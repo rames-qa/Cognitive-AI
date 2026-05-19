@@ -57,6 +57,7 @@
             backdrop-filter: blur(20px);
             background: rgba(9, 13, 22, 0.8);
             border-bottom: 1px solid var(--border-subtle);
+            gap: 15px;
         }
 
         .brand-lockup {
@@ -71,27 +72,65 @@
             background: var(--dynamic-accent);
             border-radius: 2px;
             transition: background 0.3s ease;
+            flex-shrink: 0;
         }
 
         .brand-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .system-time-stamp {
             font-family: var(--font-mono);
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* Responsive Mobile View Selector Bar */
+        .mobile-view-selector {
+            display: none;
+            width: 100%;
+            position: fixed;
+            top: 55px;
+            left: 0;
+            z-index: 999;
+            background: #0d1321;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 8px 4%;
+            gap: 10px;
+        }
+
+        .mobile-view-selector button {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .mobile-view-selector button.active {
+            background: var(--color-primary);
+            color: #ffffff;
+            border-color: var(--color-primary);
         }
 
         /* Workspace Layout */
         .workspace {
             min-height: 100vh;
             display: grid;
-            grid-template-columns: 420px 1fr;
-            padding-top: 65px;
+            grid-template-columns: 400px 1fr;
+            padding-top: 57px;
         }
 
         /* Left Console Sidebar Panel */
@@ -101,19 +140,17 @@
             padding: 30px 24px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             position: fixed;
-            width: 420px;
-            height: calc(100vh - 65px);
+            width: 400px;
+            height: calc(100vh - 57px);
             overflow-y: auto;
-        }
-
-        .panel-heading {
-            margin-bottom: 20px;
+            gap: 24px;
+            z-index: 90;
         }
 
         .panel-heading h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             margin-bottom: 6px;
             letter-spacing: -0.02em;
@@ -131,7 +168,6 @@
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
         }
 
         .engine-status-row {
@@ -141,6 +177,7 @@
             margin-bottom: 15px;
             padding-bottom: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            gap: 10px;
         }
 
         .engine-label {
@@ -162,6 +199,7 @@
             border-radius: 6px;
             font-family: var(--font-mono);
             border: 1px solid var(--border-subtle);
+            flex-shrink: 0;
         }
 
         .badge-dot {
@@ -257,14 +295,6 @@
             background: #2563eb;
         }
 
-        .btn-primary-ops.listening-state {
-            background: var(--color-danger);
-        }
-
-        .btn-primary-ops.listening-state:hover {
-            background: #dc2626;
-        }
-
         .btn-secondary-ops {
             background: transparent;
             color: var(--text-primary);
@@ -278,9 +308,9 @@
 
         /* Right Dashboard Panel */
         .dashboard-stream {
-            margin-left: 420px;
+            margin-left: 400px;
             padding: 30px 4%;
-            width: calc(100% - 420px);
+            width: calc(100% - 400px);
         }
 
         .stream-title-block {
@@ -290,6 +320,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
         }
 
         .stream-title-block h2 {
@@ -305,6 +336,7 @@
             padding: 4px;
             border-radius: 8px;
             border: 1px solid var(--border-subtle);
+            flex-shrink: 0;
         }
 
         .view-btn {
@@ -317,6 +349,7 @@
             cursor: pointer;
             border-radius: 6px;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
         .view-btn.active {
@@ -353,17 +386,10 @@
             position: relative;
         }
 
-        /* Active highlight state frame */
-        .data-card-node.system-vocal-intercept {
-            border-color: var(--dynamic-accent) !important;
-            box-shadow: 0 4px 30px rgba(59, 130, 246, 0.12);
-            transform: translateY(-4px);
-        }
-
         .node-top-meta {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 12px;
         }
 
@@ -424,10 +450,9 @@
 
         .fill-track {
             height: 100%;
-            width: 0%;
+            width: 75%; /* Temporary visibility value */
             background: var(--color-primary);
             border-radius: 2px;
-            transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* Tabular Sub-data Layout */
@@ -464,7 +489,7 @@
             background: #0b0f19;
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            padding: 30px;
+            padding: 30px 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -487,13 +512,6 @@
             width: 100%;
             max-width: 460px;
             text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .arch-node.highlighted-intent {
-            border-color: var(--dynamic-accent);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-            transform: scale(1.02);
         }
 
         .arch-node-title {
@@ -516,7 +534,6 @@
             height: 24px;
             background-color: var(--arrow-color);
             position: relative;
-            transition: background-color 0.3s;
         }
 
         .v-arrow::after {
@@ -528,7 +545,6 @@
             border-left: 4px solid transparent;
             border-right: 4px solid transparent;
             border-top: 5px solid var(--arrow-color);
-            transition: border-top-color 0.3s;
         }
 
         /* Split-Grid Tracks */
@@ -553,8 +569,7 @@
             border: 1px solid var(--border-subtle);
             border-radius: 6px;
             padding: 10px 14px;
-            width: 190px;
-            transition: all 0.3s;
+            width: 170px;
         }
 
         .h-connector {
@@ -563,7 +578,6 @@
             position: relative;
             flex-grow: 1;
             max-width: 30px;
-            transition: background-color 0.3s;
         }
 
         .h-connector.to-right::after {
@@ -577,130 +591,85 @@
             border-left: 5px solid var(--arrow-color);
         }
 
-        /* Branching Paths Setup */
-        .branch-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 700px;
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .branch-container::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 25%;
-            right: 25%;
-            height: 2px;
-            background-color: var(--arrow-color);
-        }
-
-        .branch-line-down {
-            width: 2px;
-            height: 20px;
-            background-color: var(--arrow-color);
-            position: absolute;
-            top: -20px;
-        }
-        .branch-line-down.left { left: 25%; }
-        .branch-line-down.right { right: 25%; }
-
-        .branch-line-down::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 5px solid var(--arrow-color);
-        }
-
-        .branch-card {
-            width: 48%;
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 14px;
-            transition: all 0.3s ease;
-        }
-        .branch-card.success { border-left: 4px solid var(--color-success); }
-        .branch-card.failure { border-left: 4px solid var(--color-danger); }
-
-        .branch-card.active-path {
-            box-shadow: 0 0 15px rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.4);
-        }
-
-        .path-badge {
-            display: inline-block;
-            font-size: 8px;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-        }
-        .path-badge.success { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
-        .path-badge.failure { background: rgba(239, 68, 68, 0.1); color: var(--color-danger); }
-
-
-        /* Real-Time Linear Spectrum Canvas */
-        .live-spectrogram-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .spectrogram-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .spectrogram-header h4 {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-        }
-
-        .spectrogram-canvas {
-            width: 100%;
-            height: 95px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            display: block;
-        }
-
-        footer {
-            border-top: 1px solid var(--border-subtle);
-            padding: 16px 0 0;
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-        }
-
-        /* Responsive Flow Adaptation */
+        /* Responsive Flow Adaptation for Tablets and Smartphones */
         @media (max-width: 992px) {
-            .workspace { grid-template-columns: 1fr; }
-            .control-sidebar { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-subtle); }
-            .dashboard-stream { margin-left: 0; width: 100%; }
-            .split-grid { grid-template-columns: 1fr; gap: 10px; }
-            .h-connector { display: none; }
-            .side-node-container.right, .side-node-container.left { justify-content: center; }
-            .side-arch-node { width: 100%; max-width: 460px; text-align: center; }
-            .branch-container { flex-direction: column; gap: 15px; }
-            .branch-container::before, .branch-line-down { display: none; }
-            .branch-card { width: 100%; }
+            header {
+                padding: 12px 4%;
+            }
+            .brand-title {
+                font-size: 13px;
+            }
+            .system-time-stamp {
+                font-size: 10px;
+            }
+            .mobile-view-selector {
+                display: flex;
+            }
+            .workspace {
+                grid-template-columns: 1fr;
+                padding-top: 105px;
+            }
+            .control-sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                display: none; /* Controlled dynamically via JS view toggles */
+                padding: 20px 4%;
+            }
+            .control-sidebar.active-mobile-panel {
+                display: flex;
+            }
+            .dashboard-stream {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px 4%;
+                display: none;
+            }
+            .dashboard-stream.active-mobile-panel {
+                display: block;
+            }
+            .stream-title-block {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .view-toggle-group {
+                width: 100%;
+            }
+            .view-btn {
+                flex: 1;
+                text-align: center;
+            }
+            .split-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .h-connector {
+                display: none;
+            }
+            .side-node-container.right, .side-node-container.left {
+                justify-content: center;
+                width: 100%;
+            }
+            .side-arch-node {
+                width: 100%;
+                max-width: 460px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .matrix-grid {
+                grid-template-columns: 1fr;
+            }
+            .tabular-sub-grid {
+                gap: 4px;
+                padding: 6px;
+            }
+            .sub-data-cell span {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -711,47 +680,50 @@
             <div class="brand-logo" id="logoIndicator"></div>
             <div class="brand-title">Cognitive Operations Center</div>
         </div>
-        <div class="system-time-stamp" id="lblLiveTimestamp">SYS-STATUS: DEPLOYED // INFRA-MATRIX</div>
+        <div class="system-time-stamp" id="lblLiveTimestamp">SYS-STATUS: ACTIVE</div>
     </header>
+
+    <div class="mobile-view-selector">
+        <button id="mbBtnTelemetry" class="active" onclick="toggleMobilePanel('telemetry')">Telemetry Console</button>
+        <button id="mbBtnAnalytics" onclick="toggleMobilePanel('analytics')">Dashboard Stream</button>
+    </div>
 
     <div class="workspace">
         
-        <aside class="control-sidebar">
-            <div>
-                <div class="panel-heading">
-                    <h1>Acoustic Telemetry</h1>
-                    <p>Interface framework capturing real-time vocal command matrices to route structural automated architecture flows.</p>
+        <aside id="panelTelemetrySidebar" class="control-sidebar active-mobile-panel">
+            <div class="panel-heading">
+                <h1>Acoustic Telemetry</h1>
+                <p>Interface framework capturing real-time vocal command matrices to route structural automated architecture flows.</p>
+            </div>
+
+            <div class="telemetry-card">
+                <div class="engine-status-row">
+                    <span class="engine-label">Acoustic Signal Processing</span>
+                    <div class="engine-indicator-badge">
+                        <span class="badge-dot active" id="voiceIndicatorDot"></span>
+                        <span id="txtEngineStatus">STANDBY</span>
+                    </div>
+                </div>
+                <div class="transcript-output-pane" id="paneTranscript">
+                    Awaiting input sequence verification. Initialize engine or vocalize valid tracking command routes.
                 </div>
 
-                <div class="telemetry-card">
-                    <div class="engine-status-row">
-                        <span class="engine-label">Acoustic Signal Processing</span>
-                        <div class="engine-indicator-badge">
-                            <span class="badge-dot" id="voiceIndicatorDot"></span>
-                            <span id="txtEngineStatus">STANDBY</span>
-                        </div>
+                <div class="matrix-grid">
+                    <div class="matrix-node">
+                        <label>Perceived Valence</label>
+                        <div class="val" id="metricValence">0.00</div>
                     </div>
-                    <div class="transcript-output-pane" id="paneTranscript">
-                        Awaiting input sequence verification. Initialize engine or vocalize valid tracking command routes.
+                    <div class="matrix-node">
+                        <label>Arousal Index</label>
+                        <div class="val" id="metricArousal">0.00</div>
                     </div>
-
-                    <div class="matrix-grid">
-                        <div class="matrix-node">
-                            <label>Perceived Valence</label>
-                            <div class="val" id="metricValence">0.00</div>
-                        </div>
-                        <div class="matrix-node">
-                            <label>Arousal Index</label>
-                            <div class="val" id="metricArousal">0.00</div>
-                        </div>
-                        <div class="matrix-node">
-                            <label>Vocal Frequency</label>
-                            <div class="val" id="metricHertz">-- Hz</div>
-                        </div>
-                        <div class="matrix-node">
-                            <label>Confidence Metric</label>
-                            <div class="val" id="metricConfidence">0.0%</div>
-                        </div>
+                    <div class="matrix-node">
+                        <label>Vocal Frequency</label>
+                        <div class="val" id="metricHertz">-- Hz</div>
+                    </div>
+                    <div class="matrix-node">
+                        <label>Confidence Metric</label>
+                        <div class="val" id="metricConfidence">0.0%</div>
                     </div>
                 </div>
             </div>
@@ -765,13 +737,13 @@
             </div>
         </aside>
 
-        <main class="dashboard-stream">
+        <main id="panelAnalyticsStream" class="dashboard-stream">
             
             <div class="stream-title-block">
                 <h2>System Analytics & Architecture Matrix</h2>
                 <div class="view-toggle-group">
-                    <button class="view-btn active" onclick="switchView('nodes')">System Nodes</button>
-                    <button class="view-btn" onclick="switchView('blueprint')">Production Architecture Blueprint</button>
+                    <button id="tabBtnNodes" class="view-btn active" onclick="switchView('nodes')">System Nodes</button>
+                    <button id="tabBtnBlueprint" class="view-btn" onclick="switchView('blueprint')">Architecture Blueprint</button>
                 </div>
             </div>
 
@@ -793,7 +765,7 @@
                                 <label>Processing Load</label>
                                 <span id="txtPctNeural">94%</span>
                             </div>
-                            <div class="horizontal-rail"><div class="fill-track" id="barNeural"></div></div>
+                            <div class="horizontal-rail"><div class="fill-track" id="barNeural" style="width: 94%;"></div></div>
                         </div>
                         <div class="tabular-sub-grid">
                             <div class="sub-data-cell"><label>Velocity</label><span>94%</span></div>
@@ -818,7 +790,7 @@
                                 <label>Vector Precision</label>
                                 <span id="txtPctAnalytics">99%</span>
                             </div>
-                            <div class="horizontal-rail"><div class="fill-track" id="barAnalytics"></div></div>
+                            <div class="horizontal-rail"><div class="fill-track" id="barAnalytics" style="width: 99%;"></div></div>
                         </div>
                         <div class="tabular-sub-grid">
                             <div class="sub-data-cell"><label>Accuracy</label><span>99%</span></div>
@@ -843,7 +815,7 @@
                                 <label>Operational Yield</label>
                                 <span id="txtPctAutomation">84%</span>
                             </div>
-                            <div class="horizontal-rail"><div class="fill-track" id="barAutomation"></div></div>
+                            <div class="horizontal-rail"><div class="fill-track" id="barAutomation" style="width: 84%;"></div></div>
                         </div>
                         <div class="tabular-sub-grid">
                             <div class="sub-data-cell"><label>Executed</label><span>84%</span></div>
@@ -898,421 +870,51 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="v-arrow"></div>
-                    </div>
-
-                    <div class="flow-step" id="archEmbedding">
-                        <div class="arch-node">
-                            <div class="arch-node-title">Vectorization Engine</div>
-                            <div class="arch-node-value">Embedding Model: text-embedding-004</div>
-                        </div>
-                        <div class="v-arrow"></div>
-                    </div>
-
-                    <div class="flow-step" id="archVectorSearch">
-                        <div class="arch-node">
-                            <div class="arch-node-title">Vector Database</div>
-                            <div class="arch-node-value">Vector DB: Vertex AI Vector Search</div>
-                        </div>
-                        <div class="v-arrow"></div>
-                    </div>
-
-                    <div class="flow-step" id="archOrchestration">
-                        <div class="split-grid">
-                            <div class="side-node-container left">
-                                <div class="side-arch-node" id="archGrounding">
-                                    <div class="arch-node-title">Grounding Layer</div>
-                                    <div class="arch-node-value">Vertex AI Search / Playbooks</div>
-                                </div>
-                                <div class="h-connector"></div>
-                            </div>
-                            <div class="arch-node">
-                                <div class="arch-node-title">Orchestration & Reasoning</div>
-                                <div class="arch-node-value">LangChain / LangGraph</div>
-                            </div>
-                            <div></div>
-                        </div>
-                        <div class="v-arrow"></div>
-                    </div>
-
-                    <div class="flow-step" id="archModel">
-                        <div class="arch-node">
-                            <div class="arch-node-title">Cognitive Foundation Model</div>
-                            <div class="arch-node-value">Gemini 1.5 Pro via Vertex AI</div>
-                        </div>
-                        <div class="v-arrow"></div>
-                    </div>
-
-                    <div class="flow-step" id="archGuardrails">
-                        <div class="arch-node">
-                            <div class="arch-node-title">Policy & Schema Guardrails</div>
-                            <div class="arch-node-value">Guardrail & Validation Engine</div>
-                        </div>
-                        <div class="v-arrow"></div>
-                    </div>
-
-                    <div class="flow-step">
-                        <div class="branch-container">
-                            <div class="branch-line-down left"></div>
-                            <div class="branch-line-down right"></div>
-
-                            <div class="branch-card success" id="pathSuccess">
-                                <span class="path-badge success">Success Path</span>
-                                <div class="arch-node-title">Automation Execution</div>
-                                <div class="arch-node-value">Cloud Run / Webhooks</div>
-                            </div>
-
-                            <div class="branch-card failure" id="pathFailure">
-                                <span class="path-badge failure">Exception Path</span>
-                                <div class="arch-node-title">Telemetry & Alerting</div>
-                                <div class="arch-node-value">Control Plane Dashboard</div>
-                            </div>
-                        </div>
                     </div>
 
                 </div>
             </div>
-
-            <div class="live-spectrogram-container">
-                <div class="spectrogram-header">
-                    <h4>Vocal Frequency Array & Spectrogram Matrix Waveform</h4>
-                    <div class="system-time-stamp" id="txtHzTelemetry">0.00 Hz // Core Constant</div>
-                </div>
-                <canvas class="spectrogram-canvas" id="canvasSpectrogram"></canvas>
-            </div>
-
-            <footer>
-                <span>CONSOLE VERSION 5.0.0 // SECURE INTEGRATION PLATFORM</span>
-                <span>ENGINE ARCHITECTURE SYSTEM SPEC</span>
-            </footer>
         </main>
-
     </div>
 
     <script>
-        // Interface Tab Toggle Controller
-        function switchView(viewName) {
-            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.dashboard-section').forEach(sect => sect.classList.remove('active-view'));
+        function switchView(viewType) {
+            const nodesSection = document.getElementById('viewNodes');
+            const blueprintSection = document.getElementById('viewBlueprint');
+            const tabBtnNodes = document.getElementById('tabBtnNodes');
+            const tabBtnBlueprint = document.getElementById('tabBtnBlueprint');
 
-            if(viewName === 'nodes') {
-                document.querySelector('[onclick="switchView(\'nodes\')"]').classList.add('active');
-                document.getElementById('viewNodes').classList.add('active-view');
+            if(viewType === 'nodes') {
+                nodesSection.classList.add('active-view');
+                blueprintSection.classList.remove('active-view');
+                tabBtnNodes.classList.add('active');
+                tabBtnBlueprint.classList.remove('active');
             } else {
-                document.querySelector('[onclick="switchView(\'blueprint\')"]').classList.add('active');
-                document.getElementById('viewBlueprint').classList.add('active-view');
+                blueprintSection.classList.add('active-view');
+                nodesSection.classList.remove('active-view');
+                tabBtnBlueprint.classList.add('active');
+                tabBtnNodes.classList.remove('active');
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            
-            let telemetryModulationCoeff = 3; 
+        function toggleMobilePanel(panelType) {
+            const sidebar = document.getElementById('panelTelemetrySidebar');
+            const stream = document.getElementById('panelAnalyticsStream');
+            const btnTelemetry = document.getElementById('mbBtnTelemetry');
+            const btnAnalytics = document.getElementById('mbBtnAnalytics');
 
-            // Initialize Progress Bars Custom Animation Widths
-            setTimeout(() => { document.getElementById("barNeural").style.width = "94%"; }, 150);
-            setTimeout(() => { document.getElementById("barAnalytics").style.width = "99%"; }, 300);
-            setTimeout(() => { document.getElementById("barAutomation").style.width = "84%"; }, 450);
-
-            // Cross-functional routing to view nodes or architectural coordinates
-            function highlightTargetElement(elementId, viewContext) {
-                switchView(viewContext);
-                const targetNode = document.getElementById(elementId);
-                if (targetNode) {
-                    targetNode.scrollIntoView({ behavior: "smooth", block: "center" });
-
-                    document.querySelectorAll('.data-card-node, .arch-node').forEach(node => {
-                        node.classList.remove('system-vocal-intercept', 'highlighted-intent');
-                    });
-
-                    setTimeout(() => {
-                        if(viewContext === 'nodes') {
-                            targetNode.classList.add('system-vocal-intercept');
-                        } else {
-                            targetNode.classList.add('highlighted-intent');
-                        }
-                    }, 350);
-                }
-            }
-
-            /* --- DISPATCH AUTOMATION PIPELINE SYNC RUNNER --- */
-            let isProcessingPipelineSync = false;
-            function triggerOperationalSystemSync() {
-                if (isProcessingPipelineSync) return;
-                isProcessingPipelineSync = true;
-
-                paneTranscript.textContent = "CRITICAL COMMAND MATCHED: Executing multi-module operational pipeline sync...";
-                
-                document.getElementById("barNeural").style.width = "100%";
-                document.getElementById("barAnalytics").style.width = "100%";
-                document.getElementById("barAutomation").style.width = "100%";
-
-                document.querySelectorAll('.data-card-node').forEach(node => {
-                    node.classList.add('system-vocal-intercept');
-                });
-
-                setTimeout(() => {
-                    document.getElementById("barNeural").style.width = "94%";
-                    document.getElementById("barAnalytics").style.width = "99%";
-                    document.getElementById("barAutomation").style.width = "84%";
-                    
-                    document.querySelectorAll('.data-card-node').forEach(node => {
-                        node.classList.remove('system-vocal-intercept');
-                    });
-                    isProcessingPipelineSync = false;
-                    paneTranscript.textContent = "Pipeline synchronization verified. Modulates restored to base constant parameters.";
-                }, 3000);
-            }
-
-            document.getElementById("btnForceSync").addEventListener("click", () => {
-                highlightTargetElement("nodeNeural", "nodes");
-                triggerOperationalSystemSync();
-            });
-
-            /* --- COGNITIVE LEXICON EMOTION ANALYTICS PARSER --- */
-            function classifyVocalLinguisticEmotion(transcriptText) {
-                const normalizedStr = transcriptText.toLowerCase();
-
-                const metricValence = document.getElementById("metricValence");
-                const metricArousal = document.getElementById("metricArousal");
-                const metricConfidence = document.getElementById("metricConfidence");
-                const pathSuccess = document.getElementById("pathSuccess");
-                const pathFailure = document.getElementById("pathFailure");
-
-                // Enterprise ML Lexicon Mapping Profiles
-                const lexPositiveProfile = ["great", "awesome", "excellent", "perfect", "run", "sync", "trigger", "boost", "fast", "accelerate", "success"];
-                const lexStressProfile = ["error", "fail", "wrong", "broken", "stop", "critical", "slow", "scramble", "bad", "alert", "failure"];
-                const lexStableProfile = ["neural", "analytics", "automation", "show", "clear", "steady", "balance", "calm", "smooth", "constant", "blueprint"];
-
-                let scorePositive = 0;
-                let scoreStress = 0;
-                let scoreStable = 0;
-
-                lexPositiveProfile.forEach(word => { if(normalizedStr.includes(word)) scorePositive += 2; });
-                lexStressProfile.forEach(word => { if(normalizedStr.includes(word)) scoreStress += 2; });
-                lexStableProfile.forEach(word => { if(normalizedStr.includes(word)) scoreStable += 1; });
-
-                // Reset specific dynamic paths inside view blueprint
-                pathSuccess.classList.remove("active-path");
-                pathFailure.classList.remove("active-path");
-
-                if (scorePositive > scoreStress && scorePositive >= scoreStable) {
-                    metricValence.textContent = "0.89";
-                    metricArousal.textContent = "0.74";
-                    metricConfidence.textContent = "94.2%";
-                    
-                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-success)');
-                    telemetryModulationCoeff = 7;
-                    pathSuccess.classList.add("active-path");
-                } 
-                else if (scoreStress > scorePositive) {
-                    metricValence.textContent = "-0.62";
-                    metricArousal.textContent = "0.91";
-                    metricConfidence.textContent = "38.5%";
-                    
-                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-danger)');
-                    telemetryModulationCoeff = 14; 
-                    pathFailure.classList.add("active-path");
-                } 
-                else {
-                    metricValence.textContent = "0.15";
-                    metricArousal.textContent = "0.08";
-                    metricConfidence.textContent = "86.0%";
-                    
-                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-primary)');
-                    telemetryModulationCoeff = 3;
-                }
-            }
-
-            /* --- WEB SPEECH RECOGNITION INTERFACE HUB --- */
-            const btnTogglePipeline = document.getElementById("btnTogglePipeline");
-            const voiceIndicatorDot = document.getElementById("voiceIndicatorDot");
-            const txtEngineStatus = document.getElementById("txtEngineStatus");
-            const paneTranscript = document.getElementById("paneTranscript");
-
-            const WebSpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            let audioCtx = null;
-            let audioAnalyser = null;
-            let microphoneStream = null;
-            let javascriptFreqSimulator = true;
-
-            if (!WebSpeechAPI) {
-                txtEngineStatus.textContent = "SPEECH ENGINE UNSUPPORTED";
-                btnTogglePipeline.style.opacity = "0.4";
-                btnTogglePipeline.style.cursor = "not-allowed";
+            if(panelType === 'telemetry') {
+                sidebar.classList.add('active-mobile-panel');
+                stream.classList.remove('active-mobile-panel');
+                btnTelemetry.classList.add('active');
+                btnAnalytics.classList.remove('active');
             } else {
-                const vocalRecognitionEngine = new WebSpeechAPI();
-                vocalRecognitionEngine.continuous = false;
-                vocalRecognitionEngine.lang = 'en-US';
-                vocalRecognitionEngine.interimResults = false;
-
-                let recognitionActive = false;
-
-                async function linkAcousticHardwareNodes() {
-                    try {
-                        if (!audioCtx) {
-                            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                            audioAnalyser = audioCtx.createAnalyser();
-                            audioAnalyser.fftSize = 64;
-                            
-                            microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                            const source = audioCtx.createMediaStreamSource(microphoneStream);
-                            source.connect(audioAnalyser);
-                            javascriptFreqSimulator = false; 
-                        }
-                    } catch (e) {
-                        console.warn("Hardware audio engine intercept denied. Falling back to internal simulation mapping logic.", e);
-                        javascriptFreqSimulator = true;
-                    }
-                }
-
-                function routeVocalCommandStrings(rawText) {
-                    const cleanString = rawText.toLowerCase().trim();
-                    paneTranscript.textContent = `Acoustic Log Captured: "${rawText}"`;
-
-                    classifyVocalLinguisticEmotion(rawText);
-
-                    // Cross-functional element visibility routing rules
-                    if (cleanString.includes("blueprint") || cleanString.includes("show blueprint")) {
-                        switchView('blueprint');
-                    } else if (cleanString.includes("neural")) {
-                        highlightTargetElement("nodeNeural", "nodes");
-                    } else if (cleanString.includes("analytics")) {
-                        highlightTargetElement("nodeAnalytics", "nodes");
-                    } else if (cleanString.includes("automation")) {
-                        highlightTargetElement("nodeAutomation", "nodes");
-                    } else if (cleanString.includes("ingestion")) {
-                        highlightTargetElement("archIngestion", "blueprint");
-                    } else if (cleanString.includes("queue") || cleanString.includes("pubsub") || cleanString.includes("pub sub")) {
-                        highlightTargetElement("archPubSub", "blueprint");
-                    } else if (cleanString.includes("dataflow") || cleanString.includes("processor")) {
-                        highlightTargetElement("archDataflow", "blueprint");
-                    } else if (cleanString.includes("embedding")) {
-                        highlightTargetElement("archEmbedding", "blueprint");
-                    } else if (cleanString.includes("vector")) {
-                        highlightTargetElement("archVectorSearch", "blueprint");
-                    } else if (cleanString.includes("orchestration") || cleanString.includes("langchain")) {
-                        highlightTargetElement("archOrchestration", "blueprint");
-                    } else if (cleanString.includes("model") || cleanString.includes("gemini")) {
-                        highlightTargetElement("archModel", "blueprint");
-                    } else if (cleanString.includes("guardrail")) {
-                        highlightTargetElement("archGuardrails", "blueprint");
-                    } else if (cleanString.includes("sync") || cleanString.includes("trigger")) {
-                        highlightTargetElement("nodeNeural", "nodes");
-                        setTimeout(() => { triggerOperationalSystemSync(); }, 400);
-                    }
-                }
-
-                btnTogglePipeline.addEventListener("click", () => {
-                    linkAcousticHardwareNodes();
-                    if (!recognitionActive) {
-                        vocalRecognitionEngine.start();
-                    } else {
-                        vocalRecognitionEngine.stop();
-                    }
-                });
-
-                vocalRecognitionEngine.onstart = () => {
-                    recognitionActive = true;
-                    btnTogglePipeline.classList.add("listening-state");
-                    btnTogglePipeline.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Disengage Pipeline`;
-                    voiceIndicatorDot.classList.add("active");
-                    txtEngineStatus.textContent = "LIVE LISTENING";
-                    paneTranscript.textContent = "Acoustic streams engaged. Speak target array commands natively...";
-                };
-
-                vocalRecognitionEngine.onresult = (evt) => {
-                    const parsedPayloadString = evt.results[0][0].transcript;
-                    routeVocalCommandStrings(parsedPayloadString);
-                };
-
-                vocalRecognitionEngine.onend = () => {
-                    recognitionActive = false;
-                    btnTogglePipeline.classList.remove("listening-state");
-                    btnTogglePipeline.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Initialize Acoustic Engine`;
-                    voiceIndicatorDot.classList.remove("active");
-                    txtEngineStatus.textContent = "STANDBY";
-                };
+                stream.classList.add('active-mobile-panel');
+                sidebar.classList.remove('active-mobile-panel');
+                btnAnalytics.classList.add('active');
+                btnTelemetry.classList.remove('active');
             }
-
-            /* --- AUTOMATED DATA SPECTROGRAM WAVEFORM RENDERER --- */
-            const canvas = document.getElementById("canvasSpectrogram");
-            const ctx = canvas.getContext("2d");
-            const txtHzTelemetry = document.getElementById("txtHzTelemetry");
-            const metricHertz = document.getElementById("metricHertz");
-
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-
-            let waveDataBuffer = Array.from({length: 50}, () => canvas.height / 2);
-            let dynamicHertzMarker = 0;
-
-            function processSpectrogramLoop() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.beginPath();
-                
-                let targetStrokeColor = getComputedStyle(document.documentElement).getPropertyValue('--dynamic-accent').trim();
-                ctx.strokeStyle = targetStrokeColor || "#3b82f6";
-                ctx.lineWidth = 1.5;
-
-                if (!javascriptFreqSimulator && audioAnalyser) {
-                    const totalDataBins = audioAnalyser.frequencyBinCount;
-                    const arrayDataData = new Uint8Array(totalDataBins);
-                    audioAnalyser.getByteFrequencyData(arrayDataData);
-
-                    let sumMagnitudes = 0;
-                    for (let i = 0; i < totalDataBins; i++) {
-                        let scaleX = i * (canvas.width / totalDataBins);
-                        let scaleY = canvas.height - (arrayDataData[i] / 255) * canvas.height;
-                        
-                        if (i === 0) ctx.moveTo(scaleX, scaleY);
-                        else ctx.lineTo(scaleX, scaleY);
-                        
-                        sumMagnitudes += arrayDataData[i];
-                    }
-                    
-                    if(sumMagnitudes > 100) {
-                        dynamicHertzMarker = Math.floor(135 + (sumMagnitudes / totalDataBins) * 2.8);
-                        txtHzTelemetry.textContent = `${dynamicHertzMarker}.00 Hz // Live Microscopic Array Tracking`;
-                        metricHertz.textContent = `${dynamicHertzMarker} Hz`;
-                    } else {
-                        txtHzTelemetry.textContent = "0.00 Hz // Core Constant";
-                        metricHertz.textContent = "-- Hz";
-                    }
-                } else {
-                    for(let i=0; i<waveDataBuffer.length; i++) {
-                        let x = i * (canvas.width / (waveDataBuffer.length - 1));
-                        let y = waveDataBuffer[i];
-                        
-                        if(i === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
-
-                        waveDataBuffer[i] += (Math.random() - 0.5) * telemetryModulationCoeff;
-                        if(waveDataBuffer[i] < 15) waveDataBuffer[i] = 15;
-                        if(waveDataBuffer[i] > canvas.height - 15) waveDataBuffer[i] = canvas.height - 15;
-                    }
-                    
-                    if(telemetryModulationCoeff > 4) {
-                        dynamicHertzMarker = Math.floor(140 + (Math.random() * 80));
-                        txtHzTelemetry.textContent = `${dynamicHertzMarker}.24 Hz // Simulated Tracking Matrix`;
-                        metricHertz.textContent = `${dynamicHertzMarker} Hz`;
-                    } else {
-                        txtHzTelemetry.textContent = "0.00 Hz // Core Constant";
-                        metricHertz.textContent = "-- Hz";
-                    }
-                }
-
-                ctx.stroke();
-                requestAnimationFrame(processSpectrogramLoop);
-            }
-
-            processSpectrogramLoop();
-            
-            window.addEventListener('resize', () => {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-            });
-        });
+        }
     </script>
 </body>
 </html>

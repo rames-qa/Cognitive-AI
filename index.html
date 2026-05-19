@@ -1,1309 +1,810 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cognitive AI - Advanced UI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-    scroll-behavior:smooth;
-}
-
-body{
-    background:#020617;
-    color:white;
-    overflow-x:hidden;
-}
-
-/* Animated Background */
-body::before{
-    content:'';
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:
-    radial-gradient(circle at top left,#0ea5e9 0%,transparent 30%),
-    radial-gradient(circle at bottom right,#8b5cf6 0%,transparent 30%);
-    opacity:0.15;
-    z-index:-1;
-    animation:bgMove 10s infinite alternate;
-}
-
-@keyframes bgMove{
-    from{
-        transform:scale(1) rotate(0deg);
-    }
-    to{
-        transform:scale(1.1) rotate(2deg);
-    }
-}
-
-/* Navbar */
-nav{
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 8%;
-    position:fixed;
-    top:0;
-    z-index:1000;
-    backdrop-filter:blur(12px);
-    background:rgba(0,0,0,0.3);
-    border-bottom:1px solid rgba(255,255,255,0.1);
-}
-
-.logo{
-    font-size:32px;
-    font-weight:700;
-    color:#38bdf8;
-    text-shadow:0 0 20px #38bdf8;
-}
-
-nav ul{
-    display:flex;
-    list-style:none;
-    gap:35px;
-}
-
-nav ul li a{
-    text-decoration:none;
-    color:white;
-    font-size:17px;
-    transition:0.4s;
-}
-
-nav ul li a:hover{
-    color:#38bdf8;
-}
-
-/* Hero */
-.hero{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    flex-direction:column;
-    padding:120px 20px 50px;
-    position:relative;
-}
-
-.hero h1{
-    font-size:75px;
-    max-width:1000px;
-    line-height:1.2;
-    margin-bottom:25px;
-    background:linear-gradient(to right,#38bdf8,#8b5cf6);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation:glow 3s infinite alternate;
-}
-
-.hero p{
-    max-width:850px;
-    font-size:22px;
-    line-height:1.8;
-    color:#cbd5e1;
-    margin-bottom:40px;
-}
-
-.hero-buttons{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
-.btn{
-    padding:15px 35px;
-    border:none;
-    border-radius:50px;
-    font-size:18px;
-    cursor:pointer;
-    transition:0.4s;
-    font-weight:600;
-}
-
-.primary-btn{
-    background:#38bdf8;
-    color:black;
-    box-shadow:0 0 25px rgba(56,189,248,0.5);
-}
-
-.primary-btn:hover{
-    transform:translateY(-5px) scale(1.05);
-    background:white;
-}
-
-.secondary-btn{
-    background:transparent;
-    color:white;
-    border:2px solid #38bdf8;
-}
-
-.secondary-btn:hover{
-    background:#38bdf8;
-    color:black;
-}
-
-/* Floating AI Orb */
-.ai-orb{
-    width:180px;
-    height:180px;
-    border-radius:50%;
-    position:absolute;
-    top:18%;
-    right:10%;
-    background:radial-gradient(circle,#38bdf8,#8b5cf6);
-    filter:blur(10px);
-    opacity:0.6;
-    animation:float 4s infinite ease-in-out;
-}
-
-@keyframes float{
-    0%{
-        transform:translateY(0px);
-    }
-    50%{
-        transform:translateY(-25px);
-    }
-    100%{
-        transform:translateY(0px);
-    }
-}
-
-/* Features */
-.features{
-    padding:100px 8%;
-}
-
-.section-title{
-    text-align:center;
-    font-size:55px;
-    margin-bottom:70px;
-    color:#38bdf8;
-}
-
-.feature-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:35px;
-}
-
-.card{
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.1);
-    backdrop-filter:blur(12px);
-    padding:35px;
-    border-radius:25px;
-    transition:0.5s;
-    position:relative;
-    overflow:hidden;
-}
-
-.card::before{
-    content:'';
-    position:absolute;
-    width:200%;
-    height:200%;
-    background:linear-gradient(
-    45deg,
-    transparent,
-    rgba(56,189,248,0.1),
-    transparent);
-    top:-50%;
-    left:-50%;
-    transform:rotate(25deg);
-}
-
-.card:hover{
-    transform:translateY(-12px);
-    box-shadow:0 0 30px rgba(56,189,248,0.2);
-}
-
-.card h3{
-    font-size:28px;
-    margin-bottom:18px;
-    color:#38bdf8;
-}
-
-.card p{
-    color:#cbd5e1;
-    line-height:1.8;
-}
-
-/* Dashboard */
-.dashboard{
-    padding:100px 8%;
-    background:#0f172a;
-}
-
-.dashboard-container{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:30px;
-}
-
-.dashboard-box{
-    position:relative;
-    background:rgba(255,255,255,0.04);
-    padding:40px;
-    border-radius:25px;
-    transition:0.4s;
-    border:1px solid rgba(255,255,255,0.1);
-    overflow:hidden;
-}
-
-.dashboard-box:hover{
-    transform:scale(1.03);
-}
-
-.dashboard-box h3{
-    margin-bottom:20px;
-    color:#38bdf8;
-    font-size:28px;
-}
-
-.progress-bar{
-    width:100%;
-    height:10px;
-    background:#1e293b;
-    border-radius:20px;
-    margin-top:20px;
-    overflow:hidden;
-}
-
-.progress{
-    height:100%;
-    background:linear-gradient(to right,#38bdf8,#8b5cf6);
-    animation:load 3s infinite;
-}
-
-@keyframes load{
-    0%{
-        width:20%;
-    }
-    50%{
-        width:80%;
-    }
-    100%{
-        width:60%;
-    }
-}
-
-/* Glow Title Common */
-.glow-text{
-    font-size:30px;
-    text-align:center;
-    color:#00ffff;
-    text-shadow:
-        0 0 10px #00ffff,
-        0 0 20px #00ffff,
-        0 0 40px #00ffff;
-    animation:glow 2s infinite alternate;
-}
-
-/* Glow Animation */
-@keyframes glow{
-    from{
-        text-shadow:0 0 15px #38bdf8;
-    }
-    to{
-        text-shadow:
-        0 0 25px #38bdf8,
-        0 0 45px #8b5cf6;
-    }
-}
-
-/* Live Text Box 1 */
-.live-text{
-    text-align:center;
-    margin:15px 0;
-    color:#d9faff;
-    line-height:1.6;
-    animation:floating 3s ease-in-out infinite;
-}
-
-@keyframes floating{
-    0%,100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-5px);
-    }
-}
-
-/* Stats Box 1 */
-.stats{
-    display:flex;
-    justify-content:space-between;
-    margin-top:25px;
-}
-
-.stat-card{
-    width:30%;
-    text-align:center;
-    padding:15px 10px;
-    border-radius:15px;
-    background:rgba(255,255,255,0.06);
-    backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,0.1);
-    transition:0.4s;
-}
-
-.stat-card:hover{
-    transform:translateY(-5px) scale(1.05);
-    box-shadow:0 0 20px rgba(0,255,255,0.5);
-}
-
-.stat-card span{
-    display:block;
-    font-size:22px;
-    color:#00ffff;
-    font-weight:bold;
-}
-
-.stat-card small{
-    color:#ccc;
-}
-
-/* AI Brain Graphic */
-.brain-container{
-    display:flex;
-    justify-content:center;
-    margin-bottom:20px;
-}
-
-.brain{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, #00ffff, #001133);
-    position:relative;
-    box-shadow:
-        0 0 20px #00ffff,
-        0 0 50px #00ffff;
-    animation:pulse 2s infinite;
-}
-
-.brain::before,
-.brain::after{
-    content:'';
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    border:2px solid rgba(0,255,255,0.4);
-    animation:ring 3s linear infinite;
-}
-
-.brain::after{
-    animation-delay:1.5s;
-}
-
-@keyframes pulse{
-    0%,100%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.1);
-    }
-}
-
-@keyframes ring{
-    0%{
-        transform:scale(1);
-        opacity:1;
-    }
-    100%{
-        transform:scale(1.8);
-        opacity:0;
-    }
-}
-
-/* Particles Box 1 */
-.particles span{
-    position:absolute;
-    width:4px;
-    height:4px;
-    background:#00ffff;
-    border-radius:50%;
-    animation:moveParticles linear infinite;
-}
-
-@keyframes moveParticles{
-    from{
-        transform:translateY(0);
-        opacity:1;
-    }
-    to{
-        transform:translateY(-700px);
-        opacity:0;
-    }
-}
-
-/* Canvas Box 1 */
-#neuralCanvas{
-    width:100%;
-    height:120px;
-    margin-top:25px;
-    border-radius:15px;
-    background:rgba(0,0,0,0.2);
-}
-
-/* BOX 2: SMART ANALYTICS */
-.analytics-box{
-    position:relative;
-    width:430px;
-    padding:35px;
-    border-radius:30px;
-    overflow:hidden;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.12);
-    box-shadow:
-        0 0 40px rgba(0,255,255,0.2),
-        inset 0 0 30px rgba(255,255,255,0.04);
-    color:white;
-}
-
-.analytics-title{
-    text-align:center;
-    font-size:32px;
-    color:#00ffff;
-    text-shadow:
-        0 0 10px #00ffff,
-        0 0 25px #00ffff;
-    animation:analyticsGlow 2s infinite alternate;
-}
-
-@keyframes analyticsGlow{
-    from{
-        text-shadow:0 0 10px #00ffff;
-    }
-    to{
-        text-shadow:
-            0 0 20px #00ffff,
-            0 0 40px #00ffff,
-            0 0 60px #00ffff;
-    }
-}
-
-.analytics-text{
-    text-align:center;
-    margin-top:15px;
-    line-height:1.8;
-    color:#d8f8ff;
-    animation:textFloat 4s ease-in-out infinite;
-}
-
-@keyframes textFloat{
-    0%,100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-6px);
-    }
-}
-
-.analytics-core{
-    position:relative;
-    width:120px;
-    height:120px;
-    margin:0 auto 25px auto;
-}
-
-.core-center{
-    position:absolute;
-    width:50px;
-    height:50px;
-    background:#00ffff;
-    border-radius:50%;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    box-shadow:
-        0 0 20px #00ffff,
-        0 0 50px #00ffff;
-    animation:pulseCore 2s infinite;
-}
-
-.core-ring{
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    border:2px solid rgba(0,255,255,0.4);
-    animation:rotateRing 8s linear infinite;
-}
-
-.ring2{
-    width:80px;
-    height:80px;
-    top:20px;
-    left:20px;
-    animation-direction:reverse;
-    animation-duration:5s;
-}
-
-@keyframes rotateRing{
-    from{
-        transform:rotate(0deg);
-    }
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-@keyframes pulseCore{
-    0%,100%{
-        transform:translate(-50%,-50%) scale(1);
-    }
-    50%{
-        transform:translate(-50%,-50%) scale(1.2);
-    }
-}
-
-.analytics-progress{
-    width:0%;
-    height:100%;
-    background:linear-gradient(90deg,#00ffff,#0066ff,#7a00ff);
-    box-shadow:0 0 20px #00ffff;
-    animation:analyticsLoad 5s infinite;
-}
-
-@keyframes analyticsLoad{
-    0%{
-        width:0%;
-    }
-    100%{
-        width:100%;
-    }
-}
-
-.analytics-stats{
-    display:flex;
-    justify-content:space-between;
-    margin-top:30px;
-}
-
-.analytics-card{
-    width:31%;
-    padding:15px;
-    text-align:center;
-    border-radius:18px;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,0.08);
-    transition:0.4s;
-}
-
-.analytics-card:hover{
-    transform:translateY(-6px) scale(1.05);
-    box-shadow:0 0 20px rgba(0,255,255,0.5);
-}
-
-.analytics-card span{
-    display:block;
-    font-size:24px;
-    font-weight:bold;
-    color:#00ffff;
-}
-
-.analytics-card small{
-    color:#c7c7c7;
-}
-
-#analyticsCanvas{
-    width:100%;
-    height:140px;
-    margin-top:30px;
-    border-radius:20px;
-    background:rgba(0,0,0,0.2);
-}
-
-.floating-data{
-    position:absolute;
-    color:#00ffff;
-    font-size:12px;
-    opacity:0.5;
-    animation:floatData 8s linear infinite;
-}
-
-.data1{
-    top:20px;
-    left:20px;
-}
-
-.data2{
-    top:60%;
-    right:20px;
-}
-
-.data3{
-    bottom:20px;
-    left:40%;
-}
-
-@keyframes floatData{
-    0%{
-        transform:translateY(0);
-        opacity:0;
-    }
-    50%{
-        opacity:1;
-    }
-    100%{
-        transform:translateY(-40px);
-        opacity:0;
-    }
-}
-
-.analytics-particles span{
-    position:absolute;
-    width:3px;
-    height:3px;
-    background:#00ffff;
-    border-radius:50%;
-    animation:particleMove linear infinite;
-}
-
-@keyframes particleMove{
-    from{
-        transform:translateY(0);
-        opacity:1;
-    }
-    to{
-        transform:translateY(-700px);
-        opacity:0;
-    }
-}
-
-/* BOX 3: AUTOMATION ENGINE */
-.automation-box{
-    position:relative;
-    width:430px;
-    padding:35px;
-    border-radius:30px;
-    overflow:hidden;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.1);
-    box-shadow:
-        0 0 40px rgba(0,255,255,0.2),
-        inset 0 0 30px rgba(255,255,255,0.04);
-    color:white;
-}
-
-.automation-title{
-    text-align:center;
-    font-size:32px;
-    color:#00ffff;
-    text-shadow:
-        0 0 10px #00ffff,
-        0 0 25px #00ffff;
-    animation:autoGlow 2s infinite alternate;
-}
-
-@keyframes autoGlow{
-    from{
-        text-shadow:0 0 10px #00ffff;
-    }
-    to{
-        text-shadow:
-            0 0 20px #00ffff,
-            0 0 40px #00ffff,
-            0 0 60px #00ffff;
-    }
-}
-
-.automation-text{
-    text-align:center;
-    margin-top:15px;
-    line-height:1.8;
-    color:#d8f8ff;
-    animation:textMove 4s ease-in-out infinite;
-}
-
-@keyframes textMove{
-    0%,100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-5px);
-    }
-}
-
-.automation-core{
-    position:relative;
-    width:140px;
-    height:140px;
-    margin:0 auto 25px auto;
-}
-
-.gear{
-    position:absolute;
-    border-radius:50%;
-    border:4px solid #00ffff;
-    box-shadow:0 0 20px #00ffff;
-    animation:rotateGear linear infinite;
-}
-
-.gear1{
-    width:90px;
-    height:90px;
-    top:20px;
-    left:10px;
-    animation-duration:6s;
-}
-
-.gear2{
-    width:60px;
-    height:60px;
-    top:55px;
-    left:75px;
-    animation-duration:4s;
-    animation-direction:reverse;
-}
-
-.gear-center{
-    position:absolute;
-    width:25px;
-    height:25px;
-    border-radius:50%;
-    background:#00ffff;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    box-shadow:
-        0 0 20px #00ffff,
-        0 0 40px #00ffff;
-}
-
-@keyframes rotateGear{
-    from{
-        transform:rotate(0deg);
-    }
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-.automation-progress{
-    width:0%;
-    height:100%;
-    background:linear-gradient(90deg,#00ffff,#0077ff,#00ffcc);
-    box-shadow:0 0 20px #00ffff;
-    animation:autoLoad 5s infinite;
-}
-
-@keyframes autoLoad{
-    0%{
-        width:0%;
-    }
-    100%{
-        width:100%;
-    }
-}
-
-.automation-stats{
-    display:flex;
-    justify-content:space-between;
-    margin-top:30px;
-}
-
-.automation-card{
-    width:31%;
-    padding:15px;
-    text-align:center;
-    border-radius:18px;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.08);
-    backdrop-filter:blur(10px);
-    transition:0.4s;
-}
-
-.automation-card:hover{
-    transform:translateY(-6px) scale(1.05);
-    box-shadow:0 0 20px rgba(0,255,255,0.5);
-}
-
-.automation-card span{
-    display:block;
-    font-size:24px;
-    font-weight:bold;
-    color:#00ffff;
-}
-
-.automation-card small{
-    color:#cfcfcf;
-}
-
-#automationCanvas{
-    width:100%;
-    height:140px;
-    margin-top:30px;
-    border-radius:20px;
-    background:rgba(0,0,0,0.2);
-}
-
-.floating-ai{
-    position:absolute;
-    font-size:12px;
-    color:#00ffff;
-    opacity:0.5;
-    animation:floatAI 7s linear infinite;
-}
-
-.ai1{
-    top:20px;
-    left:20px;
-}
-
-.ai2{
-    top:50%;
-    right:20px;
-}
-
-.ai3{
-    bottom:20px;
-    left:45%;
-}
-
-@keyframes floatAI{
-    0%{
-        transform:translateY(0);
-        opacity:0;
-    }
-    50%{
-        opacity:1;
-    }
-    100%{
-        transform:translateY(-40px);
-        opacity:0;
-    }
-}
-
-.automation-particles span{
-    position:absolute;
-    width:3px;
-    height:3px;
-    border-radius:50%;
-    background:#00ffff;
-    animation:particleFloat linear infinite;
-}
-
-@keyframes particleFloat{
-    from{
-        transform:translateY(0);
-        opacity:1;
-    }
-    to{
-        transform:translateY(-700px);
-        opacity:0;
-    }
-}
-
-/* About */
-.about{
-    padding:100px 8%;
-    text-align:center;
-}
-
-.about p{
-    max-width:1000px;
-    margin:auto;
-    font-size:22px;
-    line-height:2;
-    color:#cbd5e1;
-}
-
-/* Footer */
-footer{
-    text-align:center;
-    padding:35px;
-    background:black;
-    color:#94a3b8;
-}
-
-/* Responsive */
-@media(max-width:768px){
-    .hero h1{
-        font-size:48px;
-    }
-    .hero p{
-        font-size:18px;
-    }
-    nav{
-        flex-direction:column;
-        gap:20px;
-    }
-    nav ul{
-        gap:20px;
-    }
-    .section-title{
-        font-size:40px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive AI - Enterprise Dashboard Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Reset & Variables */
+        :root {
+            --bg-deep: #020617;
+            --bg-surface: rgba(15, 23, 42, 0.6);
+            --border-glow: rgba(56, 189, 248, 0.15);
+            --primary-neon: #00ffff;
+            --accent-purple: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Animated Ambient Background Matrix */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.12) 0%, transparent 35%),
+                radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 35%);
+            opacity: 0.8;
+            z-index: -1;
+            animation: ambientShift 12s infinite alternate ease-in-out;
+        }
+
+        @keyframes ambientShift {
+            from { transform: scale(1) translate(0px, 0px); }
+            to { transform: scale(1.05) translate(10px, -10px); }
+        }
+
+        /* Enterprise Glassmorphic Header Navigation */
+        nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(16px);
+            background: rgba(2, 6, 23, 0.7);
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #38bdf8;
+            text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-neon);
+        }
+
+        /* Hero Concept Section */
+        .hero {
+            min-height: 95vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+            padding: 140px 20px 60px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 68px;
+            max-width: 1100px;
+            line-height: 1.15;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #38bdf8 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+        }
+
+        .hero p {
+            max-width: 800px;
+            font-size: 20px;
+            line-height: 1.7;
+            color: var(--text-muted);
+            margin-bottom: 45px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 36px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-weight: 600;
+        }
+
+        .primary-btn {
+            background: #38bdf8;
+            color: #020617;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-3px);
+            background: #f8fafc;
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #38bdf8;
+        }
+
+        /* Ambient Hero Orb Glow */
+        .ai-orb {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            position: absolute;
+            top: 25%;
+            right: 12%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.2), rgba(139, 92, 246, 0.05));
+            filter: blur(40px);
+            opacity: 0.7;
+            z-index: -1;
+            animation: floatingMotion 6s infinite ease-in-out;
+        }
+
+        @keyframes floatingMotion {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        /* System Grid Features */
+        .features {
+            padding: 100px 8%;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 60px;
+            color: #f8fafc;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(16px);
+            padding: 40px 35px;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* Unified Core Dashboard Architecture */
+        .dashboard {
+            padding: 100px 8%;
+            background: #090d16;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 35px;
+        }
+
+        /* Re-engineered Unified Dashboard Box */
+        .dashboard-box {
+            position: relative;
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border-glow);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .dashboard-box:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Realigned Dynamic Header Formatting */
+        .dashboard-header-group {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .glow-title {
+            font-size: 26px;
+            font-weight: 600;
+            color: #f8fafc;
+            letter-spacing: -0.5px;
+            margin-top: 15px;
+        }
+
+        .live-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-top: 10px;
+            min-height: 45px;
+        }
+
+        /* Re-engineered Standard Progress Components */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%; /* Driven dynamically by execution engine */
+            background: linear-gradient(90deg, #38bdf8, var(--accent-purple));
+            border-radius: 10px;
+            transition: width 4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Clean Unified Infrastructure Metrics Matrix */
+        .stats-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .stat-node {
+            text-align: center;
+            padding: 14px 8px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .stat-node:hover {
+            background: rgba(56, 189, 248, 0.04);
+            border-color: rgba(56, 189, 248, 0.2);
+        }
+
+        .stat-node span {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-neon);
+        }
+
+        .stat-node small {
+            display: block;
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-top: 4px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* Component Graphic Node Containers */
+        .graphic-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        /* Graphic Core 1: Neural Core Mesh */
+        .brain-mesh {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #00ffff 0%, #030712 80%);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            position: relative;
+            animation: pulseCore 2.5s infinite ease-in-out;
+        }
+
+        .brain-mesh::before, .brain-mesh::after {
+            content: '';
+            position: absolute;
+            top: -10%; left: -10%; width: 120%; height: 120%;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            animation: ringScale 4s linear infinite;
+        }
+        .brain-mesh::after { animation-delay: 2s; }
+
+        @keyframes pulseCore {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); }
+            50% { transform: scale(1.06); box-shadow: 0 0 45px rgba(0, 255, 255, 0.5); }
+        }
+
+        @keyframes ringScale {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* Graphic Core 2: Vector Rings */
+        .vector-ring-container {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+
+        .ring-node {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 255, 255, 0.15);
+            border-top-color: var(--primary-neon);
+            animation: rotateMatrix 6s linear infinite;
+        }
+
+        .ring-node.inner {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-color: rgba(139, 92, 246, 0.15);
+            border-bottom-color: var(--accent-purple);
+            animation-duration: 4s;
+            animation-direction: reverse;
+        }
+
+        .center-nucleus {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #f8fafc;
+            border-radius: 50%;
+            top: 38%; left: 38%;
+            box-shadow: 0 0 20px var(--primary-neon);
+        }
+
+        @keyframes rotateMatrix {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Graphic Core 3: Synchronized Automation Gears */
+        .gear-assembly {
+            width: 110px;
+            height: 110px;
+            position: relative;
+        }
+
+        .engine-gear {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px dashed var(--primary-neon);
+            animation: rotateMatrix 8s linear infinite;
+        }
+
+        .engine-gear.primary-gear {
+            width: 70px;
+            height: 70px;
+            top: 10px; left: 5px;
+        }
+
+        .engine-gear.secondary-gear {
+            width: 50px;
+            height: 50px;
+            top: 50px; left: 55px;
+            border-color: var(--accent-purple);
+            animation-duration: 5.3s;
+            animation-direction: reverse;
+        }
+
+        /* Ambient Dynamic Particle Injectors */
+        .box-particles span {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: riseParticle linear infinite;
+        }
+
+        @keyframes riseParticle {
+            from { transform: translateY(150px); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            to { transform: translateY(-400px); opacity: 0; }
+        }
+
+        /* Fluid Real-time Data Canvases */
+        .live-telemetry-canvas {
+            width: 100%;
+            height: 110px;
+            margin-top: 15px;
+            border-radius: 12px;
+            background: rgba(2, 6, 23, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* About & Mission Infrastructure Layout */
+        .about {
+            padding: 120px 8%;
+            text-align: center;
+            position: relative;
+        }
+
+        .about p {
+            max-width: 900px;
+            margin: auto;
+            font-size: 20px;
+            line-height: 1.8;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: #020617;
+            color: #64748b;
+            font-size: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive Adaptive Queries */
+        @media(max-width: 900px) {
+            .hero h1 { font-size: 46px; }
+            .hero p { font-size: 17px; }
+            .section-title { font-size: 32px; }
+            nav { padding: 20px 4%; }
+            nav ul { gap: 20px; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav>
-    <div class="logo">Cognitive AI</div>
-    <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#dashboard">Dashboard</a></li>
-        <li><a href="#about">About</a></li>
-    </ul>
-</nav>
+    <!-- Header Navigation Grid -->
+    <nav>
+        <div class="logo">Cognitive AI</div>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
 
-<!-- Hero -->
-<section class="hero">
-    <div class="ai-orb"></div>
-    <h1>Future Generation Cognitive Artificial Intelligence</h1>
-    <p>
-        Experience advanced human-like intelligence with interactive AI systems,
-        machine learning automation, neural reasoning, smart analytics,
-        and futuristic user interaction technology.
-    </p>
-    <div class="hero-buttons">
-        <button class="btn primary-btn">Explore AI</button>
-        <button class="btn secondary-btn">Watch Demo</button>
-    </div>
-</section>
-
-<!-- Features -->
-<section class="features" id="features">
-    <h2 class="section-title">AI Features</h2>
-    <div class="feature-grid">
-        <div class="card">
-            <h3>🧠 Machine Learning</h3>
-            <p>Intelligent systems that learn from user data, improve automatically, and optimize performance in real time.</p>
+    <!-- Hero Deployment Entry -->
+    <section class="hero">
+        <div class="ai-orb"></div>
+        <h1>Future Generation Cognitive Artificial Intelligence</h1>
+        <p>
+            Experience advanced human-like intelligence with interactive AI systems,
+            machine learning automation, neural reasoning, smart analytics,
+            and futuristic user interaction technology.
+        </p>
+        <div class="hero-buttons">
+            <button class="btn primary-btn">Explore AI Systems</button>
+            <button class="btn secondary-btn">Watch Deployment Demo</button>
         </div>
-        <div class="card">
-            <h3>💬 NLP Processing</h3>
-            <p>Understand human conversations, analyze text patterns, and respond intelligently.</p>
+    </section>
+
+    <!-- System Features Block -->
+    <section class="features" id="features">
+        <h2 class="section-title">Core Architecture Features</h2>
+        <div class="feature-grid">
+            <div class="card">
+                <h3>🧠 Machine Learning</h3>
+                <p>Intelligent systems that learn from user data, improve automatically, and optimize performance in real time.</p>
+            </div>
+            <div class="card">
+                <h3>💬 NLP Processing</h3>
+                <p>Understand human conversations, analyze text patterns, and respond intelligently.</p>
+            </div>
+            <div class="card">
+                <h3>👁 Computer Vision</h3>
+                <p>Analyze visual information, detect objects, and interpret images intelligently.</p>
+            </div>
+            <div class="card">
+                <h3>🎤 Voice Intelligence</h3>
+                <p>Convert voice into meaningful commands using advanced speech recognition systems.</p>
+            </div>
         </div>
-        <div class="card">
-            <h3>👁 Computer Vision</h3>
-            <p>Analyze visual information, detect objects, and interpret images intelligently.</p>
+    </section>
+
+    <!-- Unified Infrastructure Live Dashboard Grid -->
+    <section class="dashboard" id="dashboard">
+        <h2 class="section-title">System Live Operations Control</h2>
+        <div class="dashboard-container">
+
+            <!-- Card Node 1: Neural Processing -->
+            <div class="dashboard-box" id="neuralBox">
+                <div class="box-particles"></div>
+                <div class="graphic-wrapper">
+                    <div class="brain-mesh"></div>
+                </div>
+                <div class="dashboard-header-group">
+                    <h3 class="glow-title">Neural Processing</h3>
+                    <p class="live-description">⚡ AI continuously processes and learns from real-time information vectors.</p>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="neuralBar"></div>
+                </div>
+                <div class="stats-matrix">
+                    <div class="stat-node">
+                        <span id="speed">0%</span>
+                        <small>Process Speed</small>
+                    </div>
+                    <div class="stat-node">
+                        <span id="learning">0%</span>
+                        <small>Learning Rate</small>
+                    </div>
+                    <div class="stat-node">
+                        <span id="neural">0%</span>
+                        <small>Neural Activity</small>
+                    </div>
+                </div>
+                <canvas id="neuralCanvas" class="live-telemetry-canvas"></canvas>
+            </div>
+
+            <!-- Card Node 2: Smart Analytics -->
+            <div class="dashboard-box" id="analyticsBox">
+                <div class="box-particles"></div>
+                <div class="graphic-wrapper">
+                    <div class="vector-ring-container">
+                        <div class="ring-node"></div>
+                        <div class="ring-node inner"></div>
+                        <div class="center-nucleus"></div>
+                    </div>
+                </div>
+                <div class="dashboard-header-group">
+                    <h3 class="glow-title">Smart Analytics</h3>
+                    <p class="live-description">📊 Advanced predictive data analytics matching structural operational requirements.</p>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="analyticsBar"></div>
+                </div>
+                <div class="stats-matrix">
+                    <div class="stat-node">
+                        <span id="accuracy">0%</span>
+                        <small>Accuracy Rate</small>
+                    </div>
+                    <div class="stat-node">
+                        <span id="prediction">0%</span>
+                        <small>Prediction Index</small>
+                    </div>
+                    <div class="stat-node">
+                        <span id="optimization">0%</span>
+                        <small>Optimization</small>
+                    </div>
+                </div>
+                <canvas id="analyticsCanvas" class="live-telemetry-canvas"></canvas>
+            </div>
+
+            <!-- Card Node 3: Automation Engine -->
+            <div class="dashboard-box" id="automationBox">
+                <div class="box-particles"></div>
+                <div class="graphic-wrapper">
+                    <div class="gear-assembly">
+                        <div class="engine-gear primary-gear"></div>
+                        <div class="engine-gear secondary-gear"></div>
+                    </div>
+                </div>
+                <div class="dashboard-header-group">
+                    <h3 class="glow-title">Automation Engine</h3>
+                    <p class="live-description">🤖 Automated execution routines mapped to micro-task scaling algorithms.</p>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="automationBar"></div>
+                </div>
+                <div class="stats-matrix">
+                    <div class="stat-node">
+                        <span id="tasks">0%</span>
+                        <small>Completed Tasks</small>
+                    </div>
+                    <div class="stat-node">
+                        <span id="efficiency">0%</span>
+                        <small>Core Efficiency</small>
+                    </div>
+                    <div class="stat-node">
+                        <span id="aiFlow">0%</span>
+                        <small>Workflow Flow</small>
+                    </div>
+                </div>
+                <canvas id="automationCanvas" class="live-telemetry-canvas"></canvas>
+            </div>
+
         </div>
-        <div class="card">
-            <h3>🎤 Voice Intelligence</h3>
-            <p>Convert voice into meaningful commands using advanced speech recognition systems.</p>
-        </div>
-    </div>
-</section>
+    </section>
 
-<!-- Dashboard -->
-<section class="dashboard" id="dashboard">
-    <h2 class="section-title">AI Live Dashboard</h2>
-    <div class="dashboard-container">
+    <!-- About Structural Core Section -->
+    <section class="about" id="about">
+        <h2 class="section-title">About Cognitive Enterprise Infrastructure</h2>
+        <p>
+            Cognitive AI combines machine learning, deep learning, natural language processing,
+            and reasoning systems to simulate intelligent human behavior. These advanced systems learn,
+            adapt, and interact dynamically with users to create futuristic digital experiences.
+        </p>
+    </section>
 
-        <!-- Box 1 -->
-        <div class="dashboard-box">
-            <div class="particles"></div>
-            <div class="brain-container">
-                <div class="brain"></div>
-            </div>
-            <h3 class="glow-text">Neural Processing</h3>
-            <p class="live-text">⚡ AI continuously processes and learns from real-time information.</p>
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-            <div class="stats">
-                <div class="stat-card">
-                    <span id="speed">0</span>
-                    <small>Processing Speed</small>
-                </div>
-                <div class="stat-card">
-                    <span id="learning">0</span>
-                    <small>Learning Rate</small>
-                </div>
-                <div class="stat-card">
-                    <span id="neural">0</span>
-                    <small>Neural Activity</small>
-                </div>
-            </div>
-            <canvas id="neuralCanvas"></canvas>
-        </div>
+    <!-- Footer System Element -->
+    <footer> 
+        &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
+    </footer>
 
-        <!-- Box 2 -->
-        <div class="dashboard-box analytics-box">
-            <div class="analytics-particles"></div>
-            <div class="analytics-core">
-                <div class="core-ring"></div>
-                <div class="core-ring ring2"></div>
-                <div class="core-center"></div>
-            </div>
-            <h3 class="analytics-title">Smart Analytics</h3>
-            <p class="analytics-text">📊 Advanced data analysis with adaptive intelligence systems and real-time predictive monitoring.</p>
-            <div class="progress-bar">
-                <div class="progress analytics-progress"></div>
-            </div>
-            <div class="analytics-stats">
-                <div class="analytics-card">
-                    <span id="accuracy">0</span>
-                    <small>Accuracy</small>
-                </div>
-                <div class="analytics-card">
-                    <span id="prediction">0</span>
-                    <small>Prediction</small>
-                </div>
-                <div class="analytics-card">
-                    <span id="optimization">0</span>
-                    <small>Optimization</small>
-                </div>
-            </div>
-            <canvas id="analyticsCanvas"></canvas>
-            <div class="floating-data data1">AI</div>
-            <div class="floating-data data2">DATA</div>
-            <div class="floating-data data3">LIVE</div>
-        </div>
+    <!-- Optimized Real-time Synchronized Functional Operations Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            /* --- ASYNC MULTI-THREADED DIGITAL COUNTER ENGINE --- */
+            function executeMetricCounter(elementId, initialValue, targetValue, operationalDuration) {
+                const telemetryElement = document.getElementById(elementId);
+                if (!telemetryElement) return;
+                
+                const trajectoryRange = targetValue - initialValue;
+                let currentIterationValue = initialValue;
+                const dynamicFrameRateInterval = 24; 
+                const absoluteStepsCount = operationalDuration / dynamicFrameRateInterval;
+                const progressiveIncrementValue = trajectoryRange / absoluteStepsCount;
+                
+                const performanceTimer = setInterval(() => {
+                    currentIterationValue += progressiveIncrementValue;
+                    if ((progressiveIncrementValue > 0 && currentIterationValue >= targetValue) || 
+                        (progressiveIncrementValue < 0 && currentIterationValue <= targetValue)) {
+                        currentIterationValue = targetValue;
+                        clearInterval(performanceTimer);
+                    }
+                    telemetryElement.textContent = Math.floor(currentIterationValue) + "%";
+                }, dynamicFrameRateInterval);
+            }
 
-        <!-- Box 3 -->
-        <div class="dashboard-box automation-box">
-            <div class="automation-particles"></div>
-            <div class="automation-core">
-                <div class="gear gear1"></div>
-                <div class="gear gear2"></div>
-                <div class="gear-center"></div>
-            </div>
-            <h3 class="automation-title">Automation Engine</h3>
-            <p class="automation-text">🤖 Intelligent automation with human-like decision capabilities and adaptive AI workflow processing.</p>
-            <div class="progress-bar">
-                <div class="progress automation-progress"></div>
-            </div>
-            <div class="automation-stats">
-                <div class="automation-card">
-                    <span id="tasks">0</span>
-                    <small>Tasks</small>
-                </div>
-                <div class="automation-card">
-                    <span id="efficiency">0</span>
-                    <small>Efficiency</small>
-                </div>
-                <div class="automation-card">
-                    <span id="aiFlow">0</span>
-                    <small>AI Flow</small>
-                </div>
-            </div>
-            <canvas id="automationCanvas"></canvas>
-            <div class="floating-ai ai1">AUTO</div>
-            <div class="floating-ai ai2">SYSTEM</div>
-            <div class="floating-ai ai3">AI</div>
-        </div>
+            // Fire Counter Progress Loops Sequence
+            executeMetricCounter("speed", 0, 98, 3200);
+            executeMetricCounter("learning", 0, 94, 3200);
+            executeMetricCounter("neural", 0, 99, 3200);
+            executeMetricCounter("accuracy", 0, 98, 3200);
+            executeMetricCounter("prediction", 0, 95, 3200);
+            executeMetricCounter("optimization", 0, 99, 3200);
+            executeMetricCounter("tasks", 0, 96, 3200);
+            executeMetricCounter("efficiency", 0, 99, 3200);
+            executeMetricCounter("aiFlow", 0, 94, 3200);
 
-    </div>
-</section>
+            /* --- SYNCHRONIZED PROGRESS LINE ANIMATION OVERLAYS --- */
+            setTimeout(() => { document.getElementById("neuralBar").style.width = "96%"; }, 200);
+            setTimeout(() => { document.getElementById("analyticsBar").style.width = "98%"; }, 400);
+            setTimeout(() => { document.getElementById("automationBar").style.width = "94%"; }, 600);
 
-<!-- About -->
-<section class="about" id="about">
-    <h2 class="section-title">About Cognitive AI</h2>
-    <p>
-        Cognitive AI combines machine learning, deep learning, natural language processing,
-        and reasoning systems to simulate intelligent human behavior. These advanced systems learn,
-        adapt, and interact dynamically with users to create futuristic digital experiences.
-    </p>
-</section>
+            /* --- DISTRIBUTED GRAPHIC PARTICLE EMISSION ARRAYS --- */
+            function initializeParticleGrid(boxSelector, totalNodeQuantity, lifespanScalar) {
+                const insertionTarget = document.querySelector(boxSelector);
+                if (!insertionTarget) return;
+                
+                for (let i = 0; i < totalNodeQuantity; i++) {
+                    const nodeParticle = document.createElement("span");
+                    nodeParticle.style.left = Math.random() * 100 + "%";
+                    nodeParticle.style.bottom = "0px";
+                    nodeParticle.style.animationDuration = (Math.random() * 5 + lifespanScalar) + "s";
+                    nodeParticle.style.opacity = Math.random() * 0.7;
+                    nodeParticle.style.animationDelay = (Math.random() * 4) + "s";
+                    insertionTarget.appendChild(nodeParticle);
+                }
+            }
+            
+            initializeParticleGrid("#neuralBox .box-particles", 25, 4);
+            initializeParticleGrid("#analyticsBox .box-particles", 25, 5);
+            initializeParticleGrid("#automationBox .box-particles", 25, 4);
 
-<!-- Footer -->
-<footer> 
-    &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
-</footer>
+            /* --- REALTIME HIGH-PERFORMANCE DATA CANVAS RENDER LOOP --- */
+            function allocateTelemetryMatrix(targetCanvasId, absoluteSampleWidth, variationDelta) {
+                const dynamicCanvasElement = document.getElementById(targetCanvasId);
+                if (!dynamicCanvasElement) return;
+                const renderingContext2D = dynamicCanvasElement.getContext("2d");
+                
+                // Track dynamic element configuration bounding rect box dimensions
+                dynamicCanvasElement.width = dynamicCanvasElement.offsetWidth;
+                dynamicCanvasElement.height = dynamicCanvasElement.offsetHeight;
+                
+                let coordinateVectorArray = [];
+                for (let i = 0; i < absoluteSampleWidth; i++) {
+                    coordinateVectorArray.push(Math.random() * (dynamicCanvasElement.height - 30) + 15);
+                }
 
-<script>
-/* LIVE COUNTERS BOX 1 */
-function animateValue(id, start, end, duration){
-    let obj = document.getElementById(id);
-    let range = end - start;
-    let current = start;
-    let increment = end > start ? 1 : -1;
-    let stepTime = Math.abs(Math.floor(duration / range));
+                function computeFrameExecution() {
+                    renderingContext2D.clearRect(0, 0, dynamicCanvasElement.width, dynamicCanvasElement.height);
+                    renderingContext2D.beginPath();
+                    
+                    for (let i = 0; i < coordinateVectorArray.length; i++) {
+                        let linePositionX = i * (dynamicCanvasElement.width / (coordinateVectorArray.length - 1));
+                        let linePositionY = coordinateVectorArray[i];
+                        
+                        if (i === 0) renderingContext2D.moveTo(linePositionX, linePositionY);
+                        else renderingContext2D.lineTo(linePositionX, linePositionY);
+                        
+                        // Mutate matrix arrays via minor noise variation vectors
+                        coordinateVectorArray[i] += (Math.random() - 0.5) * variationDelta;
+                        if (coordinateVectorArray[i] < 15) coordinateVectorArray[i] = 15;
+                        if (coordinateVectorArray[i] > dynamicCanvasElement.height - 15) {
+                            coordinateVectorArray[i] = dynamicCanvasElement.height - 15;
+                        }
+                    }
+                    
+                    renderingContext2D.strokeStyle = "rgba(0, 255, 255, 0.85)";
+                    renderingContext2D.lineWidth = 2;
+                    renderingContext2D.shadowBlur = 12;
+                    renderingContext2D.shadowColor = "#00ffff";
+                    renderingContext2D.stroke();
+                    
+                    requestAnimationFrame(computeFrameExecution);
+                }
+                computeFrameExecution();
+            }
 
-    let timer = setInterval(function(){
-        current += increment;
-        obj.textContent = current + "%";
-        if(current == end){
-            clearInterval(timer);
-        }
-    }, stepTime);
-}
-
-animateValue("speed", 0, 98, 3000);
-animateValue("learning", 0, 94, 3500);
-animateValue("neural", 0, 99, 4000);
-
-/* PARTICLE SYSTEM BOX 1 */
-const particleContainer = document.querySelector(".particles");
-for(let i=0;i<60;i++){
-    let particle = document.createElement("span");
-    particle.style.left = Math.random()*100 + "%";
-    particle.style.top = Math.random()*100 + "%";
-    particle.style.animationDuration = (Math.random()*6+3)+"s";
-    particle.style.opacity = Math.random();
-    particleContainer.appendChild(particle);
-}
-
-/* LIVE DATA VISUALIZATION BOX 1 */
-const canvas = document.getElementById("neuralCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
-let points = [];
-for(let i=0;i<60;i++){
-    points.push(Math.random()*80+20);
-}
-
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.beginPath();
-    for(let i=0;i<points.length;i++){
-        let x = i * (canvas.width / points.length);
-        let y = points[i];
-        ctx.lineTo(x,y);
-        points[i] += (Math.random()-0.5)*10;
-        if(points[i] < 20) points[i]=20;
-        if(points[i] > 100) points[i]=100;
-    }
-    ctx.strokeStyle="#00ffff";
-    ctx.lineWidth=3;
-    ctx.shadowBlur=15;
-    ctx.shadowColor="#00ffff";
-    ctx.stroke();
-    requestAnimationFrame(draw);
-}
-draw();
-
-/* LIVE COUNTERS BOX 2 */
-function animateCounter(id,end,duration){
-    let element = document.getElementById(id);
-    let start = 0;
-    let increment = end / (duration / 20);
-    let counter = setInterval(()=>{
-        start += increment;
-        if(start >= end){
-            start = end;
-            clearInterval(counter);
-        }
-        element.innerHTML = Math.floor(start) + "%";
-    },20);
-}
-
-animateCounter("accuracy",98,3000);
-animateCounter("prediction",95,3500);
-animateCounter("optimization",99,4000);
-
-/* PARTICLE SYSTEM BOX 2 */
-const analyticsParticles = document.querySelector(".analytics-particles");
-for(let i=0;i<70;i++){
-    let particle = document.createElement("span");
-    particle.style.left = Math.random()*100 + "%";
-    particle.style.top = Math.random()*100 + "%";
-    particle.style.animationDuration = (Math.random()*6+4)+"s";
-    particle.style.opacity = Math.random();
-    analyticsParticles.appendChild(particle);
-}
-
-/* LIVE ANALYTICS GRAPH BOX 2 */
-const analyticsCanvas = document.getElementById("analyticsCanvas");
-const analyticsCtx = analyticsCanvas.getContext("2d");
-analyticsCanvas.width = analyticsCanvas.offsetWidth;
-analyticsCanvas.height = analyticsCanvas.offsetHeight;
-let analyticsPoints = [];
-for(let i=0;i<80;i++){
-    analyticsPoints.push(Math.random()*90+20);
-}
-
-function drawAnalytics(){
-    analyticsCtx.clearRect(0,0,analyticsCanvas.width,analyticsCanvas.height);
-    analyticsCtx.beginPath();
-    for(let i=0;i<analyticsPoints.length;i++){
-        let x = i * (analyticsCanvas.width / analyticsPoints.length);
-        let y = analyticsPoints[i];
-        analyticsCtx.lineTo(x,y);
-        analyticsPoints[i] += (Math.random()-0.5)*8;
-        if(analyticsPoints[i] < 20) analyticsPoints[i]=20;
-        if(analyticsPoints[i] > 120) analyticsPoints[i]=120;
-    }
-    analyticsCtx.strokeStyle="#00ffff";
-    analyticsCtx.lineWidth=3;
-    analyticsCtx.shadowBlur=15;
-    analyticsCtx.shadowColor="#00ffff";
-    analyticsCtx.stroke();
-    requestAnimationFrame(drawAnalytics);
-}
-drawAnalytics();
-
-/* LIVE COUNTERS BOX 3 */
-function autoCounter(id,end,duration){
-    let element = document.getElementById(id);
-    let start = 0;
-    let increment = end / (duration / 20);
-    let counter = setInterval(()=>{
-        start += increment;
-        if(start >= end){
-            start = end;
-            clearInterval(counter);
-        }
-        element.innerHTML = Math.floor(start) + "%";
-    },20);
-}
-
-autoCounter("tasks",96,3000);
-autoCounter("efficiency",99,3500);
-autoCounter("aiFlow",94,4000);
-
-/* PARTICLE SYSTEM BOX 3 */
-const autoParticles = document.querySelector(".automation-particles");
-for(let i=0;i<80;i++){
-    let particle = document.createElement("span");
-    particle.style.left = Math.random()*100 + "%";
-    particle.style.top = Math.random()*100 + "%";
-    particle.style.animationDuration = (Math.random()*7+3)+"s";
-    particle.style.opacity = Math.random();
-    autoParticles.appendChild(particle);
-}
-
-/* LIVE WORKFLOW GRAPH BOX 3 */
-const autoCanvas = document.getElementById("automationCanvas");
-const autoCtx = autoCanvas.getContext("2d");
-autoCanvas.width = autoCanvas.offsetWidth;
-autoCanvas.height = autoCanvas.offsetHeight;
-let autoPoints = [];
-for(let i=0;i<90;i++){
-    autoPoints.push(Math.random()*90+20);
-}
-
-function drawAutomation(){
-    autoCtx.clearRect(0,0,autoCanvas.width,autoCanvas.height);
-    autoCtx.beginPath();
-    for(let i=0;i<autoPoints.length;i++){
-        let x = i * (autoCanvas.width / autoPoints.length);
-        let y = autoPoints[i];
-        autoCtx.lineTo(x,y);
-        autoPoints[i] += (Math.random()-0.5)*7;
-        if(autoPoints[i] < 20) autoPoints[i]=20;
-        if(autoPoints[i] > 120) autoPoints[i]=120;
-    }
-    autoCtx.strokeStyle = "#00ffff";
-    autoCtx.lineWidth = 3;
-    autoCtx.shadowBlur = 15;
-    autoCtx.shadowColor = "#00ffff";
-    autoCtx.stroke();
-    requestAnimationFrame(drawAutomation);
-}
-drawAutomation();
-</script>
-
+            allocateTelemetryMatrix("neuralCanvas", 45, 4);
+            allocateTelemetryMatrix("analyticsCanvas", 45, 3);
+            allocateTelemetryMatrix("automationCanvas", 45, 3.5);
+        });
+    </script>
 </body>
 </html>

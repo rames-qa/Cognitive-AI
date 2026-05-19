@@ -1,281 +1,560 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cognitive AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
+<title>Cognitive AI - Advanced UI</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#020617;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* Animated Background */
+
+body::before{
+    content:'';
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:
+    radial-gradient(circle at top left,#0ea5e9 0%,transparent 30%),
+    radial-gradient(circle at bottom right,#8b5cf6 0%,transparent 30%);
+    opacity:0.15;
+    z-index:-1;
+    animation:bgMove 10s infinite alternate;
+}
+
+@keyframes bgMove{
+    from{
+        transform:scale(1) rotate(0deg);
     }
 
-    body{
-      background:#0f172a;
-      color:white;
-      overflow-x:hidden;
+    to{
+        transform:scale(1.1) rotate(2deg);
+    }
+}
+
+/* Navbar */
+
+nav{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 8%;
+    position:fixed;
+    top:0;
+    z-index:1000;
+    backdrop-filter:blur(12px);
+    background:rgba(0,0,0,0.3);
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.logo{
+    font-size:32px;
+    font-weight:700;
+    color:#38bdf8;
+    text-shadow:0 0 20px #38bdf8;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:35px;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:white;
+    font-size:17px;
+    transition:0.4s;
+}
+
+nav ul li a:hover{
+    color:#38bdf8;
+}
+
+/* Hero */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    flex-direction:column;
+    padding:120px 20px 50px;
+    position:relative;
+}
+
+.hero h1{
+    font-size:75px;
+    max-width:1000px;
+    line-height:1.2;
+    margin-bottom:25px;
+    background:linear-gradient(to right,#38bdf8,#8b5cf6);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:glow 3s infinite alternate;
+}
+
+.hero p{
+    max-width:850px;
+    font-size:22px;
+    line-height:1.8;
+    color:#cbd5e1;
+    margin-bottom:40px;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    padding:15px 35px;
+    border:none;
+    border-radius:50px;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.4s;
+    font-weight:600;
+}
+
+.primary-btn{
+    background:#38bdf8;
+    color:black;
+    box-shadow:0 0 25px rgba(56,189,248,0.5);
+}
+
+.primary-btn:hover{
+    transform:translateY(-5px) scale(1.05);
+    background:white;
+}
+
+.secondary-btn{
+    background:transparent;
+    color:white;
+    border:2px solid #38bdf8;
+}
+
+.secondary-btn:hover{
+    background:#38bdf8;
+    color:black;
+}
+
+/* Floating AI Orb */
+
+.ai-orb{
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    position:absolute;
+    top:18%;
+    right:10%;
+    background:radial-gradient(circle,#38bdf8,#8b5cf6);
+    filter:blur(10px);
+    opacity:0.6;
+    animation:float 4s infinite ease-in-out;
+}
+
+@keyframes float{
+    0%{
+        transform:translateY(0px);
     }
 
-    /* Navbar */
-
-    nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:20px 50px;
-      background:#111827;
-      position:sticky;
-      top:0;
+    50%{
+        transform:translateY(-25px);
     }
 
-    nav h1{
-      color:#38bdf8;
-      font-size:32px;
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+/* Features */
+
+.features{
+    padding:100px 8%;
+}
+
+.section-title{
+    text-align:center;
+    font-size:55px;
+    margin-bottom:70px;
+    color:#38bdf8;
+}
+
+.feature-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:35px;
+}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(12px);
+    padding:35px;
+    border-radius:25px;
+    transition:0.5s;
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:'';
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:linear-gradient(
+    45deg,
+    transparent,
+    rgba(56,189,248,0.1),
+    transparent);
+    top:-50%;
+    left:-50%;
+    transform:rotate(25deg);
+}
+
+.card:hover{
+    transform:translateY(-12px);
+    box-shadow:0 0 30px rgba(56,189,248,0.2);
+}
+
+.card h3{
+    font-size:28px;
+    margin-bottom:18px;
+    color:#38bdf8;
+}
+
+.card p{
+    color:#cbd5e1;
+    line-height:1.8;
+}
+
+/* Dashboard */
+
+.dashboard{
+    padding:100px 8%;
+    background:#0f172a;
+}
+
+.dashboard-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+}
+
+.dashboard-box{
+    background:rgba(255,255,255,0.04);
+    padding:40px;
+    border-radius:25px;
+    transition:0.4s;
+    border:1px solid rgba(255,255,255,0.1);
+}
+
+.dashboard-box:hover{
+    transform:scale(1.03);
+}
+
+.dashboard-box h3{
+    margin-bottom:20px;
+    color:#38bdf8;
+    font-size:28px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#1e293b;
+    border-radius:20px;
+    margin-top:20px;
+    overflow:hidden;
+}
+
+.progress{
+    height:100%;
+    background:linear-gradient(to right,#38bdf8,#8b5cf6);
+    animation:load 3s infinite;
+}
+
+@keyframes load{
+    0%{
+        width:20%;
     }
 
-    nav ul{
-      display:flex;
-      gap:30px;
-      list-style:none;
+    50%{
+        width:80%;
     }
 
-    nav ul li a{
-      color:white;
-      text-decoration:none;
-      transition:0.3s;
+    100%{
+        width:60%;
+    }
+}
+
+/* About */
+
+.about{
+    padding:100px 8%;
+    text-align:center;
+}
+
+.about p{
+    max-width:1000px;
+    margin:auto;
+    font-size:22px;
+    line-height:2;
+    color:#cbd5e1;
+}
+
+/* Footer */
+
+footer{
+    text-align:center;
+    padding:35px;
+    background:black;
+    color:#94a3b8;
+}
+
+/* Glow Animation */
+
+@keyframes glow{
+    from{
+        text-shadow:0 0 15px #38bdf8;
     }
 
-    nav ul li a:hover{
-      color:#38bdf8;
+    to{
+        text-shadow:
+        0 0 25px #38bdf8,
+        0 0 45px #8b5cf6;
     }
+}
 
-    /* Hero Section */
+/* Responsive */
 
-    .hero{
-      height:90vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      flex-direction:column;
-      padding:20px;
-      background:linear-gradient(to right,#0f172a,#1e293b);
-    }
+@media(max-width:768px){
 
-    .hero h2{
-      font-size:60px;
-      margin-bottom:20px;
-      color:#38bdf8;
+    .hero h1{
+        font-size:48px;
     }
 
     .hero p{
-      font-size:22px;
-      max-width:800px;
-      line-height:1.6;
-      margin-bottom:30px;
+        font-size:18px;
     }
 
-    .hero button{
-      padding:15px 35px;
-      font-size:18px;
-      border:none;
-      border-radius:30px;
-      background:#38bdf8;
-      color:black;
-      cursor:pointer;
-      transition:0.3s;
-      font-weight:bold;
+    nav{
+        flex-direction:column;
+        gap:20px;
     }
 
-    .hero button:hover{
-      transform:scale(1.05);
-      background:white;
+    nav ul{
+        gap:20px;
     }
 
-    /* Features */
-
-    .features{
-      padding:80px 50px;
-      text-align:center;
+    .section-title{
+        font-size:40px;
     }
 
-    .features h2{
-      font-size:45px;
-      margin-bottom:50px;
-      color:#38bdf8;
-    }
+}
 
-    .feature-box{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:30px;
-    }
-
-    .card{
-      background:#1e293b;
-      padding:30px;
-      border-radius:20px;
-      transition:0.4s;
-      box-shadow:0 0 15px rgba(0,0,0,0.5);
-    }
-
-    .card:hover{
-      transform:translateY(-10px);
-      background:#334155;
-    }
-
-    .card h3{
-      margin-bottom:15px;
-      color:#38bdf8;
-    }
-
-    .card p{
-      line-height:1.6;
-    }
-
-    /* About */
-
-    .about{
-      padding:80px 50px;
-      background:#111827;
-      text-align:center;
-    }
-
-    .about h2{
-      font-size:45px;
-      margin-bottom:30px;
-      color:#38bdf8;
-    }
-
-    .about p{
-      max-width:900px;
-      margin:auto;
-      font-size:20px;
-      line-height:1.8;
-    }
-
-    /* Footer */
-
-    footer{
-      text-align:center;
-      padding:20px;
-      background:black;
-      color:#aaa;
-    }
-
-    /* Animation */
-
-    .glow{
-      animation:glow 2s infinite alternate;
-    }
-
-    @keyframes glow{
-      from{
-        text-shadow:0 0 10px #38bdf8;
-      }
-      to{
-        text-shadow:0 0 25px #38bdf8,
-                     0 0 40px #38bdf8;
-      }
-    }
-
-  </style>
+</style>
 </head>
 
 <body>
 
-  <!-- Navbar -->
+<!-- Navbar -->
 
-  <nav>
-    <h1 class="glow">Cognitive AI</h1>
+<nav>
+
+    <div class="logo">Cognitive AI</div>
 
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Features</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Contact</a></li>
+        <li><a href="#">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#about">About</a></li>
     </ul>
-  </nav>
 
-  <!-- Hero Section -->
+</nav>
 
-  <section class="hero">
+<!-- Hero -->
 
-    <h2 class="glow">Future of Intelligent Thinking</h2>
+<section class="hero">
+
+    <div class="ai-orb"></div>
+
+    <h1>
+        Future Generation Cognitive Artificial Intelligence
+    </h1>
 
     <p>
-      Cognitive AI is an advanced artificial intelligence system
-      that simulates human thinking, learning, reasoning,
-      and problem-solving capabilities.
+        Experience advanced human-like intelligence with interactive AI systems,
+        machine learning automation, neural reasoning, smart analytics,
+        and futuristic user interaction technology.
     </p>
 
-    <button>Explore AI</button>
+    <div class="hero-buttons">
 
-  </section>
+        <button class="btn primary-btn">
+            Explore AI
+        </button>
 
-  <!-- Features -->
-
-  <section class="features">
-
-    <h2>AI Features</h2>
-
-    <div class="feature-box">
-
-      <div class="card">
-        <h3>🧠 Machine Learning</h3>
-        <p>
-          AI learns from data and improves performance automatically.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>💬 NLP</h3>
-        <p>
-          Natural Language Processing helps AI understand human language.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>👁 Computer Vision</h3>
-        <p>
-          AI can analyze and understand images and videos intelligently.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>🎤 Speech Recognition</h3>
-        <p>
-          AI converts human voice into understandable digital commands.
-        </p>
-      </div>
+        <button class="btn secondary-btn">
+            Watch Demo
+        </button>
 
     </div>
 
-  </section>
+</section>
 
-  <!-- About -->
+<!-- Features -->
 
-  <section class="about">
+<section class="features" id="features">
 
-    <h2>About Cognitive AI</h2>
+    <h2 class="section-title">
+        AI Features
+    </h2>
+
+    <div class="feature-grid">
+
+        <div class="card">
+            <h3>🧠 Machine Learning</h3>
+
+            <p>
+                Intelligent systems that learn from user data,
+                improve automatically, and optimize performance in real time.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>💬 NLP Processing</h3>
+
+            <p>
+                Understand human conversations,
+                analyze text patterns, and respond intelligently.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>👁 Computer Vision</h3>
+
+            <p>
+                Analyze visual information,
+                detect objects, and interpret images intelligently.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>🎤 Voice Intelligence</h3>
+
+            <p>
+                Convert voice into meaningful commands
+                using advanced speech recognition systems.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Dashboard -->
+
+<section class="dashboard" id="dashboard">
+
+    <h2 class="section-title">
+        AI Live Dashboard
+    </h2>
+
+    <div class="dashboard-container">
+
+        <div class="dashboard-box">
+
+            <h3>Neural Processing</h3>
+
+            <p>
+                AI continuously processes and learns from real-time information.
+            </p>
+
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+
+        </div>
+
+        <div class="dashboard-box">
+
+            <h3>Smart Analytics</h3>
+
+            <p>
+                Advanced data analysis with adaptive intelligence systems.
+            </p>
+
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+
+        </div>
+
+        <div class="dashboard-box">
+
+            <h3>Automation Engine</h3>
+
+            <p>
+                Intelligent automation with human-like decision capabilities.
+            </p>
+
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- About -->
+
+<section class="about" id="about">
+
+    <h2 class="section-title">
+        About Cognitive AI
+    </h2>
 
     <p>
-      Cognitive AI combines machine learning, deep learning,
-      natural language processing, and reasoning systems
-      to create intelligent applications that mimic human behavior.
-      These systems can learn, adapt, and make decisions in real time.
+        Cognitive AI combines machine learning,
+        deep learning, natural language processing,
+        and reasoning systems to simulate intelligent
+        human behavior. These advanced systems learn,
+        adapt, and interact dynamically with users
+        to create futuristic digital experiences.
     </p>
 
-  </section>
+</section>
 
-  <!-- Footer -->
+<!-- Footer -->
 
-  <footer>
-    © 2026 Cognitive AI Project | Designed by Ramesh Kumar K
-  </footer>
+<footer>
+    © 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
+</footer>
 
 </body>
 </html>

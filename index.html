@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cognitive AI</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#0f172a;
+      color:white;
+      overflow-x:hidden;
+    }
+
+    /* Navbar */
+
+    nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:20px 50px;
+      background:#111827;
+      position:sticky;
+      top:0;
+    }
+
+    nav h1{
+      color:#38bdf8;
+      font-size:32px;
+    }
+
+    nav ul{
+      display:flex;
+      gap:30px;
+      list-style:none;
+    }
+
+    nav ul li a{
+      color:white;
+      text-decoration:none;
+      transition:0.3s;
+    }
+
+    nav ul li a:hover{
+      color:#38bdf8;
+    }
+
+    /* Hero Section */
+
+    .hero{
+      height:90vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      flex-direction:column;
+      padding:20px;
+      background:linear-gradient(to right,#0f172a,#1e293b);
+    }
+
+    .hero h2{
+      font-size:60px;
+      margin-bottom:20px;
+      color:#38bdf8;
+    }
+
+    .hero p{
+      font-size:22px;
+      max-width:800px;
+      line-height:1.6;
+      margin-bottom:30px;
+    }
+
+    .hero button{
+      padding:15px 35px;
+      font-size:18px;
+      border:none;
+      border-radius:30px;
+      background:#38bdf8;
+      color:black;
+      cursor:pointer;
+      transition:0.3s;
+      font-weight:bold;
+    }
+
+    .hero button:hover{
+      transform:scale(1.05);
+      background:white;
+    }
+
+    /* Features */
+
+    .features{
+      padding:80px 50px;
+      text-align:center;
+    }
+
+    .features h2{
+      font-size:45px;
+      margin-bottom:50px;
+      color:#38bdf8;
+    }
+
+    .feature-box{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:30px;
+    }
+
+    .card{
+      background:#1e293b;
+      padding:30px;
+      border-radius:20px;
+      transition:0.4s;
+      box-shadow:0 0 15px rgba(0,0,0,0.5);
+    }
+
+    .card:hover{
+      transform:translateY(-10px);
+      background:#334155;
+    }
+
+    .card h3{
+      margin-bottom:15px;
+      color:#38bdf8;
+    }
+
+    .card p{
+      line-height:1.6;
+    }
+
+    /* About */
+
+    .about{
+      padding:80px 50px;
+      background:#111827;
+      text-align:center;
+    }
+
+    .about h2{
+      font-size:45px;
+      margin-bottom:30px;
+      color:#38bdf8;
+    }
+
+    .about p{
+      max-width:900px;
+      margin:auto;
+      font-size:20px;
+      line-height:1.8;
+    }
+
+    /* Footer */
+
+    footer{
+      text-align:center;
+      padding:20px;
+      background:black;
+      color:#aaa;
+    }
+
+    /* Animation */
+
+    .glow{
+      animation:glow 2s infinite alternate;
+    }
+
+    @keyframes glow{
+      from{
+        text-shadow:0 0 10px #38bdf8;
+      }
+      to{
+        text-shadow:0 0 25px #38bdf8,
+                     0 0 40px #38bdf8;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+
+  <nav>
+    <h1 class="glow">Cognitive AI</h1>
+
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+
+  <section class="hero">
+
+    <h2 class="glow">Future of Intelligent Thinking</h2>
+
+    <p>
+      Cognitive AI is an advanced artificial intelligence system
+      that simulates human thinking, learning, reasoning,
+      and problem-solving capabilities.
+    </p>
+
+    <button>Explore AI</button>
+
+  </section>
+
+  <!-- Features -->
+
+  <section class="features">
+
+    <h2>AI Features</h2>
+
+    <div class="feature-box">
+
+      <div class="card">
+        <h3>🧠 Machine Learning</h3>
+        <p>
+          AI learns from data and improves performance automatically.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>💬 NLP</h3>
+        <p>
+          Natural Language Processing helps AI understand human language.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>👁 Computer Vision</h3>
+        <p>
+          AI can analyze and understand images and videos intelligently.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>🎤 Speech Recognition</h3>
+        <p>
+          AI converts human voice into understandable digital commands.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- About -->
+
+  <section class="about">
+
+    <h2>About Cognitive AI</h2>
+
+    <p>
+      Cognitive AI combines machine learning, deep learning,
+      natural language processing, and reasoning systems
+      to create intelligent applications that mimic human behavior.
+      These systems can learn, adapt, and make decisions in real time.
+    </p>
+
+  </section>
+
+  <!-- Footer -->
+
+  <footer>
+    © 2026 Cognitive AI Project | Designed by Ramesh Kumar K
+  </footer>
+
+</body>
+</html>

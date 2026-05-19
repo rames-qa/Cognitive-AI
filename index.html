@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive AI - Voice Dashboard System</title>
+    <title>Cognitive AI - Multi-Modal Voice & Emotion Dashboard System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -17,6 +17,7 @@
             --emerald-neon: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --sentiment-color: #38bdf8;
         }
 
         * {
@@ -88,7 +89,7 @@
 
         /* Hero Control Room */
         .hero {
-            min-height: 90vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -99,7 +100,7 @@
         }
 
         .hero h1 {
-            font-size: 62px;
+            font-size: 56px;
             max-width: 1000px;
             line-height: 1.2;
             margin-bottom: 20px;
@@ -115,28 +116,29 @@
             font-size: 18px;
             line-height: 1.7;
             color: var(--text-muted);
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
-        /* Voice Interface Deck */
+        /* Voice & Emotion Telemetry Console */
         .voice-console-card {
             background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            padding: 24px 40px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 24px 35px;
             border-radius: 20px;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            max-width: 650px;
+            gap: 15px;
+            max-width: 700px;
             width: 100%;
             backdrop-filter: blur(12px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.5s ease;
         }
 
         .voice-status-indicator {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
             font-weight: 600;
             display: flex;
@@ -173,6 +175,41 @@
             font-size: 16px;
             font-weight: 400;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        /* Sentiment Real-time Metric Matrix Grid */
+        .sentiment-matrix-deck {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 15px;
+        }
+
+        .sentiment-node {
+            background: rgba(2, 6, 23, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .sentiment-node label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .sentiment-node span {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--sentiment-color);
+            transition: color 0.5s ease;
         }
 
         .hero-buttons {
@@ -399,16 +436,36 @@
     </nav>
 
     <section class="hero" id="home">
-        <h1>Voice Responsive Infrastructure Hub</h1>
-        <p>Speak to deploy system tracking and route focus parameters dynamically across processing cores.</p>
+        <h1>Multi-Modal Voice & Emotion Hub</h1>
+        <p>Speak naturally. Our cognitive interface dynamically maps system architecture while evaluating vocal sentiment matrices.</p>
 
-        <!-- Live Vocal Input Deck -->
-        <div class="voice-console-card">
+        <!-- Live Vocal & Emotion Analysis Deck -->
+        <div class="voice-console-card" id="consoleCard">
             <div class="voice-status-indicator">
                 <span class="status-dot" id="voiceStatusDot"></span>
                 <span id="voiceStatusText">Acoustic Engine Offline</span>
             </div>
-            <div class="voice-transcript-box" id="voiceTranscript">Click below and say a control path phrase...</div>
+            <div class="voice-transcript-box" id="voiceTranscript">Click below to verify commands & emotional state trackers...</div>
+            
+            <!-- Sentiment Metrics Display Matrix -->
+            <div class="sentiment-matrix-deck">
+                <div class="sentiment-node">
+                    <label>Perceived Mood</label>
+                    <span id="txtMood">None</span>
+                </div>
+                <div class="sentiment-node">
+                    <label>Confidence</label>
+                    <span id="txtConfidence">0%</span>
+                </div>
+                <div class="sentiment-node">
+                    <label>System Focus</label>
+                    <span id="txtFocus">Balanced</span>
+                </div>
+                <div class="sentiment-node">
+                    <label>Energy Index</label>
+                    <span id="txtEnergy">Neutral</span>
+                </div>
+            </div>
         </div>
 
         <div class="hero-buttons">
@@ -429,7 +486,7 @@
                 <div class="graphic-wrapper"><div class="brain-mesh"></div></div>
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Neural Processing</h3>
-                    <p class="live-description">⚡ Continuously evaluating complex learning matrices across array logic tracks.</p>
+                    <p class="live-description" id="neuralDesc">⚡ Continuously evaluating complex learning matrices across array logic tracks.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="neuralBar"></div></div>
                 <div class="stats-matrix">
@@ -445,7 +502,7 @@
                 <div class="graphic-wrapper"><div class="vector-ring"></div></div>
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Smart Analytics</h3>
-                    <p class="live-description">📊 Processing predictive pattern vectors matching operations metrics.</p>
+                    <p class="live-description" id="analyticsDesc">📊 Processing predictive pattern vectors matching operations metrics.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="analyticsBar"></div></div>
                 <div class="stats-matrix">
@@ -461,7 +518,7 @@
                 <div class="graphic-wrapper"><div class="gear-assembly"></div></div>
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Automation Engine</h3>
-                    <p class="live-description">🤖 Automated background threads mapping scaling orchestration.</p>
+                    <p class="live-description" id="automationDesc">🤖 Automated background threads mapping scaling orchestration.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="automationBar"></div></div>
                 <div class="stats-matrix">
@@ -482,7 +539,14 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             
-            // Basic UI Setup Elements
+            // Speed scalars for the real-time canvas waves
+            let waveDynamics = {
+                neuralCanvas: 3,
+                analyticsCanvas: 2.5,
+                automationCanvas: 3
+            };
+
+            // Basic UI Progress Line Transitions
             setTimeout(() => { document.getElementById("neuralBar").style.width = "94%"; }, 200);
             setTimeout(() => { document.getElementById("analyticsBar").style.width = "99%"; }, 400);
             setTimeout(() => { document.getElementById("automationBar").style.width = "84%"; }, 600);
@@ -492,21 +556,19 @@
                 const sectionContainer = document.getElementById("dashboard");
                 
                 if (targetElement && sectionContainer) {
-                    // Step 1: Smooth scroll to the main dashboard container area
                     const headerOffset = 90;
                     const elementPosition = sectionContainer.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     
                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
 
-                    // Step 2: Clear old highlights, then flash the new target emerald neon pulse
                     document.querySelectorAll('.dashboard-box').forEach(box => {
                         box.classList.remove('voice-pulse-highlight');
                     });
 
                     setTimeout(() => {
                         targetElement.classList.add('voice-pulse-highlight');
-                    }, 400); // Small wait for scroll movement animation buffer
+                    }, 400); 
                 }
             }
 
@@ -518,12 +580,10 @@
 
                 voiceTranscript.textContent = "Processing High-Speed Simulation Sync Routine...";
                 
-                // Max out progress visualization lines
                 document.getElementById("neuralBar").style.width = "100%";
                 document.getElementById("analyticsBar").style.width = "100%";
                 document.getElementById("automationBar").style.width = "100%";
 
-                // Flash all nodes together for unity response view
                 document.querySelectorAll('.dashboard-box').forEach(box => {
                     box.classList.add('voice-pulse-highlight');
                 });
@@ -546,6 +606,77 @@
                 runHighSpeedSimulationRoutine();
             });
 
+            /* --- NATIVE LINGUISTIC EMOTION CLASSIFIER MATRIX --- */
+            function evaluateVocalSentiment(transcriptText) {
+                const query = transcriptText.toLowerCase();
+                
+                // Element targets
+                const consoleCard = document.getElementById("consoleCard");
+                const txtMood = document.getElementById("txtMood");
+                const txtConfidence = document.getElementById("txtConfidence");
+                const txtFocus = document.getElementById("txtFocus");
+                const txtEnergy = document.getElementById("txtEnergy");
+
+                // Emotional Lexicon Mapping Arrays
+                const markersPositive = ["great", "awesome", "good", "happy", "excellent", "perfect", "amazing", "run", "trigger", "sync", "boost", "fast"];
+                const markersAnxious = ["error", "fail", "wrong", "broken", "stop", "help", "slow", "scared", "scramble", "bad"];
+                const markersCalm = ["neural", "analytics", "automation", "show", "clear", "steady", "balance", "calm", "smooth"];
+
+                let scorePositive = 0;
+                let scoreAnxious = 0;
+                let scoreCalm = 0;
+
+                markersPositive.forEach(word => { if(query.includes(word)) scorePositive += 2; });
+                markersAnxious.forEach(word => { if(query.includes(word)) scoreAnxious += 2; });
+                markersCalm.forEach(word => { if(query.includes(word)) scoreCalm += 1; });
+
+                // Multi-modal state assignment conditions
+                if (scorePositive > scoreAnxious && scorePositive >= scoreCalm) {
+                    // Positive High-Energy State
+                    txtMood.textContent = "Positive / Energetic";
+                    txtConfidence.textContent = "96%";
+                    txtFocus.textContent = "High Capacity";
+                    txtEnergy.textContent = "Accelerated";
+                    
+                    consoleCard.style.borderColor = "var(--emerald-neon)";
+                    document.documentElement.style.setProperty('--sentiment-color', 'var(--emerald-neon)');
+                    
+                    // Boost real-time wave acceleration properties
+                    waveDynamics.neuralCanvas = 8;
+                    waveDynamics.analyticsCanvas = 7;
+                    waveDynamics.automationCanvas = 8.5;
+                } 
+                else if (scoreAnxious > scorePositive) {
+                    // Anxious / Stressed State
+                    txtMood.textContent = "Stressed / Alert";
+                    txtConfidence.textContent = "41%";
+                    txtFocus.textContent = "Interrupted";
+                    txtEnergy.textContent = "Erratic Spike";
+                    
+                    consoleCard.style.borderColor = "#ef4444";
+                    document.documentElement.style.setProperty('--sentiment-color', '#ef4444');
+                    
+                    waveDynamics.neuralCanvas = 14;
+                    waveDynamics.analyticsCanvas = 12;
+                    waveDynamics.automationCanvas = 15;
+                } 
+                else {
+                    // Balanced Technical State
+                    txtMood.textContent = "Calm / Analytical";
+                    txtConfidence.textContent = "85%";
+                    txtFocus.textContent = "Stable Focus";
+                    txtEnergy.textContent = "Sustained";
+                    
+                    consoleCard.style.borderColor = "var(--accent-purple)";
+                    document.documentElement.style.setProperty('--sentiment-color', 'var(--primary-neon)');
+                    
+                    waveDynamics.neuralCanvas = 3;
+                    waveDynamics.analyticsCanvas = 2.5;
+                    waveDynamics.automationCanvas = 3;
+                }
+            }
+
+
             /* --- INTUITIVE COGNITIVE SPEECH API HANDLER HUB --- */
             const voiceBtn = document.getElementById("btnVoiceTrigger");
             const voiceStatusDot = document.getElementById("voiceStatusDot");
@@ -566,12 +697,14 @@
 
                 let isListening = false;
 
-                // Voice Logic Command Evaluator Parser Matrix
                 function evaluateVoiceCommand(rawUtterance) {
                     const normalizedText = rawUtterance.toLowerCase().trim();
-                    voiceTranscript.textContent = `Captured Command: "${rawUtterance}"`;
+                    voiceTranscript.textContent = `Captured Input: "${rawUtterance}"`;
 
-                    // Command Path Route Mapping Conditions
+                    // Step 1: Run through linguistic sentiment analyzer
+                    evaluateVocalSentiment(rawUtterance);
+
+                    // Step 2: Route core dashboard commands
                     if (normalizedText.includes("neural") || normalizedText.includes("show neural")) {
                         routeScrollToDashboard("neuralBox");
                     } else if (normalizedText.includes("analytics") || normalizedText.includes("show analytics")) {
@@ -584,11 +717,13 @@
                             runHighSpeedSimulationRoutine();
                         }, 500);
                     } else {
-                        voiceTranscript.textContent = "Command unmapped. Say 'Show Neural', 'Show Analytics', 'Show Automation', or 'Run System Sync'.";
+                        // Keep on screen if no explicit functional route matches
+                        if(voiceTranscript.textContent === "") {
+                            voiceTranscript.textContent = "Command recognized. Parsing complete.";
+                        }
                     }
                 }
 
-                // Event Listeners Integration Hooks
                 voiceBtn.addEventListener("click", () => {
                     if (!isListening) {
                         recognitionEngine.start();
@@ -603,7 +738,7 @@
                     voiceBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Disengage Engine`;
                     voiceStatusDot.classList.add("active");
                     voiceStatusText.textContent = "Listening Active";
-                    voiceTranscript.textContent = "Awaiting structural voice path instruction...";
+                    voiceTranscript.textContent = "Speak naturally to test command routers and mood processors...";
                 };
 
                 recognitionEngine.onresult = (event) => {
@@ -612,8 +747,8 @@
                 };
 
                 recognitionEngine.onerror = (err) => {
-                    voiceTranscript.textContent = "Vocal analysis timed out or failed.";
-                    console.error("Acoustic Logging error: ", err.error);
+                    voiceTranscript.textContent = "Acoustic evaluation timed out or skipped.";
+                    console.error("Acoustic logging track signature exception: ", err.error);
                 };
 
                 recognitionEngine.onend = () => {
@@ -638,8 +773,10 @@
                 function draw() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.beginPath();
-                    ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
-                    ctx.lineWidth = 1.5;
+                    
+                    // Fetch dynamic coloring assignment from design properties
+                    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--sentiment-color').trim() || "rgba(56, 189, 248, 0.4)";
+                    ctx.lineWidth = 2;
 
                     for(let i=0; i<dataNodesArray.length; i++) {
                         let x = i * (canvas.width / (dataNodesArray.length - 1));
@@ -647,7 +784,8 @@
                         if(i === 0) ctx.moveTo(x, y);
                         else ctx.lineTo(x, y);
 
-                        dataNodesArray[i] += (Math.random() - 0.5) * 3;
+                        // Use custom frequency modifiers calculated by sentiment evaluator matches
+                        dataNodesArray[i] += (Math.random() - 0.5) * waveDynamics[canvasId];
                         if(dataNodesArray[i] < 10) dataNodesArray[i] = 10;
                         if(dataNodesArray[i] > canvas.height - 10) dataNodesArray[i] = canvas.height - 10;
                     }

@@ -1044,393 +1044,212 @@
 
     </section>
 
-
-
-    <footer> 
-
+<footer> 
         &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
-
     </footer>
 
-
-
+    <!-- ALL SYSTEM CONTROL LOGIC ENGINE SCRIPT -->
     <script>
-
         document.addEventListener("DOMContentLoaded", () => {
-
             
+            // --- 1. Global State Configuration ---
+            const SystemState = {
+                activeModule: null,
+                workingMode: "STANDBY",
+                syncRunning: false,
+                dataNodes: { neural: [], analytics: [], automation: [] }
+            };
 
-            // Basic UI Setup Elements
+            // --- 2. Element Selectors ---
+            const voiceBtn = document.getElementById("btnVoiceTrigger");
+            const voiceStatusDot = document.getElementById("voiceStatusDot");
+            const voiceStatusText = document.getElementById("voiceStatusText");
+            const voiceTranscript = document.getElementById("voiceTranscript");
+            const manualSyncBtn = document.getElementById("btnManualSync");
 
-            setTimeout(() => { document.getElementById("neuralBar").style.width = "94%"; }, 200);
+            // --- 3. Initial Progress UI Load Animations ---
+            setTimeout(() => { animateProgressBar("neuralBar", 94); }, 200);
+            setTimeout(() => { animateProgressBar("analyticsBar", 99); }, 400);
+            setTimeout(() => { animateProgressBar("automationBar", 84); }, 600);
 
-            setTimeout(() => { document.getElementById("analyticsBar").style.width = "99%"; }, 400);
+            function animateProgressBar(barId, targetValue) {
+                const bar = document.getElementById(barId);
+                if (bar) bar.style.width = `${targetValue}%`;
+            }
 
-            setTimeout(() => { document.getElementById("automationBar").style.width = "84%"; }, 600);
-
-
-
+            // --- 4. Smooth Scrolling UI Router ---
             function routeScrollToDashboard(targetBoxId) {
-
                 const targetElement = document.getElementById(targetBoxId);
-
                 const sectionContainer = document.getElementById("dashboard");
-
                 
-
                 if (targetElement && sectionContainer) {
-
-                    // Step 1: Smooth scroll to the main dashboard container area
-
                     const headerOffset = 90;
-
                     const elementPosition = sectionContainer.getBoundingClientRect().top;
-
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
                     
-
                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
 
-
-
-                    // Step 2: Clear old highlights, then flash the new target emerald neon pulse
-
                     document.querySelectorAll('.dashboard-box').forEach(box => {
-
                         box.classList.remove('voice-pulse-highlight');
-
                     });
-
-
 
                     setTimeout(() => {
-
                         targetElement.classList.add('voice-pulse-highlight');
-
-                    }, 400); // Small wait for scroll movement animation buffer
-
+                    }, 400); 
                 }
-
             }
 
-
-
-            /* --- HIGH FREQUENCY SIMULATION SYNC ROUTINE ENGINE --- */
-
-            let syncRunning = false;
-
+            // --- 5. High Speed Simulation Sync Routine ---
             function runHighSpeedSimulationRoutine() {
-
-                if (syncRunning) return;
-
-                syncRunning = true;
-
-
+                if (SystemState.syncRunning) return;
+                SystemState.syncRunning = true;
 
                 voiceTranscript.textContent = "Processing High-Speed Simulation Sync Routine...";
-
                 
-
-                // Max out progress visualization lines
-
                 document.getElementById("neuralBar").style.width = "100%";
-
                 document.getElementById("analyticsBar").style.width = "100%";
-
                 document.getElementById("automationBar").style.width = "100%";
 
-
-
-                // Flash all nodes together for unity response view
-
                 document.querySelectorAll('.dashboard-box').forEach(box => {
-
                     box.classList.add('voice-pulse-highlight');
-
                 });
 
-
-
                 setTimeout(() => {
-
                     document.getElementById("neuralBar").style.width = "94%";
-
                     document.getElementById("analyticsBar").style.width = "99%";
-
                     document.getElementById("automationBar").style.width = "84%";
-
                     
-
                     document.querySelectorAll('.dashboard-box').forEach(box => {
-
                         box.classList.remove('voice-pulse-highlight');
-
                     });
-
-                    syncRunning = false;
-
+                    SystemState.syncRunning = false;
                     voiceTranscript.textContent = "Simulation Sync Complete. System Stabilized.";
-
                 }, 3000);
-
             }
 
+            if (manualSyncBtn) {
+                manualSyncBtn.addEventListener("click", () => {
+                    routeScrollToDashboard("neuralBox");
+                    runHighSpeedSimulationRoutine();
+                });
+            }
 
-
-            document.getElementById("btnManualSync").addEventListener("click", () => {
-
-                routeScrollToDashboard("neuralBox");
-
-                runHighSpeedSimulationRoutine();
-
-            });
-
-
-
-            /* --- INTUITIVE COGNITIVE SPEECH API HANDLER HUB --- */
-
-            const voiceBtn = document.getElementById("btnVoiceTrigger");
-
-            const voiceStatusDot = document.getElementById("voiceStatusDot");
-
-            const voiceStatusText = document.getElementById("voiceStatusText");
-
-            const voiceTranscript = document.getElementById("voiceTranscript");
-
-
-
+            // --- 6. Intuitive Web Speech API Integration ---
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-
-
             if (!SpeechRecognition) {
-
-                voiceStatusText.textContent = "Speech API Engine Missing";
-
-                voiceBtn.style.opacity = "0.5";
-
-                voiceBtn.style.cursor = "not-allowed";
-
+                if (voiceStatusText) voiceStatusText.textContent = "Speech API Engine Missing";
+                if (voiceBtn) {
+                    voiceBtn.style.opacity = "0.5";
+                    voiceBtn.style.cursor = "not-allowed";
+                }
+                if (voiceTranscript) voiceTranscript.textContent = "Web Speech API is not supported in this browser.";
             } else {
-
                 const recognitionEngine = new SpeechRecognition();
-
                 recognitionEngine.continuous = false;
-
                 recognitionEngine.lang = 'en-US';
-
                 recognitionEngine.interimResults = false;
-
-
 
                 let isListening = false;
 
-
-
-                // Voice Logic Command Evaluator Parser Matrix
-
                 function evaluateVoiceCommand(rawUtterance) {
-
                     const normalizedText = rawUtterance.toLowerCase().trim();
+                    voiceTranscript.innerHTML = `Captured Command: "<span>${rawUtterance}</span>"`;
 
-                    voiceTranscript.textContent = `Captured Command: "${rawUtterance}"`;
-
-
-
-                    // Command Path Route Mapping Conditions
-
-                    if (normalizedText.includes("neural") || normalizedText.includes("show neural")) {
-
+                    if (normalizedText.includes("neural") || normalizedText.includes("show neural") || normalizedText.includes("brain")) {
                         routeScrollToDashboard("neuralBox");
-
-                    } else if (normalizedText.includes("analytics") || normalizedText.includes("show analytics")) {
-
+                    } else if (normalizedText.includes("analytics") || normalizedText.includes("show analytics") || normalizedText.includes("data")) {
                         routeScrollToDashboard("analyticsBox");
-
-                    } else if (normalizedText.includes("automation") || normalizedText.includes("show automation")) {
-
+                    } else if (normalizedText.includes("automation") || normalizedText.includes("show automation") || normalizedText.includes("engine")) {
                         routeScrollToDashboard("automationBox");
-
-                    } else if (normalizedText.includes("sync") || normalizedText.includes("trigger demo") || normalizedText.includes("run system sync")) {
-
+                    } else if (normalizedText.includes("sync") || normalizedText.includes("trigger demo") || normalizedText.includes("run system sync") || normalizedText.includes("all")) {
                         routeScrollToDashboard("neuralBox");
-
-                        setTimeout(() => {
-
-                            runHighSpeedSimulationRoutine();
-
-                        }, 500);
-
+                        setTimeout(() => { runHighSpeedSimulationRoutine(); }, 500);
                     } else {
-
                         voiceTranscript.textContent = "Command unmapped. Say 'Show Neural', 'Show Analytics', 'Show Automation', or 'Run System Sync'.";
-
                     }
-
                 }
 
-
-
-                // Event Listeners Integration Hooks
-
-                voiceBtn.addEventListener("click", () => {
-
-                    if (!isListening) {
-
-                        recognitionEngine.start();
-
-                    } else {
-
-                        recognitionEngine.stop();
-
-                    }
-
-                });
-
-
+                if (voiceBtn) {
+                    voiceBtn.addEventListener("click", () => {
+                        if (!isListening) {
+                            recognitionEngine.start();
+                        } else {
+                            recognitionEngine.stop();
+                        }
+                    });
+                }
 
                 recognitionEngine.onstart = () => {
-
                     isListening = true;
-
                     voiceBtn.classList.add("listening");
-
                     voiceBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Disengage Engine`;
-
-                    voiceStatusDot.classList.add("active");
-
-                    voiceStatusText.textContent = "Listening Active";
-
-                    voiceTranscript.textContent = "Awaiting structural voice path instruction...";
-
+                    if (voiceStatusDot) voiceStatusDot.classList.add("active");
+                    if (voiceStatusText) voiceStatusText.textContent = "Listening Active";
+                    if (voiceTranscript) voiceTranscript.textContent = "Awaiting structural voice path instruction...";
                 };
-
-
 
                 recognitionEngine.onresult = (event) => {
-
                     const dynamicTextPayload = event.results[0][0].transcript;
-
                     evaluateVoiceCommand(dynamicTextPayload);
-
                 };
-
-
 
                 recognitionEngine.onerror = (err) => {
-
-                    voiceTranscript.textContent = "Vocal analysis timed out or failed.";
-
+                    if (voiceTranscript) voiceTranscript.textContent = "Vocal analysis timed out or failed.";
                     console.error("Acoustic Logging error: ", err.error);
-
                 };
-
-
 
                 recognitionEngine.onend = () => {
-
                     isListening = false;
-
                     voiceBtn.classList.remove("listening");
-
                     voiceBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Initialize Voice Listening`;
-
-                    voiceStatusDot.classList.remove("active");
-
-                    voiceStatusText.textContent = "Acoustic Engine Ready";
-
+                    if (voiceStatusDot) voiceStatusDot.classList.remove("active");
+                    if (voiceStatusText) voiceStatusText.textContent = "Acoustic Engine Ready";
                 };
-
             }
 
-
-
-            /* --- SIMULATED BACKGROUND CANVAS TRACK TELEMETRY GRAPHICS --- */
-
-            function renderCanvasBackgroundTrack(canvasId) {
-
+            // --- 7. Simulated Background Canvas Telemetry Engine ---
+            function renderCanvasBackgroundTrack(canvasId, modName) {
                 const canvas = document.getElementById(canvasId);
-
                 if (!canvas) return;
-
                 const ctx = canvas.getContext("2d");
-
                 
-
-                // Set sizes using structural offset measurements to ensure responsive execution
-
                 const resizeCanvas = () => {
-
                     canvas.width = canvas.offsetWidth;
-
                     canvas.height = canvas.offsetHeight;
-
                 };
-
                 resizeCanvas();
-
                 window.addEventListener('resize', resizeCanvas);
 
-
-
-                let dataNodesArray = Array.from({length: 30}, () => Math.random() * (canvas.height - 20) + 10);
-
-
+                SystemState.dataNodes[modName] = Array.from({length: 30}, () => Math.random() * (canvas.height - 20) + 10);
 
                 function draw() {
-
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
                     ctx.beginPath();
-
                     ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
-
                     ctx.lineWidth = 1.5;
 
-
-
-                    for(let i=0; i<dataNodesArray.length; i++) {
-
-                        let x = i * (canvas.width / (dataNodesArray.length - 1));
-
-                        let y = dataNodesArray[i];
-
+                    let nodes = SystemState.dataNodes[modName];
+                    for(let i = 0; i < nodes.length; i++) {
+                        let x = i * (canvas.width / (nodes.length - 1));
+                        let y = nodes[i];
                         if(i === 0) ctx.moveTo(x, y);
-
                         else ctx.lineTo(x, y);
 
-
-
-                        dataNodesArray[i] += (Math.random() - 0.5) * 3;
-
-                        if(dataNodesArray[i] < 10) dataNodesArray[i] = 10;
-
-                        if(dataNodesArray[i] > canvas.height - 10) dataNodesArray[i] = canvas.height - 10;
-
+                        nodes[i] += (Math.random() - 0.5) * 3;
+                        if(nodes[i] < 10) nodes[i] = 10;
+                        if(nodes[i] > canvas.height - 10) nodes[i] = canvas.height - 10;
                     }
-
                     ctx.stroke();
-
                     requestAnimationFrame(draw);
-
                 }
-
                 draw();
-
             }
 
-            renderCanvasBackgroundTrack("neuralCanvas");
-
-            renderCanvasBackgroundTrack("analyticsCanvas");
-
-            renderCanvasBackgroundTrack("automationCanvas");
-
+            renderCanvasBackgroundTrack("neuralCanvas", "neural");
+            renderCanvasBackgroundTrack("analyticsCanvas", "analytics");
+            renderCanvasBackgroundTrack("automationCanvas", "automation");
         });
-
     </script>
-
 </body>
-
-</html> 
-
+</html>

@@ -7,421 +7,458 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Base Reset & Design System Variables */
+        /* --- General Layout & Design Tokens --- */
         :root {
-            --bg-deep: #020617;
-            --bg-surface: rgba(15, 23, 42, 0.6);
-            --border-glow: rgba(56, 189, 248, 0.15);
-            --primary-neon: #00ffff;
-            --accent-purple: #8b5cf6;
-            --emerald-neon: #10b981;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-dark-main: #0b0f19;
+            --bg-dark-panel: #141b2d;
+            --border-color: #222f4c;
+            --neon-blue: #00f3ff;
+            --neon-purple: #8b5cf6;
+            --neon-green: #10b981;
+            --neon-rose: #ff3366;
+            --text-primary: #f0f4f8;
+            --text-secondary: #8a99ad;
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            scroll-behavior: smooth;
         }
 
         body {
-            background: var(--bg-deep);
-            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark-main);
+            color: var(--text-primary);
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Ambient Kinetic Grid Background */
-        body::before {
-            content: '';
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
-            z-index: -1;
-        }
-
-        /* Fixed Navigation Hub */
+        /* --- Navigation Bar --- */
         nav {
-            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 5%;
-            position: fixed;
+            padding: 20px 8%;
+            background: rgba(20, 27, 45, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
             top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(16px);
-            background: rgba(2, 6, 23, 0.7);
-            border-bottom: 1px solid var(--border-glow);
-            transition: padding 0.3s ease;
+            z-index: 100;
         }
 
-        .logo {
-            font-size: 24px;
+        nav .logo {
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            color: #38bdf8;
-            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            letter-spacing: 1px;
+            color: #fff;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         nav ul {
             display: flex;
             list-style: none;
-            gap: 25px;
+            gap: 30px;
         }
 
         nav ul li a {
+            color: var(--text-secondary);
             text-decoration: none;
-            color: var(--text-muted);
-            font-size: 14px;
             font-weight: 500;
             transition: color 0.3s ease;
         }
 
         nav ul li a:hover {
-            color: var(--primary-neon);
+            color: var(--neon-blue);
         }
 
-        /* Hero Control Room */
+        /* --- Hero Console --- */
         .hero {
-            min-height: 90vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 80px 8% 40px;
             text-align: center;
-            flex-direction: column;
-            padding: 120px 24px 40px;
-            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .hero h1 {
-            font-size: clamp(32px, 5vw, 62px);
-            max-width: 1000px;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #38bdf8 0%, var(--emerald-neon) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2.8rem;
             font-weight: 700;
-            letter-spacing: -1px;
+            margin-bottom: 15px;
+            line-height: 1.2;
         }
 
         .hero p {
-            max-width: 750px;
-            font-size: clamp(15px, 2vw, 18px);
-            line-height: 1.7;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             margin-bottom: 35px;
+            font-size: 1.1rem;
         }
 
-        /* Voice Interface Deck */
         .voice-console-card {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            padding: 20px 24px;
-            border-radius: 20px;
-            margin-bottom: 35px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            max-width: 650px;
-            width: 100%;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: var(--bg-dark-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
         .voice-status-indicator {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 600;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
         }
 
         .status-dot {
             width: 10px;
             height: 10px;
-            background: #64748b;
+            background-color: #64748b;
             border-radius: 50%;
-            display: inline-block;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
         }
 
         .status-dot.active {
-            background: var(--emerald-neon);
-            box-shadow: 0 0 14px var(--emerald-neon);
-            animation: pulseDot 1.5s infinite;
+            background-color: var(--neon-rose);
+            box-shadow: 0 0 12px var(--neon-rose);
+            animation: pulseGlow 1.5s infinite alternate;
         }
 
-        @keyframes pulseDot {
-            0%, 100% { opacity: 0.4; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.1); }
+        @keyframes pulseGlow {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
 
         .voice-transcript-box {
-            font-style: italic;
-            color: var(--primary-neon);
-            min-height: 26px;
-            font-size: 15px;
-            font-weight: 400;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-            word-break: break-word;
-            text-align: center;
+            background: #090d16;
+            padding: 18px;
+            border-radius: 10px;
+            font-family: monospace;
+            min-height: 56px;
+            color: var(--text-secondary);
+            border: 1px solid #1a243a;
         }
 
         .hero-buttons {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
             justify-content: center;
-            width: 100%;
-            max-width: 500px;
+            gap: 20px;
         }
 
         .btn {
             padding: 14px 28px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 8px;
             font-weight: 600;
+            cursor: pointer;
+            border: none;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            flex: 1 1 200px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
         .voice-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: #ffffff;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
         }
 
         .voice-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.45);
+            box-shadow: 0 6px 24px rgba(0, 243, 255, 0.5);
         }
 
         .voice-btn.listening {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.35);
+            background: var(--neon-rose);
+            box-shadow: 0 4px 20px rgba(255, 51, 102, 0.4);
         }
 
         .secondary-btn {
             background: transparent;
-            color: var(--text-main);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
 
         .secondary-btn:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: #38bdf8;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-secondary);
         }
 
-        /* Core Live Dashboard Section */
+        /* --- Global Dashboard Operations Frame --- */
         .dashboard {
-            padding: 80px 5%;
-            background: #060b13;
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 60px 8%;
         }
 
         .section-title {
+            font-size: 2rem;
             text-align: center;
-            font-size: clamp(28px, 4vw, 38px);
-            font-weight: 700;
-            letter-spacing: -1px;
             margin-bottom: 40px;
+            position: relative;
         }
 
         .dashboard-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
+            margin-bottom: 40px;
         }
 
-        /* Voice Optimized Dashboard Box Architecture */
         .dashboard-box {
+            background: var(--bg-dark-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
             position: relative;
-            background: var(--bg-surface);
-            backdrop-filter: blur(20px);
-            padding: 30px 24px;
-            border-radius: 24px;
-            border: 1px solid var(--border-glow);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             overflow: hidden;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .voice-pulse-highlight {
+            border-color: var(--neon-blue) !important;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.25);
+        }
+
+        .dashboard-header-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .glow-title {
+            font-size: 1.25rem;
+            margin-bottom: 6px;
+        }
+
+        .live-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            min-height: 42px;
+        }
+
+        .progress-bar {
+            background: #090d16;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            border-radius: 3px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #analyticsBox .progress { background: linear-gradient(to right, var(--neon-purple), var(--neon-green)); }
+        #automationBox .progress { background: linear-gradient(to right, var(--neon-green), var(--neon-blue)); }
+
+        .stats-matrix {
+            display: flex;
+            justify-content: space-between;
+            background: #090d16;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .stat-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-node span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .stat-node small {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .live-telemetry-canvas {
+            width: 100%;
+            height: 60px;
+            background: #0d1322;
+            border-radius: 6px;
+            display: block;
+        }
+
+        /* --- NEW MODULAR COGNITIVE MATRIX PANELS --- */
+        .cognitive-row-wrapper {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .cognitive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+
+        .sub-panel {
+            background: var(--bg-dark-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        /* The Emerald Neon Voice Pulse Class */
-        .dashboard-box.voice-pulse-highlight {
-            border-color: var(--emerald-neon) !important;
-            box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
-            transform: translateY(-8px) scale(1.01);
-        }
-
-        .dashboard-header-group {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .glow-title {
-            font-size: 22px;
-            font-weight: 600;
-            color: #f8fafc;
-            margin-top: 15px;
-        }
-
-        .live-description {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-top: 10px;
-            min-height: 45px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
-            width: 0%; 
-            background: linear-gradient(90deg, #38bdf8, var(--accent-purple));
-            border-radius: 10px;
-            transition: width 4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Matrix Telemetry Output */
-        .stats-matrix {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .stat-node {
-            text-align: center;
-            padding: 10px 4px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .stat-node span {
-            display: block;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary-neon);
-        }
-
-        .stat-node small {
-            display: block;
-            color: var(--text-muted);
-            font-size: 10px;
-            margin-top: 4px;
-        }
-
-        .graphic-wrapper {
+        .sub-panel-header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            height: 90px;
-            margin-bottom: 10px;
+            border-bottom: 1px solid #1e2942;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
         }
 
-        /* Graphic Nodes Elements */
-        .brain-mesh {
-            width: 65px;
-            height: 65px;
+        .sub-panel-header h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live-pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-green);
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #00ffff 0%, #030712 80%);
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 8px var(--neon-green);
         }
 
-        .vector-ring {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            border: 2px dashed var(--accent-purple);
-            animation: spin 10s linear infinite;
+        .live-pulse-dot.active {
+            animation: trackingPulse 1.6s infinite alternate;
         }
 
-        .gear-assembly {
-            width: 75px;
-            height: 75px;
-            border: 3px dashed var(--primary-neon);
-            border-radius: 50%;
-            animation: spin 7s linear infinite reverse;
+        @keyframes trackingPulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 1; }
         }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .audio-pill-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--neon-green);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
-        .live-telemetry-canvas {
+        .voice-bar-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 80px;
+            margin: 15px 0;
+            background: #090d16;
+            border-radius: 8px;
+        }
+
+        .eq-bar {
+            width: 6px;
+            height: 25%;
+            background: var(--neon-blue);
+            border-radius: 3px;
+            transition: height 0.1s ease;
+        }
+
+        .matrix-track-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .metric-bar-group {
             width: 100%;
-            height: 90px;
-            border-radius: 10px;
-            background: rgba(2, 6, 23, 0.5);
         }
 
+        .metric-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .metric-label-row .metric-value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .track-bg {
+            background: #090d16;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .track-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .track-fill.calm { background: var(--neon-green); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+        .track-fill.stress { background: var(--neon-rose); box-shadow: 0 0 8px rgba(255, 51, 102, 0.4); }
+        .track-fill.load { background: var(--neon-blue); box-shadow: 0 0 8px rgba(0, 243, 255, 0.4); }
+
+        .dashboard-metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .sub-metric-card {
+            background: #090d16;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #1a243a;
+        }
+
+        .sub-metric-card p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .sub-metric-card h5 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 2px;
+        }
+
+        /* --- Footer --- */
         footer {
             text-align: center;
-            padding: 30px 20px;
-            background: #020617;
-            color: #64748b;
-            font-size: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
-            line-height: 1.5;
-        }
-
-        /* Mobile Breakpoints & Navigation Adjustments */
-        @media (max-width: 768px) {
-            nav { padding: 15px 5%; }
-            nav ul { gap: 18px; }
-            .hero { padding: 100px 16px 30px; }
-            .voice-console-card { padding: 16px 18px; }
-            .dashboard { padding: 60px 4%; }
-        }
-
-        @media (max-width: 480px) {
-            nav {
-                flex-direction: column;
-                gap: 10px;
-                padding: 12px 20px;
-                position: absolute;
-            }
-            nav ul {
-                width: 100%;
-                justify-content: center;
-                gap: 25px;
-            }
-            .hero { padding-top: 130px; }
-            .stats-matrix {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            .stat-node { padding: 8px; }
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            background: #090d16;
         }
     </style>
 </head>
@@ -458,6 +495,79 @@
 
     <section class="dashboard" id="dashboard">
         <h2 class="section-title">System Live Operations Control</h2>
+        
+        <div class="cognitive-row-wrapper">
+            <div class="cognitive-grid">
+                
+                <div class="sub-panel">
+                    <div class="sub-panel-header">
+                        <h3><span class="live-pulse-dot active" id="voicePulseDot"></span> Real-Time Voice Processing</h3>
+                        <span class="audio-pill-badge" id="voiceModuleStatus">Standby Monitoring</span>
+                    </div>
+                    <div class="voice-bar-container" id="eqContainer">
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                    </div>
+                    <div class="dashboard-metrics-grid">
+                        <div class="sub-metric-card">
+                            <p>Capture Base</p>
+                            <h5 id="liveSampleRate">44.1 kHz</h5>
+                        </div>
+                        <div class="sub-metric-card">
+                            <p>Decibel Level</p>
+                            <h5 id="liveDecibel">-Inf dB</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-panel">
+                    <div class="sub-panel-header">
+                        <h3>Cognitive Voice Emotion Controlling</h3>
+                        <span style="font-size: 0.8rem; color: var(--neon-blue); font-weight:600;" id="cognitiveModality">Adaptive Base</span>
+                    </div>
+                    <div class="matrix-track-wrapper">
+                        
+                        <div class="metric-bar-group">
+                            <div class="metric-label-row">
+                                <span>Calm / Structural Stability</span>
+                                <span class="metric-value" id="txtCalm">0%</span>
+                            </div>
+                            <div class="track-bg">
+                                <div class="track-fill calm" id="barCalm"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-bar-group">
+                            <div class="metric-label-row">
+                                <span>Stress / Vocal Friction</span>
+                                <span class="metric-value" id="txtStress">0%</span>
+                            </div>
+                            <div class="track-bg">
+                                <div class="track-fill stress" id="barStress"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-bar-group">
+                            <div class="metric-label-row">
+                                <span>Cognitive Processing Load</span>
+                                <span class="metric-value" id="txtLoad">0%</span>
+                            </div>
+                            <div class="track-bg">
+                                <div class="track-fill load" id="barLoad"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <div class="dashboard-container">
 
             <div class="dashboard-box" id="neuralBox">
@@ -530,6 +640,18 @@
             const voiceStatusDot = document.getElementById("voiceStatusDot");
             const voiceStatusText = document.getElementById("voiceStatusText");
             const voiceTranscript = document.getElementById("voiceTranscript");
+            
+            // Cognitive Dashboard UI Bindings
+            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+            const liveDecibel = document.getElementById("liveDecibel");
+            const cognitiveModality = document.getElementById("cognitiveModality");
+            const eqBars = document.querySelectorAll(".eq-bar");
+            
+            const elementsMatrix = {
+                calm: { bar: document.getElementById("barCalm"), txt: document.getElementById("txtCalm"), val: 75 },
+                stress: { bar: document.getElementById("barStress"), txt: document.getElementById("txtStress"), val: 15 },
+                load: { bar: document.getElementById("barLoad"), txt: document.getElementById("txtLoad"), val: 20 }
+            };
 
             // Base progress bar initialization
             setTimeout(() => { document.getElementById("neuralBar").style.width = "94%"; }, 200);
@@ -548,7 +670,7 @@
                     SystemState.audioContext = new AudioContext();
                     
                     SystemState.analyser = SystemState.audioContext.createAnalyser();
-                    SystemState.analyser.fftSize = 2048; 
+                    SystemState.analyser.fftSize = 256; // Tailored for local fast visualizer tracks
                     
                     SystemState.source = SystemState.audioContext.createMediaStreamSource(stream);
                     SystemState.source.connect(SystemState.analyser);
@@ -556,6 +678,13 @@
                     const bufferLength = SystemState.analyser.frequencyBinCount;
                     SystemState.dataArray = new Uint8Array(bufferLength);
                     
+                    document.getElementById("liveSampleRate").textContent = `${SystemState.audioContext.sampleRate / 1000} kHz`;
+                    voiceModuleStatus.textContent = "Processing Signal";
+                    voiceModuleStatus.style.background = "rgba(0, 243, 255, 0.1)";
+                    voiceModuleStatus.style.color = "var(--neon-blue)";
+                    
+                    // Fire dedicated engine parsing loops
+                    runCognitiveTelemetryLoop();
                     return true;
                 } catch (err) {
                     console.error("Microphone Access Denied or Failed:", err);
@@ -575,6 +704,7 @@
                 document.getElementById("automationDesc").innerText = "🤖 Automated background threads mapping scaling orchestration.";
 
                 voiceStatusText.textContent = `MODE: ${modeName}`;
+                cognitiveModality.textContent = modeName;
                 
                 const targetBox = document.getElementById(`${targetModule}Box`);
                 const targetDesc = document.getElementById(`${targetModule}Desc`);
@@ -658,6 +788,7 @@
             function runGlobalSyncRoutine() {
                 SystemState.activeModule = "ALL";
                 voiceStatusText.textContent = "MODE: FULL SYSTEM UNIFICATION";
+                cognitiveModality.textContent = "SYSTEM UNIFICATION";
                 voiceTranscript.textContent = "Global alignment deployment executed.";
                 document.querySelectorAll('.dashboard-box').forEach(box => box.classList.add('voice-pulse-highlight'));
                 document.querySelectorAll('.progress').forEach(p => p.style.width = "100%");
@@ -668,7 +799,56 @@
                 runGlobalSyncRoutine();
             });
 
-            // --- 5. Actual Voice Audio Processing Wave Visualizer Engine ---
+            // --- 5. Integrated Sound Modulation & Cognitive Track Engine ---
+            function runCognitiveTelemetryLoop() {
+                function computeEngineState() {
+                    requestAnimationFrame(computeEngineState);
+                    if (!SystemState.analyser || !SystemState.dataArray) return;
+
+                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                    
+                    // 1. Calculate Average Energy Volume across spectrum array
+                    let sum = 0;
+                    for (let i = 0; i < SystemState.dataArray.length; i++) {
+                        sum += SystemState.dataArray[i];
+                    }
+                    const signalAverage = sum / SystemState.dataArray.length;
+                    
+                    // 2. Derive Decibel rating from mathematical baseline amplitude
+                    const calculatedDb = Math.round(20 * Math.log10(signalAverage / 255) + 6);
+                    const safeDb = isFinite(calculatedDb) && signalAverage > 2 ? `${calculatedDb} dB` : "-72 dB";
+                    liveDecibel.textContent = safeDb;
+
+                    // 3. Drive structural EQ visualizer rods
+                    eqBars.forEach((bar, idx) => {
+                        const targetDataIndex = Math.floor(idx * (SystemState.dataArray.length / eqBars.length));
+                        const amplitudePercentage = (SystemState.dataArray[targetDataIndex] / 255) * 100;
+                        bar.style.height = `${Math.max(20, amplitudePercentage)}%`;
+                    });
+
+                    // 4. Update the Cognitive Control Matrix smoothly using the actual signal variations
+                    if (signalAverage > 5) {
+                        elementsMatrix.calm.val = Math.min(100, Math.max(60, 95 - (signalAverage * 0.3)));
+                        elementsMatrix.stress.val = Math.min(60, Math.max(5, (signalAverage * 0.4)));
+                        elementsMatrix.load.val = Math.min(100, Math.max(20, 25 + (signalAverage * 0.5)));
+                    } else {
+                        // Return to resting home equilibrium state when quiet
+                        elementsMatrix.calm.val = 88;
+                        elementsMatrix.stress.val = 4;
+                        elementsMatrix.load.val = 12;
+                    }
+
+                    // Render to DOM interfaces
+                    for (let key in elementsMatrix) {
+                        const score = Math.floor(elementsMatrix[key].val);
+                        elementsMatrix[key].bar.style.width = `${score}%`;
+                        elementsMatrix[key].txt.textContent = `${score}%`;
+                    }
+                }
+                computeEngineState();
+            }
+
+            // --- 6. Lower Background Telemetry Canvas Visualizer Engine ---
             function runLiveVoiceVisualizer(canvasId, modName) {
                 const canvas = document.getElementById(canvasId);
                 if (!canvas) return;
@@ -683,7 +863,6 @@
 
                 function draw() {
                     requestAnimationFrame(draw);
-
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.beginPath();
 
@@ -702,20 +881,20 @@
                     }
                     
                     ctx.strokeStyle = gradient;
-                    ctx.lineWidth = isCurrent ? 3.0 : 1.5;
+                    ctx.lineWidth = isCurrent ? 2.5 : 1.0;
 
                     if (SystemState.analyser && SystemState.dataArray) {
+                        // Feed baseline stream details down to structural analytics canvases
                         SystemState.analyser.getByteTimeDomainData(SystemState.dataArray);
-
-                        const sliceWidth = canvas.width * 1.0 / SystemState.analyser.frequencyBinCount;
+                        const sliceWidth = canvas.width * 1.0 / SystemState.dataArray.length;
                         let x = 0;
 
-                        for (let i = 0; i < SystemState.analyser.frequencyBinCount; i++) {
+                        for (let i = 0; i < SystemState.dataArray.length; i++) {
                             const v = SystemState.dataArray[i] / 128.0; 
                             let y = (v * canvas.height) / 2;
 
                             if (!isCurrent) {
-                                y = (canvas.height / 2) + (y - (canvas.height / 2)) * 0.08;
+                                y = (canvas.height / 2) + (y - (canvas.height / 2)) * 0.05;
                             }
 
                             if (i === 0) ctx.moveTo(x, y);

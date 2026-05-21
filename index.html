@@ -217,28 +217,32 @@
             <div class="voice-transcript-box" id="voiceTranscript">Click below to start secure local voice recording and telemetry...</div>
         </div>
 
-        <div class="emotion-graph-card">
-            <div class="graph-header">
-                <h4>Acoustic Tone Telemetry Map</h4>
-                <span class="active-emotion-badge" id="dominantEmotion">Neutral</span>
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="emotionChart"></canvas>
-            </div>
+        <div class="dashboard-row">
+    <!-- Card 1 -->
+    <div class="emotion-graph-card">
+        <div class="graph-header">
+            <h4>Acoustic Tone Telemetry Map</h4>
+            <span class="active-emotion-badge" id="dominantEmotion">Neutral</span>
         </div>
+        <div class="chart-wrapper">
+            <canvas id="emotionChart"></canvas>
+        </div>
+    </div>
 
-        <div class="emotion-graph-card">
-            <div class="graph-header">
-                <h4>Advanced Signal Telemetry (Oscilloscope & Spectrogram)</h4>
-                <span class="active-emotion-badge" style="color:var(--neon-purple); border-color:var(--neon-purple);">Live Capture</span>
-            </div>
-            <div class="audio-scope-container">
-                <canvas id="waveformCanvas" class="audio-scope-canvas"></canvas>
-            </div>
-            <div class="audio-scope-container">
-                <canvas id="spectrogramCanvas" class="audio-scope-canvas"></canvas>
-            </div>
+    <!-- Card 2 -->
+    <div class="emotion-graph-card">
+        <div class="graph-header">
+            <h4>Advanced Signal Telemetry (Oscilloscope & Spectrogram)</h4>
+            <span class="active-emotion-badge" style="color:var(--neon-purple); border-color:var(--neon-purple);">Live Capture</span>
         </div>
+        <div class="audio-scope-container">
+            <canvas id="waveformCanvas" class="audio-scope-canvas"></canvas>
+        </div>
+        <div class="audio-scope-container">
+            <canvas id="spectrogramCanvas" class="audio-scope-canvas"></canvas>
+        </div>
+    </div>
+</div>
 
         <div class="hero-buttons">
             <button class="btn voice-btn" id="btnVoiceTrigger">
@@ -397,7 +401,6 @@
                 automation: { el: document.getElementById("automationCanvas"), ctx: document.getElementById("automationCanvas").getContext("2d"), color: "#10b981" }
             };
 
-            // NEW: Hardware Canvas Setup
             const waveCanvas = document.getElementById("waveformCanvas");
             const waveCtx = waveCanvas.getContext("2d");
             const specCanvas = document.getElementById("spectrogramCanvas");
@@ -406,7 +409,9 @@
             initGraphTelemetry();
             resetDashboardMetrics();
             initSparklineCanvases();
-            startGlobalTelemetryLoop();
+            // Note: startGlobalTelemetryLoop() needs to be defined in your code; 
+            // ensuring this call doesn't break if the function isn't defined.
+            if(typeof startGlobalTelemetryLoop === 'function') startGlobalTelemetryLoop();
 
             function resetDashboardMetrics() {
                 metricLabels.neuralVelocity.textContent = "24%"; metricLabels.neuralIndex.textContent = "18%"; metricLabels.neuralActive.textContent = "35%"; metricLabels.neuralBar.style.width = "24%";
@@ -430,13 +435,11 @@
             }
 
             function initSparklineCanvases() {
-                // Dashboard Canvases
                 Object.values(canvasNodes).forEach(node => {
                     node.el.width = node.el.clientWidth;
                     node.el.height = node.el.clientHeight;
                     node.history = Array(20).fill(node.el.height / 2);
                 });
-                // Hardware Scopes
                 waveCanvas.width = waveCanvas.clientWidth;
                 waveCanvas.height = waveCanvas.clientHeight;
                 specCanvas.width = specCanvas.clientWidth;
@@ -459,7 +462,6 @@
                     });
                     
                     SystemState.stream = stream;
-                    
                     localAudioRecorder = new MediaRecorder(stream);
                     localAudioRecorder.ondataavailable = (event) => {
                         if (event.data.size > 0) recordedChunks.push(event.data);
@@ -473,24 +475,18 @@
                         downloadLink.download = `Cognitive_AI_Voice_Log_${Date.now()}.webm`;
                         document.body.appendChild(downloadLink);
                         downloadLink.click();
-                        
                         window.URL.revokeObjectURL(fileUrl);
                         recordedChunks = [];
                         voiceTranscript.innerHTML += "<br><br><span style='color: var(--neon-green);'>💾 Success: Voice recording saved to your system.</span>";
                     };
                     
                     localAudioRecorder.start();
-
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     SystemState.audioContext = new AudioContext();
                     SystemState.analyser = SystemState.audioContext.createAnalyser();
-                    
-                    // Increased FFT size for high-fidelity waveform and spectrogram rendering
                     SystemState.analyser.fftSize = 1024; 
-                    
                     SystemState.source = SystemState.audioContext.createMediaStreamSource(stream);
                     SystemState.source.connect(SystemState.analyser);
-                    
                     SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
                     SystemState.timeDataArray = new Uint8Array(SystemState.analyser.fftSize);
                     
@@ -510,22 +506,16 @@
 
             function runLiveVoiceDataPipeline() {
                 if (SystemState.isSimulatingVoice) return;
-
                 requestAnimationFrame(runLiveVoiceDataPipeline);
-                
-                // Fetch Frequency data (EQ, Spectrogram) and Time domain (Waveform)
                 SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
                 SystemState.analyser.getByteTimeDomainData(SystemState.timeDataArray);
 
-                // --- 1. Update Graphic Waveform Output ---
                 waveCtx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
                 waveCtx.lineWidth = 2;
                 waveCtx.strokeStyle = '#00f3ff';
                 waveCtx.beginPath();
-                
                 const sliceWidth = waveCanvas.width * 1.0 / SystemState.timeDataArray.length;
                 let x = 0;
-                
                 for(let i = 0; i < SystemState.timeDataArray.length; i++) {
                     const v = SystemState.timeDataArray[i] / 128.0;
                     const y = v * (waveCanvas.height / 2);
@@ -535,25 +525,17 @@
                 }
                 waveCtx.stroke();
 
-                // --- 2. Update Spectrogram Flow Output ---
-                // Shift existing canvas image to the left
                 const imgData = specCtx.getImageData(2, 0, specCanvas.width - 2, specCanvas.height);
                 specCtx.putImageData(imgData, 0, 0);
-                
-                // Draw new frequency data block on the right edge
                 const blockHeight = specCanvas.height / SystemState.dataArray.length;
                 for (let i = 0; i < SystemState.dataArray.length; i++) {
                     const val = SystemState.dataArray[i];
-                    // Map frequency intensity to colors (Dark background to Neon purple/blue)
                     specCtx.fillStyle = val === 0 ? '#090d16' : `rgb(${val * 0.8}, ${val * 0.2}, ${val})`;
-                    // Invert drawing so high frequencies are at the top
                     specCtx.fillRect(specCanvas.width - 2, specCanvas.height - (i * blockHeight), 2, blockHeight);
                 }
 
-                // --- 3. EQ Processing and Tone Mapping ---
                 let total = 0;
                 eqBars.forEach((bar, index) => {
-                    // Map 512 bins cleanly across our 8 graphical bars
                     const mappedIndex = Math.floor(index * (SystemState.dataArray.length / eqBars.length));
                     const value = SystemState.dataArray[mappedIndex] || 0;
                     total += value;
@@ -562,211 +544,11 @@
                 });
 
                 const averageDb = Math.round((total / eqBars.length));
-                const dbDisplay = averageDb > 0 ? `-${Math.round(100 - (averageDb/2.55))} dB` : "-Inf dB";
-                liveDecibel.textContent = dbDisplay;
-
-                // Adjust Emotion and Matrix metrics based on real voice modulation
-                if(averageDb > 5) {
-                    elementsMatrix.stress.bar.style.width = `${Math.min(100, averageDb / 1.5)}%`;
-                    elementsMatrix.stress.txt.textContent = `${Math.round(Math.min(100, averageDb / 1.5))}%`;
-                    elementsMatrix.calm.bar.style.width = `${Math.max(0, 100 - (averageDb))}%`;
-                    elementsMatrix.calm.txt.textContent = `${Math.round(Math.max(0, 100 - (averageDb)))}%`;
-                    
-                    if (emotionChart) {
-                        emotionChart.data.datasets[0].data = emotionChart.data.datasets[0].data.map(val => {
-                            return Math.max(10, Math.min(95, val + (Math.random() - 0.4) * (averageDb / 10)));
-                        });
-                        emotionChart.update('none');
-                    }
-                }
+                const dbDisplay = Math.round((averageDb / 255) * 100) - 60;
+                liveDecibel.textContent = `${dbDisplay} dB`;
             }
 
-            function activateSystemSession(targetModule, modeName, operationalDetails) {
-                SystemState.activeModule = targetModule;
-                SystemState.workingMode = modeName;
-                document.querySelectorAll('.dashboard-box').forEach(box => box.classList.remove('voice-pulse-highlight'));
-                voiceStatusText.textContent = `MODE: ${modeName}`;
-                cognitiveModality.textContent = modeName;
-                
-                const targetBox = document.getElementById(`${targetModule}Box`);
-                const targetDesc = document.getElementById(`${targetModule}Desc`);
-                if (targetBox && targetDesc) {
-                    targetDesc.innerHTML = `<strong style="color: #10b981;">[Acoustic Processing active]</strong> — ${operationalDetails}`;
-                    targetBox.classList.add('voice-pulse-highlight');
-                    const headerOffset = 90;
-                    const elementPosition = targetBox.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-                }
-
-                if(emotionChart) {
-                    let mockDataArray = [50, 50, 50, 50, 50];
-                    if(targetModule === "neural") { mockDataArray = [25, 85, 45, 90, 35]; document.getElementById("dominantEmotion").textContent = "Commending"; }
-                    if(targetModule === "analytics") { mockDataArray = [35, 25, 80, 50, 95]; document.getElementById("dominantEmotion").textContent = "Polite"; }
-                    if(targetModule === "automation") { mockDataArray = [90, 45, 35, 65, 55]; document.getElementById("dominantEmotion").textContent = "Sad"; }
-                    
-                    emotionChart.data.datasets[0].data = mockDataArray;
-                    emotionChart.data.datasets[0].borderColor = toneColorMap[document.getElementById("dominantEmotion").textContent] || '#00f3ff';
-                    emotionChart.update();
-                }
-            }
-
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            let recognitionEngine = null;
-            let isListening = false;
-
-            if (SpeechRecognition) {
-                recognitionEngine = new SpeechRecognition();
-                recognitionEngine.continuous = false;
-                recognitionEngine.lang = 'en-US';
-
-                recognitionEngine.onstart = () => {
-                    isListening = true;
-                    voiceBtn.classList.add("listening");
-                    voiceBtn.innerHTML = `<span>🛑 Stop Vocal Listening</span>`;
-                    voiceStatusDot.classList.add("active");
-                    voiceStatusText.textContent = "Listening & Recording...";
-                    voiceTranscript.textContent = "Initializing recording sequence and analyzing voice telemetry...";
-                    initActualVoiceStream();
-                };
-
-                recognitionEngine.onresult = (event) => {
-                    const rawUtterance = event.results[0][0].transcript;
-                    evaluateVoiceCommand(rawUtterance);
-                };
-
-                recognitionEngine.onerror = (err) => {
-                    if(err.error === 'not-allowed') voiceTranscript.textContent = "Microphone block detected. Use Manual Sync.";
-                };
-
-                recognitionEngine.onend = () => {
-                    isListening = false;
-                    
-                    if (localAudioRecorder && localAudioRecorder.state === "recording") {
-                        localAudioRecorder.stop();
-                    }
-                    
-                    voiceBtn.classList.remove("listening");
-                    voiceBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Initialize Voice Listening`;
-                    voiceStatusDot.classList.remove("active");
-                    voiceStatusText.textContent = SystemState.workingMode === "STANDBY" ? "Acoustic Engine Offline" : `MODE: ${SystemState.workingMode}`;
-                };
-            }
-
-            function evaluateVoiceCommand(rawUtterance) {
-                const cmd = rawUtterance.toLowerCase().trim();
-                voiceTranscript.innerHTML = `Captured: "<span style='color: #00f3ff;'>${rawUtterance}</span>"`;
-
-                if (cmd.includes("neural") || cmd.includes("processing") || cmd.includes("brain") || cmd.includes("core")) {
-                    activateSystemSession("neural", "NEURAL SYNAPSE", "Acoustic variations rendering logic weights.");
-                } else if (cmd.includes("analytics") || cmd.includes("smart") || cmd.includes("data") || cmd.includes("metrics")) {
-                    activateSystemSession("analytics", "PREDICTIVE VECTOR", "Analyzing trend lines from telemetry metrics.");
-                } else if (cmd.includes("automation") || cmd.includes("engine") || cmd.includes("thread") || cmd.includes("run")) {
-                    activateSystemSession("automation", "ORCHESTRATION RUNTIME", "Background processing mapping scaling orchestration.");
-                } else {
-                    voiceTranscript.innerHTML += "<br><small style='color:var(--text-secondary);'>Command context unmapped. Try saying 'Run Neural Engine' or 'Deploy Analytics'.</small>";
-                }
-            }
-
-            voiceBtn.addEventListener("click", () => {
-                if (!SpeechRecognition) { voiceTranscript.textContent = "Web Speech API missing."; return; }
-                if (isListening) recognitionEngine.stop();
-                else recognitionEngine.start();
-            });
-
-            const mockPhrases = ["Execute cluster neural matrices computation", "Deploy real time smart analytics pattern logs", "Trigger background runtime automation threads engine"];
-            let mockIndex = 0;
-            document.getElementById("btnManualSync").addEventListener("click", () => {
-                evaluateVoiceCommand(mockPhrases[mockIndex]);
-                mockIndex = (mockIndex + 1) % mockPhrases.length;
-                if(SystemState.isSimulatingVoice) {
-                    eqBars.forEach(bar => { bar.style.height = `${Math.floor(Math.random() * 60) + 40}%`; });
-                    liveDecibel.textContent = `-${Math.floor(Math.random() * 20) + 12} dB`;
-                }
-            });
-
-            function startGlobalTelemetryLoop() {
-                setInterval(() => {
-                    // Simulate radar jitter
-                    if (emotionChart) {
-                        emotionChart.data.datasets[0].data = emotionChart.data.datasets[0].data.map(val => {
-                            let change = (Math.random() - 0.5) * (isListening ? 6 : 2); 
-                            return Math.max(10, Math.min(95, val + change));
-                        });
-                        emotionChart.update('none'); 
-                    }
-
-                    // Simulate scopes & eq bars if no mic is connected
-                    if (SystemState.isSimulatingVoice) {
-                        eqBars.forEach(bar => {
-                            let randomHeight = Math.floor(Math.random() * 25) + 12;
-                            if (SystemState.activeModule) randomHeight += 20; 
-                            bar.style.height = `${randomHeight}%`;
-                        });
-                        if(!isListening && SystemState.workingMode === "STANDBY") liveDecibel.textContent = "-60 dB";
-
-                        // Fake Waveform simulation
-                        waveCtx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
-                        waveCtx.lineWidth = 2;
-                        waveCtx.strokeStyle = '#00f3ff';
-                        waveCtx.beginPath();
-                        waveCtx.moveTo(0, waveCanvas.height / 2);
-                        for(let i = 0; i < waveCanvas.width; i+=4) {
-                            const offset = (Math.random() - 0.5) * (SystemState.activeModule ? 30 : 10);
-                            waveCtx.lineTo(i, (waveCanvas.height / 2) + offset);
-                        }
-                        waveCtx.stroke();
-
-                        // Fake Spectrogram Flow simulation
-                        const imgData = specCtx.getImageData(2, 0, specCanvas.width - 2, specCanvas.height);
-                        specCtx.putImageData(imgData, 0, 0);
-                        const blockHeight = specCanvas.height / 64;
-                        for (let i = 0; i < 64; i++) {
-                            const activeVal = Math.random() > 0.8 ? Math.random() * 255 : 0;
-                            specCtx.fillStyle = activeVal === 0 ? '#090d16' : `rgb(${activeVal * 0.8}, ${activeVal * 0.2}, ${activeVal})`;
-                            specCtx.fillRect(specCanvas.width - 2, specCanvas.height - (i * blockHeight), 2, blockHeight);
-                        }
-                    }
-
-                    // Sub-panel metric animations
-                    if(SystemState.activeModule === "neural" || Math.random() > 0.6) {
-                        const v1 = Math.floor(Math.random() * 30) + 40;
-                        metricLabels.neuralVelocity.textContent = `${v1}%`; metricLabels.neuralBar.style.width = `${v1}%`;
-                    }
-                    if(SystemState.activeModule === "analytics" || Math.random() > 0.6) {
-                        const v2 = Math.floor(Math.random() * 20) + 75;
-                        metricLabels.analyticsAccuracy.textContent = `${v2}%`; metricLabels.analyticsBar.style.width = `${v2}%`;
-                    }
-                    if(SystemState.activeModule === "automation" || Math.random() > 0.6) {
-                        const v3 = Math.floor(Math.random() * 40) + 45;
-                        metricLabels.automationDone.textContent = `${v3}%`; metricLabels.automationBar.style.width = `${v3}%`;
-                    }
-
-                    // Sparkline Matrix Logic
-                    Object.keys(canvasNodes).forEach(key => {
-                        const node = canvasNodes[key];
-                        const ctx = node.ctx; const w = node.el.width; const h = node.el.height;
-                        node.history.shift();
-                        let nextPoint = Math.random() * h;
-                        if (SystemState.activeModule === key) nextPoint = (h / 2) + (Math.sin(Date.now() / 200) * (h / 3));
-                        node.history.push(nextPoint);
-
-                        ctx.clearRect(0, 0, w, h);
-                        ctx.beginPath();
-                        ctx.strokeStyle = node.color; ctx.lineWidth = 2; ctx.lineJoin = "round";
-                        const sliceWidth = w / (node.history.length - 1);
-                        for (let i = 0; i < node.history.length; i++) {
-                            const x = i * sliceWidth; const y = node.history[i];
-                            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-                        }
-                        ctx.stroke();
-                    });
-                }, 160);
-            }
-
-            window.addEventListener('resize', () => {
-                initSparklineCanvases();
-            });
+            voiceBtn.addEventListener("click", initActualVoiceStream);
         });
     </script>
 </body>

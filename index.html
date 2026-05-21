@@ -1,703 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cognitive AI - Comprehensive Control Center</title>
-
     <style>
         :root {
             --bg-dark-main: #0b0f19;
             --bg-dark-panel: #141b2d;
             --border-color: #222f4c;
-
             --neon-blue: #00f3ff;
             --neon-purple: #8b5cf6;
             --neon-green: #10b981;
             --neon-rose: #ff3366;
-
             --text-primary: #f0f4f8;
             --text-secondary: #8a99ad;
-
-            --shadow-blue: 0 0 25px rgba(0, 243, 255, 0.2);
-            --shadow-rose: 0 0 25px rgba(255, 51, 102, 0.3);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-dark-main); color: var(--text-primary); }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        nav { padding: 20px 5%; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--neon-blue); }
 
-        body {
-            font-family: "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top, #111827 0%, #0b0f19 50%);
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
+        .hero { padding: 40px 5%; text-align: center; }
+        .voice-console-card { background: var(--bg-dark-panel); padding: 20px; border-radius: 14px; border: 1px solid var(--border-color); max-width: 600px; margin: 20px auto; }
+        
+        .audio-scope-container { width: 100%; height: 100px; background: #090d16; border-radius: 8px; margin: 10px 0; overflow: hidden; }
+        .audio-scope-canvas { width: 100%; height: 100%; display: block; }
 
-        /* =========================
-           NAVIGATION
-        ========================== */
-        nav {
-            width: 100%;
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(11, 15, 25, 0.92);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px 5%; }
+        .dashboard-box { background: var(--bg-dark-panel); padding: 20px; border-radius: 14px; border: 1px solid var(--border-color); transition: all 0.3s ease; }
+        
+        /* Peak Alert Effect */
+        .peak-alert { filter: hue-rotate(270deg) brightness(1.2); border-color: var(--neon-rose); box-shadow: 0 0 25px rgba(255, 51, 102, 0.3); }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neon-blue);
-            letter-spacing: 1px;
-            text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
-        }
-
-        /* =========================
-           HERO SECTION
-        ========================== */
-        .hero {
-            padding: 50px 5%;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            background: linear-gradient(
-                135deg,
-                var(--neon-blue),
-                var(--neon-purple)
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-        }
-
-        /* =========================
-           CARDS
-        ========================== */
-        .voice-console-card,
-        .dashboard-box {
-            background: linear-gradient(
-                180deg,
-                rgba(20, 27, 45, 0.95),
-                rgba(15, 20, 35, 0.98)
-            );
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: var(--shadow-blue);
-            transition: 0.3s ease;
-        }
-
-        .voice-console-card {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 25px;
-        }
-
-        .dashboard-box {
-            padding: 22px;
-            min-height: 180px;
-        }
-
-        .dashboard-box:hover,
-        .voice-console-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 243, 255, 0.5);
-        }
-
-        /* =========================
-           STATUS
-        ========================== */
-        .status-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #555;
-        }
-
-        .status-dot.active {
-            background: var(--neon-green);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.9);
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.2);
-                opacity: 0.7;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* =========================
-           AUDIO VISUALIZER
-        ========================== */
-        .audio-scope-container {
-            width: 100%;
-            height: 140px;
-            margin: 18px 0;
-            background: #090d16;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #182236;
-        }
-
-        .audio-scope-canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        /* =========================
-           BUTTONS
-        ========================== */
-        .btn {
-            padding: 15px 28px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: white;
-            margin-top: 15px;
-
-            background: linear-gradient(
-                135deg,
-                var(--neon-purple),
-                var(--neon-blue)
-            );
-
-            transition: 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
-        }
-
-        /* =========================
-           LIVE DB
-        ========================== */
-        #liveDecibel {
-            margin-top: 20px;
-            font-size: 2.2rem;
-            color: var(--neon-blue);
-            text-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
-        }
-
-        /* =========================
-           DASHBOARD GRID
-        ========================== */
-        .dashboard {
-            padding: 20px 5% 50px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .dashboard-box h3 {
-            margin-bottom: 18px;
-            color: var(--neon-blue);
-        }
-
-        /* =========================
-           EQ BARS
-        ========================== */
-        .eq-container {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 6px;
-            height: 100px;
-        }
-
-        .eq-bar {
-            width: 14px;
-            height: 20%;
-            border-radius: 4px 4px 0 0;
-            background: linear-gradient(
-                180deg,
-                var(--neon-blue),
-                var(--neon-purple)
-            );
-            transition: height 0.08s linear;
-        }
-
-        /* =========================
-           METRIC VALUES
-        ========================== */
-        .metric-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--neon-green);
-            margin-top: 15px;
-        }
-
-        /* =========================
-           PROGRESS BAR
-        ========================== */
-        .progress-wrapper {
-            width: 100%;
-            height: 12px;
-            background: #0c1322;
-            border-radius: 30px;
-            overflow: hidden;
-            margin-top: 18px;
-            border: 1px solid #1d2942;
-        }
-
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                var(--neon-blue),
-                var(--neon-purple)
-            );
-            transition: width 1s ease;
-        }
-
-        /* =========================
-           PEAK ALERT
-        ========================== */
-        .peak-alert {
-            border-color: var(--neon-rose);
-            box-shadow: var(--shadow-rose);
-            filter: brightness(1.1);
-        }
-
-        /* =========================
-           FOOTER
-        ========================== */
-        footer {
-            text-align: center;
-            padding: 25px 10px;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================== */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            #liveDecibel {
-                font-size: 1.8rem;
-            }
-
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
+        .btn { padding: 15px 30px; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue)); color: white; margin-top: 20px; }
+        
+        .eq-container { display: flex; align-items: flex-end; justify-content: center; gap: 5px; height: 50px; margin-top: 10px; }
+        .eq-bar { width: 10px; background: var(--neon-blue); transition: height 0.1s ease; }
     </style>
 </head>
-
 <body>
 
-    <!-- =========================
-         NAVIGATION
-    ========================== -->
     <nav>
         <div class="logo">COGNITIVE AI // SYSTEM</div>
     </nav>
 
-    <!-- =========================
-         HERO SECTION
-    ========================== -->
     <section class="hero">
         <h1>Neural Acoustic Interface</h1>
-
-        <p>
-            Real-Time Cognitive Voice Infrastructure & Interactive AI Dashboard
-        </p>
-
         <div class="voice-console-card">
-
-            <div class="status-wrapper">
-                <div id="voiceStatusDot" class="status-dot"></div>
-                <div id="voiceStatusText">
-                    Acoustic Engine Offline
-                </div>
-            </div>
-
+            <div id="voiceStatusText">Acoustic Engine Offline</div>
             <div class="audio-scope-container">
-                <canvas
-                    id="waveformCanvas"
-                    class="audio-scope-canvas"
-                    width="1200"
-                    height="300"
-                ></canvas>
+                <canvas id="waveformCanvas" class="audio-scope-canvas"></canvas>
             </div>
-
-            <button class="btn" id="btnVoiceTrigger">
-                INITIALIZE SENSORS
-            </button>
-
+            <button class="btn" id="btnVoiceTrigger">INITIALIZE SENSORS</button>
             <h2 id="liveDecibel">-60 dB</h2>
         </div>
     </section>
 
-    <!-- =========================
-         DASHBOARD
-    ========================== -->
     <section class="dashboard">
-
-        <!-- Voice EQ -->
         <div class="dashboard-box">
             <h3>Voice Frequency EQ</h3>
-
             <div class="eq-container" id="eqContainer">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+                <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
             </div>
         </div>
-
-        <!-- Neural Velocity -->
         <div class="dashboard-box">
             <h3>Neural Velocity</h3>
-
-            <div class="metric-value" id="valNeuralVelocity">
-                0%
-            </div>
-
-            <div class="progress-wrapper">
-                <div class="progress-fill" id="neuralBar"></div>
-            </div>
+            <p id="valNeuralVelocity">0%</p>
         </div>
-
-        <!-- Analytics -->
-        <div class="dashboard-box">
-            <h3>Analytics Accuracy</h3>
-
-            <div class="metric-value" id="valAnalyticsAccuracy">
-                0%
-            </div>
-        </div>
-
-        <!-- Automation -->
-        <div class="dashboard-box">
-            <h3>Automation Completion</h3>
-
-            <div class="metric-value" id="valAutomationDone">
-                0%
-            </div>
-        </div>
-
     </section>
 
-    <!-- =========================
-         FOOTER
-    ========================== -->
-    <footer>
-        &copy; 2026 Cognitive Speech AI Web Project - Ramesh Kumar K
+    <script>
+        const SystemState = { audioContext: null, analyser: null, dataArray: null, timeDataArray: null };
+        const waveCanvas = document.getElementById("waveformCanvas");
+        const waveCtx = waveCanvas.getContext("2d");
+
+        async function initSystem() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                SystemState.analyser = SystemState.audioContext.createAnalyser();
+                SystemState.analyser.fftSize = 2048;
+                
+                const source = SystemState.audioContext.createMediaStreamSource(stream);
+                source.connect(SystemState.analyser);
+                
+                SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
+                SystemState.timeDataArray = new Uint8Array(SystemState.analyser.fftSize);
+                
+                document.getElementById("voiceStatusText").textContent = "Acoustic Engine Online";
+                renderLoop();
+            } catch (err) { alert("Microphone access denied."); }
+        }
+
+        function renderLoop() {
+            requestAnimationFrame(renderLoop);
+            SystemState.analyser.getByteTimeDomainData(SystemState.timeDataArray);
+            SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+
+            // Draw Waveform
+            waveCtx.fillStyle = "#090d16";
+            waveCtx.fillRect(0, 0, waveCanvas.width, waveCanvas.height);
+            waveCtx.strokeStyle = "#00f3ff";
+            waveCtx.beginPath();
+            let sliceWidth = waveCanvas.width / SystemState.analyser.fftSize;
+            let x = 0;
+            for (let i = 0; i < SystemState.analyser.fftSize; i++) {
+                let v = SystemState.timeDataArray[i] / 128.0;
+                let y = v * waveCanvas.height / 2;
+                i === 0 ? waveCtx.moveTo(x, y) : waveCtx.lineTo(x, y);
+                x += sliceWidth;
+            }
+            waveCtx.stroke();
+
+            // Calculate Decibels & Peak Alert
+            let sum = SystemState.dataArray.reduce((a, b) => a + b, 0);
+            let db = Math.round((sum / SystemState.dataArray.length / 255) * 100 - 60);
+            document.getElementById("liveDecibel").textContent = db + " dB";
+
+            const boxes = document.querySelectorAll('.dashboard-box');
+            if (db > -20) {
+                boxes.forEach(b => b.classList.add('peak-alert'));
+            } else {
+                boxes.forEach(b => b.classList.remove('peak-alert'));
+            }
+
+            // Update EQ bars
+            document.querySelectorAll('.eq-bar').forEach((bar, i) => {
+                bar.style.height = (SystemState.dataArray[i * 10] / 255) * 100 + "%";
+            });
+            
+            document.getElementById("valNeuralVelocity").textContent = Math.floor(Math.random() * 20 + 80) + "%";
+        }
+
+        document.getElementById("btnVoiceTrigger").addEventListener("click", initSystem);
+    </script>
+</body>
+</html>
+        &copy; 2026 Cognitive Speech AI Web Project Ramesh Kumar K
     </footer>
 
-    <!-- =========================
-         JAVASCRIPT
-    ========================== -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
+<<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const SystemState = {
+            audioContext: null,
+            analyser: null,
+            dataArray: null,
+            timeDataArray: null
+        };
 
-            const SystemState = {
-                audioContext: null,
-                analyser: null,
-                dataArray: null,
-                timeDataArray: null,
-                animationFrame: null
-            };
+        // --- Visualizers ---
+        const waveCanvas = document.getElementById("waveformCanvas");
+        const waveCtx = waveCanvas.getContext("2d");
+        const specCanvas = document.getElementById("spectrogramCanvas");
+        const specCtx = specCanvas.getContext("2d");
 
-            // =========================
-            // ELEMENTS
-            // =========================
-            const waveCanvas = document.getElementById("waveformCanvas");
-            const waveCtx = waveCanvas.getContext("2d");
+        async function initActualVoiceStream() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                SystemState.audioContext = new AudioContext();
+                
+                SystemState.analyser = SystemState.audioContext.createAnalyser();
+                SystemState.analyser.fftSize = 2048;
+                
+                const source = SystemState.audioContext.createMediaStreamSource(stream);
+                source.connect(SystemState.analyser);
+                
+                SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
+                SystemState.timeDataArray = new Uint8Array(SystemState.analyser.fftSize);
 
-            const statusDot = document.getElementById("voiceStatusDot");
-            const statusText = document.getElementById("voiceStatusText");
-
-            const liveDecibel = document.getElementById("liveDecibel");
-            const neuralVelocity = document.getElementById("valNeuralVelocity");
-            const analyticsAccuracy = document.getElementById("valAnalyticsAccuracy");
-            const automationDone = document.getElementById("valAutomationDone");
-
-            const neuralBar = document.getElementById("neuralBar");
-            const dashboardBoxes = document.querySelectorAll(".dashboard-box");
-
-            const eqBars = document.querySelectorAll(".eq-bar");
-
-            // =========================
-            // RESIZE CANVAS
-            // =========================
-            function resizeCanvas() {
-                waveCanvas.width = waveCanvas.offsetWidth;
-                waveCanvas.height = waveCanvas.offsetHeight;
+                document.getElementById("voiceStatusDot").classList.add('active');
+                document.getElementById("voiceStatusText").textContent = "Acoustic Engine Online";
+                
+                renderPipeline();
+            } catch (err) {
+                document.getElementById("voiceTranscript").textContent = "System Error: Hardware Access Denied.";
             }
+        }
 
-            resizeCanvas();
-            window.addEventListener("resize", resizeCanvas);
+        function renderPipeline() {
+            requestAnimationFrame(renderPipeline);
+            SystemState.analyser.getByteTimeDomainData(SystemState.timeDataArray);
+            SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
 
-            // =========================
-            // INIT AUDIO
-            // =========================
-            async function initActualVoiceStream() {
-
-                if (SystemState.audioContext) {
-                    return;
-                }
-
-                try {
-
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        audio: true
-                    });
-
-                    const AudioContext =
-                        window.AudioContext || window.webkitAudioContext;
-
-                    SystemState.audioContext = new AudioContext();
-
-                    SystemState.analyser =
-                        SystemState.audioContext.createAnalyser();
-
-                    SystemState.analyser.fftSize = 2048;
-                    SystemState.analyser.smoothingTimeConstant = 0.8;
-
-                    const source =
-                        SystemState.audioContext.createMediaStreamSource(stream);
-
-                    source.connect(SystemState.analyser);
-
-                    SystemState.dataArray = new Uint8Array(
-                        SystemState.analyser.frequencyBinCount
-                    );
-
-                    SystemState.timeDataArray = new Uint8Array(
-                        SystemState.analyser.fftSize
-                    );
-
-                    // UI Update
-                    statusDot.classList.add("active");
-                    statusText.textContent = "Acoustic Engine Online";
-
-                    renderPipeline();
-
-                } catch (error) {
-
-                    console.error(error);
-
-                    statusText.textContent =
-                        "Hardware Access Denied";
-
-                    alert("Microphone access denied.");
-                }
+            // 1. Draw Waveform
+            waveCtx.fillStyle = "#090d16";
+            waveCtx.fillRect(0, 0, waveCanvas.width, waveCanvas.height);
+            waveCtx.lineWidth = 2;
+            waveCtx.strokeStyle = "#00f3ff";
+            waveCtx.beginPath();
+            let sliceWidth = waveCanvas.width * 1.0 / SystemState.analyser.fftSize;
+            let x = 0;
+            for (let i = 0; i < SystemState.analyser.fftSize; i++) {
+                let v = SystemState.timeDataArray[i] / 128.0;
+                let y = v * waveCanvas.height / 2;
+                i === 0 ? waveCtx.moveTo(x, y) : waveCtx.lineTo(x, y);
+                x += sliceWidth;
             }
+            waveCtx.stroke();
 
-            // =========================
-            // RENDER LOOP
-            // =========================
-            function renderPipeline() {
+            // 2. Update UI Metrics
+            const db = Math.round((SystemState.dataArray[0] / 255) * 100 - 60);
+            document.getElementById("liveDecibel").textContent = db + " dB";
+        }
 
-                SystemState.animationFrame =
-                    requestAnimationFrame(renderPipeline);
+        // --- Dashboard Simulation Logic ---
+        setInterval(() => {
+            document.getElementById("valNeuralVelocity").textContent = Math.floor(Math.random() * 40 + 50) + "%";
+            document.getElementById("valAnalyticsAccuracy").textContent = Math.floor(Math.random() * 10 + 90) + "%";
+            document.getElementById("valAutomationDone").textContent = Math.floor(Math.random() * 20 + 70) + "%";
+            
+            // Progress Bar Update
+            document.getElementById("neuralBar").style.width = Math.random() * 100 + "%";
+        }, 1500);
 
-                if (!SystemState.analyser) return;
-
-                SystemState.analyser.getByteTimeDomainData(
-                    SystemState.timeDataArray
-                );
-
-                SystemState.analyser.getByteFrequencyData(
-                    SystemState.dataArray
-                );
-
-                drawWaveform();
-                updateMetrics();
-                updateEQ();
-            }
-
-            // =========================
-            // DRAW WAVEFORM
-            // =========================
-            function drawWaveform() {
-
-                waveCtx.clearRect(
-                    0,
-                    0,
-                    waveCanvas.width,
-                    waveCanvas.height
-                );
-
-                waveCtx.fillStyle = "#090d16";
-
-                waveCtx.fillRect(
-                    0,
-                    0,
-                    waveCanvas.width,
-                    waveCanvas.height
-                );
-
-                waveCtx.lineWidth = 2;
-                waveCtx.strokeStyle = "#00f3ff";
-
-                waveCtx.beginPath();
-
-                const sliceWidth =
-                    waveCanvas.width / SystemState.timeDataArray.length;
-
-                let x = 0;
-
-                for (
-                    let i = 0;
-                    i < SystemState.timeDataArray.length;
-                    i++
-                ) {
-
-                    const v =
-                        SystemState.timeDataArray[i] / 128.0;
-
-                    const y =
-                        (v * waveCanvas.height) / 2;
-
-                    if (i === 0) {
-                        waveCtx.moveTo(x, y);
-                    } else {
-                        waveCtx.lineTo(x, y);
-                    }
-
-                    x += sliceWidth;
-                }
-
-                waveCtx.lineTo(
-                    waveCanvas.width,
-                    waveCanvas.height / 2
-                );
-
-                waveCtx.stroke();
-            }
-
-            // =========================
-            // UPDATE METRICS
-            // =========================
-            function updateMetrics() {
-
-                let sum = 0;
-
-                for (let i = 0; i < SystemState.dataArray.length; i++) {
-                    sum += SystemState.dataArray[i];
-                }
-
-                const avg = sum / SystemState.dataArray.length;
-
-                const db = Math.round((avg / 255) * 100 - 60);
-
-                liveDecibel.textContent = `${db} dB`;
-
-                // Peak Alert
-                if (db > -20) {
-
-                    dashboardBoxes.forEach(box => {
-                        box.classList.add("peak-alert");
-                    });
-
-                } else {
-
-                    dashboardBoxes.forEach(box => {
-                        box.classList.remove("peak-alert");
-                    });
-                }
-
-                // Dynamic Simulation
-                const velocity =
-                    Math.floor(Math.random() * 20 + 80);
-
-                const accuracy =
-                    Math.floor(Math.random() * 10 + 90);
-
-                const automation =
-                    Math.floor(Math.random() * 20 + 70);
-
-                neuralVelocity.textContent = `${velocity}%`;
-                analyticsAccuracy.textContent = `${accuracy}%`;
-                automationDone.textContent = `${automation}%`;
-
-                neuralBar.style.width = `${velocity}%`;
-            }
-
-            // =========================
-            // UPDATE EQ
-            // =========================
-            function updateEQ() {
-
-                eqBars.forEach((bar, index) => {
-
-                    const value =
-                        SystemState.dataArray[index * 8] || 0;
-
-                    const height =
-                        Math.max(10, (value / 255) * 100);
-
-                    bar.style.height = `${height}%`;
-                });
-            }
-
-            // =========================
-            // BUTTON EVENT
-            // =========================
-            document
-                .getElementById("btnVoiceTrigger")
-                .addEventListener(
-                    "click",
-                    initActualVoiceStream
-                );
-
-        });
-    </script>
-
+        document.getElementById("btnVoiceTrigger").addEventListener("click", initActualVoiceStream);
+    });
+</script>
 </body>
 </html>

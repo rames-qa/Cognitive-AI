@@ -6,7 +6,6 @@
     <title>Cognitive AI - Comprehensive Control Center</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Include Chart.js via CDN for the emotion telemetry graph component -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- General Layout & Design Tokens --- */
@@ -22,11 +21,7 @@
             --text-secondary: #8a99ad;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Poppins', sans-serif;
@@ -61,45 +56,14 @@
             -webkit-text-fill-color: transparent;
         }
 
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 20px;
-        }
-
-        nav ul li a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: color 0.3s ease;
-            padding: 5px 10px;
-        }
-
-        nav ul li a:hover {
-            color: var(--neon-blue);
-        }
+        nav ul { display: flex; list-style: none; gap: 20px; }
+        nav ul li a { color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s ease; padding: 5px 10px; }
+        nav ul li a:hover { color: var(--neon-blue); }
 
         /* --- Responsive Hero Console --- */
-        .hero {
-            padding: 40px 5% 20px;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            line-height: 1.3;
-        }
-
-        .hero p {
-            color: var(--text-secondary);
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-        }
+        .hero { padding: 40px 5% 20px; text-align: center; max-width: 900px; margin: 0 auto; }
+        .hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .hero p { color: var(--text-secondary); margin-bottom: 25px; font-size: 0.95rem; }
 
         .voice-console-card {
             background: var(--bg-dark-panel);
@@ -122,274 +86,64 @@
         }
 
         .graph-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #1e2942;
-            padding-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #1e2942; padding-bottom: 10px;
         }
-
-        .graph-header h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
+        .graph-header h4 { font-size: 1rem; font-weight: 600; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; }
         .active-emotion-badge {
-            background: #1e2942;
-            color: var(--neon-blue);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            transition: all 0.3s ease;
+            background: #1e2942; color: var(--neon-blue); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; border: 1px solid rgba(0, 243, 255, 0.2); transition: all 0.3s ease;
         }
 
-        .chart-wrapper {
-            position: relative;
-            height: 260px;
-            width: 100%;
-            margin: 0 auto;
-        }
+        .chart-wrapper { position: relative; height: 260px; width: 100%; margin: 0 auto; }
+        #emotionChart { width: 100% !important; height: 100% !important; }
 
-        #emotionChart {
-            width: 100% !important;
-            height: 100% !important;
-        }
+        .voice-status-indicator { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; font-weight: 600; font-size: 0.9rem; }
+        .status-dot { width: 10px; height: 10px; background-color: #64748b; border-radius: 50%; transition: all 0.4s ease; }
+        .status-dot.active { background-color: var(--neon-rose); box-shadow: 0 0 12px var(--neon-rose); animation: pulseGlow 1.5s infinite alternate; }
 
-        .voice-status-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #64748b;
-            border-radius: 50%;
-            transition: all 0.4s ease;
-        }
-
-        .status-dot.active {
-            background-color: var(--neon-rose);
-            box-shadow: 0 0 12px var(--neon-rose);
-            animation: pulseGlow 1.5s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
+        @keyframes pulseGlow { 0% { opacity: 0.6; } 100% { opacity: 1; } }
 
         .voice-transcript-box {
-            background: #090d16;
-            padding: 15px;
-            border-radius: 10px;
-            font-family: monospace;
-            min-height: 65px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            border: 1px solid #1a243a;
-            word-break: break-word;
+            background: #090d16; padding: 15px; border-radius: 10px; font-family: monospace; min-height: 65px; font-size: 0.85rem; color: var(--text-secondary); border: 1px solid #1a243a; word-break: break-word;
         }
 
-        .hero-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-        }
-
-        .voice-btn {
-            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-        }
-
-        .voice-btn.listening {
-            background: var(--neon-rose);
-            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
-        }
-
-        .secondary-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .secondary-btn:hover {
-            background: rgba(34, 47, 76, 0.4);
-            border-color: var(--neon-blue);
-        }
+        .hero-buttons { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 400px; margin: 0 auto; }
+        .btn { width: 100%; padding: 15px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; font-size: 0.95rem; }
+        
+        .voice-btn { background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue)); color: #fff; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+        .voice-btn.listening { background: var(--neon-rose); box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3); }
+        
+        .secondary-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
+        .secondary-btn:hover { background: rgba(34, 47, 76, 0.4); border-color: var(--neon-blue); }
 
         /* --- Main Dashboard Sections Matrix --- */
-        .dashboard {
-            padding: 40px 5%;
-        }
+        .dashboard { padding: 40px 5%; }
+        .section-title { font-size: 1.5rem; text-align: center; margin-bottom: 30px; }
+        .cognitive-grid, .dashboard-container { display: flex; flex-direction: column; gap: 20px; width: 100%; margin-bottom: 25px; }
 
-        .section-title {
-            font-size: 1.5rem;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+        .sub-panel, .dashboard-box { background: var(--bg-dark-panel); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; transition: border-color 0.4s ease, box-shadow 0.4s ease; }
+        .voice-pulse-highlight { border-color: var(--neon-blue) !important; box-shadow: 0 0 20px rgba(0, 243, 255, 0.25); }
 
-        .cognitive-grid, .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
-            margin-bottom: 25px;
-        }
+        .sub-panel-header, .dashboard-header-group { display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #1e2942; padding-bottom: 12px; margin-bottom: 15px; }
+        .sub-panel-header h3, .glow-title { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
-        .sub-panel, .dashboard-box {
-            background: var(--bg-dark-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.4s ease, box-shadow 0.4s ease;
-        }
+        .live-pulse-dot { width: 8px; height: 8px; background-color: var(--neon-green); border-radius: 50%; box-shadow: 0 0 8px var(--neon-green); }
+        .live-pulse-dot.active { animation: trackingPulse 1.6s infinite alternate; }
+        @keyframes trackingPulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
 
-        .voice-pulse-highlight {
-            border-color: var(--neon-blue) !important;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.25);
-        }
-
-        .sub-panel-header, .dashboard-header-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            border-bottom: 1px solid #1e2942;
-            padding-bottom: 12px;
-            margin-bottom: 15px;
-        }
-
-        .sub-panel-header h3, .glow-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .live-pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--neon-green);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--neon-green);
-        }
-
-        .live-pulse-dot.active {
-            animation: trackingPulse 1.6s infinite alternate;
-        }
-
-        @keyframes trackingPulse {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            100% { transform: scale(1.2); opacity: 1; }
-        }
-
-        .audio-pill-badge {
-            align-self: flex-start;
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--neon-green);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .live-description {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            min-height: 48px;
-        }
+        .audio-pill-badge { align-self: flex-start; background: rgba(16, 185, 129, 0.1); color: var(--neon-green); padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .live-description { font-size: 0.85rem; color: var(--text-secondary); min-height: 48px; }
 
         /* --- Audio EQ Equalizer Graphic Strip --- */
-        .voice-bar-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            height: 70px;
-            margin: 10px 0;
-            background: #090d16;
-            border-radius: 8px;
-            padding: 0 10px;
-        }
-
-        .eq-bar {
-            flex: 1;
-            max-width: 8px;
-            height: 25%;
-            background: var(--neon-blue);
-            border-radius: 3px;
-            transition: height 0.1s ease;
-        }
+        .voice-bar-container { display: flex; align-items: center; justify-content: center; gap: 6px; height: 70px; margin: 10px 0; background: #090d16; border-radius: 8px; padding: 0 10px; }
+        .eq-bar { flex: 1; max-width: 8px; height: 25%; background: var(--neon-blue); border-radius: 3px; transition: height 0.1s ease; }
 
         /* --- Progress Bars & Tracks Matrix --- */
-        .matrix-track-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        .matrix-track-wrapper { display: flex; flex-direction: column; gap: 15px; }
+        .metric-label-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; }
+        .metric-label-row .metric-value { color: #fff; font-weight: 600; }
 
-        .metric-label-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
-
-        .metric-label-row .metric-value {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .track-bg, .progress-bar {
-            background: #090d16;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .track-fill, .progress {
-            height: 100%;
-            width: 0%;
-            border-radius: 4px;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .track-bg, .progress-bar { background: #090d16; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+        .track-fill, .progress { height: 100%; width: 0%; border-radius: 4px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         .progress { background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); }
         #analyticsBox .progress { background: linear-gradient(to right, var(--neon-purple), var(--neon-green)); }
@@ -400,108 +154,27 @@
         .track-fill.load { background: var(--neon-blue); }
 
         /* --- Internal Grid Metrics Display --- */
-        .dashboard-metrics-grid, .stats-matrix {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
+        .dashboard-metrics-grid, .stats-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .dashboard-metrics-grid { grid-template-columns: 1fr 1fr; }
+        .sub-metric-card, .stat-node { background: #090d16; padding: 10px; border-radius: 8px; border: 1px solid #1a243a; text-align: center; }
+        .sub-metric-card p, .stat-node small { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; display: block; }
+        .sub-metric-card h5, .stat-node span { font-size: 1rem; font-weight: 600; color: #fff; margin-top: 2px; }
 
-        .dashboard-metrics-grid {
-            grid-template-columns: 1fr 1fr;
-        }
+        .live-telemetry-canvas { width: 100%; height: 55px; background: #0d1322; border-radius: 6px; display: block; margin-top: 10px; }
 
-        .sub-metric-card, .stat-node {
-            background: #090d16;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #1a243a;
-            text-align: center;
-        }
+        footer { text-align: center; padding: 30px 20px; color: var(--text-secondary); border-top: 1px solid var(--border-color); font-size: 0.8rem; background: #090d16; }
 
-        .sub-metric-card p, .stat-node small {
-            font-size: 0.65rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: block;
-        }
-
-        .sub-metric-card h5, .stat-node span {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #fff;
-            margin-top: 2px;
-        }
-
-        .live-telemetry-canvas {
-            width: 100%;
-            height: 55px;
-            background: #0d1322;
-            border-radius: 6px;
-            display: block;
-            margin-top: 10px;
-        }
-
-        /* --- Footer --- */
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
-            font-size: 0.8rem;
-            background: #090d16;
-        }
-
-        /* ======================================================== */
-        /* MEDIA BREAKPOINTS FOR FULL LAPTOP / PC DISPLAYS           */
-        /* ======================================================== */
+        /* --- PC DISPLAYS --- */
         @media (min-width: 768px) {
-            nav {
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 18px 8%;
-            }
-
-            .hero {
-                padding: 60px 8% 30px;
-            }
-
-            .hero h1 {
-                font-size: 2.6rem;
-            }
-
-            .hero-buttons {
-                flex-direction: row;
-                max-width: 100%;
-            }
-
-            .sub-panel-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .audio-pill-badge {
-                align-self: center;
-            }
-
-            .cognitive-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 25px;
-            }
-
-            .dashboard-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 25px;
-            }
-
-            .section-title {
-                font-size: 2rem;
-                margin-bottom: 40px;
-            }
+            nav { flex-direction: row; justify-content: space-between; padding: 18px 8%; }
+            .hero { padding: 60px 8% 30px; }
+            .hero h1 { font-size: 2.6rem; }
+            .hero-buttons { flex-direction: row; max-width: 100%; }
+            .sub-panel-header { flex-direction: row; justify-content: space-between; align-items: center; }
+            .audio-pill-badge { align-self: center; }
+            .cognitive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+            .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+            .section-title { font-size: 2rem; margin-bottom: 40px; }
         }
     </style>
 </head>
@@ -517,14 +190,14 @@
 
     <section class="hero" id="home">
         <h1>Future Generation Cognitive Artificial Intelligence</h1>
-        <p>Speak to deploy system tracking and route focus parameters dynamically across processing cores.</p>
+        <p>Speak to deploy system tracking. Your voice is locally recorded, processed with noise-cancellation, and downloaded directly to your system when finished.</p>
 
         <div class="voice-console-card">
             <div class="voice-status-indicator">
                 <span class="status-dot" id="voiceStatusDot"></span>
                 <span id="voiceStatusText">Acoustic Engine Offline</span>
             </div>
-            <div class="voice-transcript-box" id="voiceTranscript">Click below or use Manual Sync to generate matrix variables data paths...</div>
+            <div class="voice-transcript-box" id="voiceTranscript">Click below to start secure local voice recording and telemetry...</div>
         </div>
 
         <div class="emotion-graph-card">
@@ -557,19 +230,13 @@
                     <span class="audio-pill-badge" id="voiceModuleStatus">Standby Monitoring</span>
                 </div>
                 <div class="voice-bar-container" id="eqContainer">
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
                 </div>
                 <div class="dashboard-metrics-grid">
                     <div class="sub-metric-card">
-                        <p>Capture Base</p>
-                        <h5 id="liveSampleRate">44.1 kHz</h5>
+                        <p>Noise Cancellation</p>
+                        <h5 style="color:var(--neon-green);">Active</h5>
                     </div>
                     <div class="sub-metric-card">
                         <p>Decibel Level</p>
@@ -585,24 +252,15 @@
                 </div>
                 <div class="matrix-track-wrapper">
                     <div class="metric-bar-group">
-                        <div class="metric-label-row">
-                            <span>Calm Stability</span>
-                            <span class="metric-value" id="txtCalm">0%</span>
-                        </div>
+                        <div class="metric-label-row"><span>Calm Stability</span><span class="metric-value" id="txtCalm">0%</span></div>
                         <div class="track-bg"><div class="track-fill calm" id="barCalm"></div></div>
                     </div>
                     <div class="metric-bar-group">
-                        <div class="metric-label-row">
-                            <span>Vocal Friction</span>
-                            <span class="metric-value" id="txtStress">0%</span>
-                        </div>
+                        <div class="metric-label-row"><span>Vocal Friction</span><span class="metric-value" id="txtStress">0%</span></div>
                         <div class="track-bg"><div class="track-fill stress" id="barStress"></div></div>
                     </div>
                     <div class="metric-bar-group">
-                        <div class="metric-label-row">
-                            <span>Processing Load</span>
-                            <span class="metric-value" id="txtLoad">0%</span>
-                        </div>
+                        <div class="metric-label-row"><span>Processing Load</span><span class="metric-value" id="txtLoad">0%</span></div>
                         <div class="track-bg"><div class="track-fill load" id="barLoad"></div></div>
                     </div>
                 </div>
@@ -611,7 +269,6 @@
         </div>
 
         <div class="dashboard-container">
-
             <div class="dashboard-box" id="neuralBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Neural Processing</h3>
@@ -653,7 +310,6 @@
                 </div>
                 <canvas id="automationCanvas" class="live-telemetry-canvas"></canvas>
             </div>
-
         </div>
     </section>
 
@@ -664,7 +320,6 @@
    <script>
         document.addEventListener("DOMContentLoaded", () => {
             
-            // System Tracking Variables Matrix
             const SystemState = {
                 activeModule: null,
                 workingMode: "STANDBY",
@@ -676,16 +331,13 @@
                 isSimulatingVoice: true
             };
 
-            // Graph Tracking Settings
+            // NEW: Media Recorder variables for local saving
+            let localAudioRecorder = null;
+            let recordedChunks = [];
+
             let emotionChart = null;
             const emotionLabels = ['Sad', 'Anger', 'Happiest', 'Commending', 'Polite'];
-            const toneColorMap = {
-                'Sad': '#3b82f6',        
-                'Anger': '#ff3366',      
-                'Happiest': '#eab308',   
-                'Commending': '#8b5cf6', 
-                'Polite': '#10b981'      
-            };
+            const toneColorMap = { 'Sad': '#3b82f6', 'Anger': '#ff3366', 'Happiest': '#eab308', 'Commending': '#8b5cf6', 'Polite': '#10b981' };
 
             const voiceBtn = document.getElementById("btnVoiceTrigger");
             const voiceStatusDot = document.getElementById("voiceStatusDot");
@@ -703,49 +355,27 @@
             };
 
             const metricLabels = {
-                neuralVelocity: document.getElementById("valNeuralVelocity"),
-                neuralIndex: document.getElementById("valNeuralIndex"),
-                neuralActive: document.getElementById("valNeuralActive"),
-                analyticsAccuracy: document.getElementById("valAnalyticsAccuracy"),
-                analyticsForecast: document.getElementById("valAnalyticsForecast"),
-                analyticsEfficiency: document.getElementById("valAnalyticsEfficiency"),
-                automationDone: document.getElementById("valAutomationDone"),
-                automationLoad: document.getElementById("valAutomationLoad"),
-                automationFlow: document.getElementById("valAutomationFlow"),
-                neuralBar: document.getElementById("neuralBar"),
-                analyticsBar: document.getElementById("analyticsBar"),
-                automationBar: document.getElementById("automationBar")
+                neuralVelocity: document.getElementById("valNeuralVelocity"), neuralIndex: document.getElementById("valNeuralIndex"), neuralActive: document.getElementById("valNeuralActive"),
+                analyticsAccuracy: document.getElementById("valAnalyticsAccuracy"), analyticsForecast: document.getElementById("valAnalyticsForecast"), analyticsEfficiency: document.getElementById("valAnalyticsEfficiency"),
+                automationDone: document.getElementById("valAutomationDone"), automationLoad: document.getElementById("valAutomationLoad"), automationFlow: document.getElementById("valAutomationFlow"),
+                neuralBar: document.getElementById("neuralBar"), analyticsBar: document.getElementById("analyticsBar"), automationBar: document.getElementById("automationBar")
             };
 
-            // Canvas Context References
             const canvasNodes = {
                 neural: { el: document.getElementById("neuralCanvas"), ctx: document.getElementById("neuralCanvas").getContext("2d"), color: "#00f3ff" },
                 analytics: { el: document.getElementById("analyticsCanvas"), ctx: document.getElementById("analyticsCanvas").getContext("2d"), color: "#8b5cf6" },
                 automation: { el: document.getElementById("automationCanvas"), ctx: document.getElementById("automationCanvas").getContext("2d"), color: "#10b981" }
             };
 
-            // Initialize Everything
             initGraphTelemetry();
             resetDashboardMetrics();
             initSparklineCanvases();
             startGlobalTelemetryLoop();
 
             function resetDashboardMetrics() {
-                metricLabels.neuralVelocity.textContent = "24%";
-                metricLabels.neuralIndex.textContent = "18%";
-                metricLabels.neuralActive.textContent = "35%";
-                metricLabels.neuralBar.style.width = "24%";
-
-                metricLabels.analyticsAccuracy.textContent = "88%";
-                metricLabels.analyticsForecast.textContent = "72%";
-                metricLabels.analyticsEfficiency.textContent = "91%";
-                metricLabels.analyticsBar.style.width = "88%";
-
-                metricLabels.automationDone.textContent = "64%";
-                metricLabels.automationLoad.textContent = "45%";
-                metricLabels.automationFlow.textContent = "78%";
-                metricLabels.automationBar.style.width = "64%";
-
+                metricLabels.neuralVelocity.textContent = "24%"; metricLabels.neuralIndex.textContent = "18%"; metricLabels.neuralActive.textContent = "35%"; metricLabels.neuralBar.style.width = "24%";
+                metricLabels.analyticsAccuracy.textContent = "88%"; metricLabels.analyticsForecast.textContent = "72%"; metricLabels.analyticsEfficiency.textContent = "91%"; metricLabels.analyticsBar.style.width = "88%";
+                metricLabels.automationDone.textContent = "64%"; metricLabels.automationLoad.textContent = "45%"; metricLabels.automationFlow.textContent = "78%"; metricLabels.automationBar.style.width = "64%";
                 elementsMatrix.calm.bar.style.width = "75%"; elementsMatrix.calm.txt.textContent = "75%";
                 elementsMatrix.stress.bar.style.width = "15%"; elementsMatrix.stress.txt.textContent = "15%";
                 elementsMatrix.load.bar.style.width = "45%"; elementsMatrix.load.txt.textContent = "45%";
@@ -757,37 +387,9 @@
                     type: 'radar',
                     data: {
                         labels: emotionLabels,
-                        datasets: [{
-                            label: 'Acoustic Frequency Trace',
-                            data: [45, 35, 55, 60, 50], 
-                            backgroundColor: 'rgba(0, 243, 255, 0.12)',
-                            borderColor: '#00f3ff',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#8b5cf6',
-                            pointBorderColor: '#00f3ff',
-                            pointRadius: 3
-                        }]
+                        datasets: [{ label: 'Acoustic Trace', data: [45, 35, 55, 60, 50], backgroundColor: 'rgba(0, 243, 255, 0.12)', borderColor: '#00f3ff', borderWidth: 2, pointBackgroundColor: '#8b5cf6', pointBorderColor: '#00f3ff', pointRadius: 3 }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            r: {
-                                angleLines: { color: '#222f4c' },
-                                grid: { color: '#1e2942' },
-                                pointLabels: {
-                                    color: '#8a99ad',
-                                    font: { family: 'Poppins', size: 10, weight: '500' }
-                                },
-                                ticks: { display: false },
-                                suggestedMin: 0,
-                                suggestedMax: 100
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: '#222f4c' }, grid: { color: '#1e2942' }, pointLabels: { color: '#8a99ad', font: { family: 'Poppins', size: 10, weight: '500' } }, ticks: { display: false }, suggestedMin: 0, suggestedMax: 100 } }, plugins: { legend: { display: false } } }
                 });
             }
 
@@ -800,10 +402,56 @@
             }
 
             async function initActualVoiceStream() {
-                if (SystemState.audioContext) return true;
+                // If stream is already active, just start a new recording block
+                if (SystemState.audioContext) {
+                    if (localAudioRecorder && localAudioRecorder.state === "inactive") {
+                        recordedChunks = [];
+                        localAudioRecorder.start();
+                    }
+                    return true;
+                }
+                
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    // NEW: Hardware Audio Constraints for Noise Cancellation
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            noiseSuppression: true,
+                            echoCancellation: true,
+                            autoGainControl: true
+                        }, 
+                        video: false 
+                    });
+                    
                     SystemState.stream = stream;
+                    
+                    // NEW: Local Media Recorder Setup to save to user's system
+                    localAudioRecorder = new MediaRecorder(stream);
+                    localAudioRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) recordedChunks.push(event.data);
+                    };
+                    localAudioRecorder.onstop = () => {
+                        // Package the audio data into a Blob file
+                        const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+                        const fileUrl = URL.createObjectURL(audioBlob);
+                        
+                        // Create a hidden download link and click it
+                        const downloadLink = document.createElement('a');
+                        downloadLink.style.display = 'none';
+                        downloadLink.href = fileUrl;
+                        downloadLink.download = `Cognitive_AI_Voice_Log_${Date.now()}.webm`;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        
+                        // Cleanup
+                        window.URL.revokeObjectURL(fileUrl);
+                        recordedChunks = [];
+                        
+                        // Notify user it was downloaded
+                        voiceTranscript.innerHTML += "<br><br><span style='color: var(--neon-green);'>💾 Success: Voice recording saved to your system downloads folder.</span>";
+                    };
+                    
+                    localAudioRecorder.start();
+
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     SystemState.audioContext = new AudioContext();
                     SystemState.analyser = SystemState.audioContext.createAnalyser();
@@ -812,8 +460,7 @@
                     SystemState.source.connect(SystemState.analyser);
                     SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
                     
-                    document.getElementById("liveSampleRate").textContent = `${SystemState.audioContext.sampleRate / 1000} kHz`;
-                    voiceModuleStatus.textContent = "Signal Live";
+                    voiceModuleStatus.textContent = "Signal Live - Recording";
                     voiceModuleStatus.style.background = "rgba(0, 243, 255, 0.1)";
                     voiceModuleStatus.style.color = "var(--neon-blue)";
                     
@@ -821,7 +468,7 @@
                     runLiveVoiceDataPipeline();
                     return true;
                 } catch (err) {
-                    voiceTranscript.textContent = "Mic hardware unlinked. Switching to automated vector telemetry matrix loop.";
+                    voiceTranscript.textContent = "Mic hardware unlinked or permission denied.";
                     SystemState.isSimulatingVoice = true;
                     return false;
                 }
@@ -851,7 +498,6 @@
                     elementsMatrix.calm.bar.style.width = `${Math.max(0, 100 - (averageDb))}%`;
                     elementsMatrix.calm.txt.textContent = `${Math.round(Math.max(0, 100 - (averageDb)))}%`;
                     
-                    // Allow voice input volume spikes to map into radar node mutations
                     if (emotionChart) {
                         emotionChart.data.datasets[0].data = emotionChart.data.datasets[0].data.map(val => {
                             return Math.max(10, Math.min(95, val + (Math.random() - 0.4) * (averageDb / 10)));
@@ -864,9 +510,7 @@
             function activateSystemSession(targetModule, modeName, operationalDetails) {
                 SystemState.activeModule = targetModule;
                 SystemState.workingMode = modeName;
-                
                 document.querySelectorAll('.dashboard-box').forEach(box => box.classList.remove('voice-pulse-highlight'));
-                
                 voiceStatusText.textContent = `MODE: ${modeName}`;
                 cognitiveModality.textContent = modeName;
                 
@@ -875,14 +519,12 @@
                 if (targetBox && targetDesc) {
                     targetDesc.innerHTML = `<strong style="color: #10b981;">[Acoustic Processing active]</strong> — ${operationalDetails}`;
                     targetBox.classList.add('voice-pulse-highlight');
-                    
                     const headerOffset = 90;
                     const elementPosition = targetBox.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.scrollY - headerOffset;
                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
                 }
 
-                // Base configurations when core commands lock down 
                 if(emotionChart) {
                     let mockDataArray = [50, 50, 50, 50, 50];
                     if(targetModule === "neural") { mockDataArray = [25, 85, 45, 90, 35]; document.getElementById("dominantEmotion").textContent = "Commending"; }
@@ -895,7 +537,6 @@
                 }
             }
 
-            // High-Performance Natural Voice Recognition Setup API Loop
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             let recognitionEngine = null;
             let isListening = false;
@@ -910,7 +551,8 @@
                     voiceBtn.classList.add("listening");
                     voiceBtn.innerHTML = `<span>🛑 Stop Vocal Listening</span>`;
                     voiceStatusDot.classList.add("active");
-                    voiceStatusText.textContent = "Listening to Acoustic Stream...";
+                    voiceStatusText.textContent = "Listening & Recording...";
+                    voiceTranscript.textContent = "Initializing recording sequence and analyzing voice telemetry...";
                     initActualVoiceStream();
                 };
 
@@ -920,22 +562,21 @@
                 };
 
                 recognitionEngine.onerror = (err) => {
-                    console.warn("Speech API Error Context:", err.error);
-                    if(err.error === 'not-allowed') {
-                        voiceTranscript.textContent = "Microphone block detected. Use Manual Sync to change parameters.";
-                    }
+                    if(err.error === 'not-allowed') voiceTranscript.textContent = "Microphone block detected. Use Manual Sync.";
                 };
 
                 recognitionEngine.onend = () => {
                     isListening = false;
+                    
+                    // Stop the local recording and trigger the file download automatically
+                    if (localAudioRecorder && localAudioRecorder.state === "recording") {
+                        localAudioRecorder.stop();
+                    }
+                    
                     voiceBtn.classList.remove("listening");
                     voiceBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Initialize Voice Listening`;
                     voiceStatusDot.classList.remove("active");
-                    if(SystemState.workingMode === "STANDBY") {
-                        voiceStatusText.textContent = "Acoustic Engine Offline";
-                    } else {
-                        voiceStatusText.textContent = `MODE: ${SystemState.workingMode}`;
-                    }
+                    voiceStatusText.textContent = SystemState.workingMode === "STANDBY" ? "Acoustic Engine Offline" : `MODE: ${SystemState.workingMode}`;
                 };
             }
 
@@ -955,119 +596,76 @@
             }
 
             voiceBtn.addEventListener("click", () => {
-                if (!SpeechRecognition) {
-                    voiceTranscript.textContent = "Web Speech Native API missing in current client layout environment container.";
-                    return;
-                }
-                if (isListening) {
-                    recognitionEngine.stop();
-                } else {
-                    recognitionEngine.start();
-                }
+                if (!SpeechRecognition) { voiceTranscript.textContent = "Web Speech API missing."; return; }
+                if (isListening) recognitionEngine.stop();
+                else recognitionEngine.start();
             });
 
-            const mockPhrases = [
-                "Execute cluster neural matrices computation",
-                "Deploy real time smart analytics pattern logs",
-                "Trigger background runtime automation threads engine"
-            ];
+            const mockPhrases = ["Execute cluster neural matrices computation", "Deploy real time smart analytics pattern logs", "Trigger background runtime automation threads engine"];
             let mockIndex = 0;
-
             document.getElementById("btnManualSync").addEventListener("click", () => {
-                const speechString = mockPhrases[mockIndex];
+                evaluateVoiceCommand(mockPhrases[mockIndex]);
                 mockIndex = (mockIndex + 1) % mockPhrases.length;
-                evaluateVoiceCommand(speechString);
-                
                 if(SystemState.isSimulatingVoice) {
-                    eqBars.forEach(bar => {
-                        bar.style.height = `${Math.floor(Math.random() * 60) + 40}%`;
-                    });
+                    eqBars.forEach(bar => { bar.style.height = `${Math.floor(Math.random() * 60) + 40}%`; });
                     liveDecibel.textContent = `-${Math.floor(Math.random() * 20) + 12} dB`;
                 }
             });
 
-            // Global Data Simulator Engine loop for Background Sparklines & Radar Map Tracking Loops
             function startGlobalTelemetryLoop() {
                 setInterval(() => {
-                    // 1. Live Radar Chart Real-time Telemetry Processing Wave Mutation
                     if (emotionChart) {
                         emotionChart.data.datasets[0].data = emotionChart.data.datasets[0].data.map(val => {
-                            // High performance minor telemetry drift changes to signify live tracing calculations
-                            let varianceAmplitude = isListening ? 6 : 2;
-                            let change = (Math.random() - 0.5) * varianceAmplitude; 
+                            let change = (Math.random() - 0.5) * (isListening ? 6 : 2); 
                             return Math.max(10, Math.min(95, val + change));
                         });
-                        emotionChart.update('none'); // Update without full recalculation flashes
+                        emotionChart.update('none'); 
                     }
-
-                    // 2. Render Audio EQ simulation bars if mic stream is not active
                     if (SystemState.isSimulatingVoice) {
                         eqBars.forEach(bar => {
                             let randomHeight = Math.floor(Math.random() * 25) + 12;
                             if (SystemState.activeModule) randomHeight += 20; 
                             bar.style.height = `${randomHeight}%`;
                         });
-                        if(!isListening && SystemState.workingMode === "STANDBY") {
-                            liveDecibel.textContent = "-60 dB";
-                        }
+                        if(!isListening && SystemState.workingMode === "STANDBY") liveDecibel.textContent = "-60 dB";
                     }
 
-                    // 3. Drive running dashboard random variations values dynamically
                     if(SystemState.activeModule === "neural" || Math.random() > 0.6) {
                         const v1 = Math.floor(Math.random() * 30) + 40;
-                        metricLabels.neuralVelocity.textContent = `${v1}%`;
-                        metricLabels.neuralBar.style.width = `${v1}%`;
+                        metricLabels.neuralVelocity.textContent = `${v1}%`; metricLabels.neuralBar.style.width = `${v1}%`;
                     }
                     if(SystemState.activeModule === "analytics" || Math.random() > 0.6) {
                         const v2 = Math.floor(Math.random() * 20) + 75;
-                        metricLabels.analyticsAccuracy.textContent = `${v2}%`;
-                        metricLabels.analyticsBar.style.width = `${v2}%`;
+                        metricLabels.analyticsAccuracy.textContent = `${v2}%`; metricLabels.analyticsBar.style.width = `${v2}%`;
                     }
                     if(SystemState.activeModule === "automation" || Math.random() > 0.6) {
                         const v3 = Math.floor(Math.random() * 40) + 45;
-                        metricLabels.automationDone.textContent = `${v3}%`;
-                        metricLabels.automationBar.style.width = `${v3}%`;
+                        metricLabels.automationDone.textContent = `${v3}%`; metricLabels.automationBar.style.width = `${v3}%`;
                     }
 
-                    // 4. Render Canvas Sparklines Vector Waves Graphs
                     Object.keys(canvasNodes).forEach(key => {
                         const node = canvasNodes[key];
-                        const ctx = node.ctx;
-                        const w = node.el.width;
-                        const h = node.el.height;
-
+                        const ctx = node.ctx; const w = node.el.width; const h = node.el.height;
                         node.history.shift();
                         let nextPoint = Math.random() * h;
-                        if (SystemState.activeModule === key) {
-                            nextPoint = (h / 2) + (Math.sin(Date.now() / 200) * (h / 3));
-                        }
+                        if (SystemState.activeModule === key) nextPoint = (h / 2) + (Math.sin(Date.now() / 200) * (h / 3));
                         node.history.push(nextPoint);
 
                         ctx.clearRect(0, 0, w, h);
                         ctx.beginPath();
-                        ctx.strokeStyle = node.color;
-                        ctx.lineWidth = 2;
-                        ctx.lineJoin = "round";
-
+                        ctx.strokeStyle = node.color; ctx.lineWidth = 2; ctx.lineJoin = "round";
                         const sliceWidth = w / (node.history.length - 1);
                         for (let i = 0; i < node.history.length; i++) {
-                            const x = i * sliceWidth;
-                            const y = node.history[i];
-                            if (i === 0) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
+                            const x = i * sliceWidth; const y = node.history[i];
+                            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
                         }
                         ctx.stroke();
                     });
-
                 }, 160);
             }
 
-            // Recalculate sparkline sizes dynamically if display size updates
             window.addEventListener('resize', () => {
-                Object.values(canvasNodes).forEach(node => {
-                    node.el.width = node.el.clientWidth;
-                    node.el.height = node.el.clientHeight;
-                });
+                Object.values(canvasNodes).forEach(node => { node.el.width = node.el.clientWidth; node.el.height = node.el.clientHeight; });
             });
         });
     </script>

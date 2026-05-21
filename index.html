@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive AI - Comprehensive Control Center</title>
+    <title>Cognitive AI - Robotic Emotion Control Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -135,6 +135,54 @@
         @keyframes pulseGlow {
             0% { opacity: 0.6; }
             100% { opacity: 1; }
+        }
+
+        /* --- Voice Morphing Controls CSS --- */
+        .morph-control-wrapper {
+            margin: 15px 0;
+            padding: 12px;
+            background: #090d16;
+            border-radius: 10px;
+            border: 1px solid #1a243a;
+        }
+
+        .morph-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .morph-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .morph-btn {
+            background: #141b2d;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 10px 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .morph-btn:hover {
+            color: #fff;
+            border-color: var(--text-secondary);
+        }
+
+        .morph-btn.active {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
         }
 
         .voice-transcript-box {
@@ -457,7 +505,7 @@
     </nav>
 
     <section class="hero" id="home">
-        <h1>Future Generation Cognitive Artificial Intelligence</h1>
+        <h1>Future Generation Cognitive Artificial Intelligence center</h1>
         <p>Speak to deploy system tracking and route focus parameters dynamically across processing cores.</p>
 
         <div class="voice-console-card">
@@ -465,6 +513,16 @@
                 <span class="status-dot" id="voiceStatusDot"></span>
                 <span id="voiceStatusText">Acoustic Engine Offline</span>
             </div>
+
+            <div class="morph-control-wrapper">
+                <span class="morph-label">Acoustic Voice Morphing Profile</span>
+                <div class="morph-grid">
+                    <button class="morph-btn active" id="morphNormal">Normal</button>
+                    <button class="morph-btn" id="morphDeep">Cosmic Deep</button>
+                    <button class="morph-btn" id="morphRobot">Cyber Robot</button>
+                </div>
+            </div>
+
             <div class="voice-transcript-box" id="voiceTranscript">Click below and say a control path phrase...</div>
         </div>
 
@@ -478,7 +536,7 @@
     </section>
 
     <section class="dashboard" id="dashboard">
-        <h2 class="section-title">System Live Operations Control</h2>
+        <h2 class="section-title">System Live Operations Control Center</h2>
         
         <div class="cognitive-grid">
             
@@ -595,7 +653,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             
-            // System Tracking Variables Matrix
             const SystemState = {
                 activeModule: null,
                 workingMode: "STANDBY",
@@ -603,7 +660,12 @@
                 analyser: null,
                 dataArray: null,
                 source: null,
-                stream: null
+                stream: null,
+                morphMode: "normal",
+                
+                filterNode: null,
+                delayNode: null,
+                feedbackGain: null
             };
 
             const voiceBtn = document.getElementById("btnVoiceTrigger");
@@ -636,7 +698,6 @@
                 automationBar: document.getElementById("automationBar")
             };
 
-            // Set natural baseline resting weights before speech initializes
             resetDashboardMetrics();
 
             function resetDashboardMetrics() {
@@ -660,7 +721,6 @@
                 elementsMatrix.load.bar.style.width = "15%"; elementsMatrix.load.txt.textContent = "15%";
             }
 
-            // Web Hardware Audio Stream Initialization Function
             async function initActualVoiceStream() {
                 if (SystemState.audioContext) return true;
                 try {
@@ -668,17 +728,39 @@
                     SystemState.stream = stream;
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     SystemState.audioContext = new AudioContext();
+                    
+                    SystemState.source = SystemState.audioContext.createMediaStreamSource(stream);
                     SystemState.analyser = SystemState.audioContext.createAnalyser();
                     SystemState.analyser.fftSize = 256; 
-                    SystemState.source = SystemState.audioContext.createMediaStreamSource(stream);
-                    SystemState.source.connect(SystemState.analyser);
                     SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
+                    
+                    SystemState.filterNode = SystemState.audioContext.createBiquadFilter();
+                    SystemState.delayNode = SystemState.audioContext.createDelay();
+                    SystemState.feedbackGain = SystemState.audioContext.createGain();
+                    
+                    SystemState.filterNode.type = "peaking";
+                    SystemState.filterNode.frequency.value = 1000;
+                    SystemState.filterNode.Q.value = 1;
+                    SystemState.filterNode.gain.value = 0;
+                    
+                    SystemState.delayNode.delayTime.value = 0.0;
+                    SystemState.feedbackGain.gain.value = 0.0;
+
+                    SystemState.source.connect(SystemState.filterNode);
+                    SystemState.filterNode.connect(SystemState.delayNode);
+                    
+                    SystemState.delayNode.connect(SystemState.feedbackGain);
+                    SystemState.feedbackGain.connect(SystemState.delayNode);
+                    
+                    SystemState.delayNode.connect(SystemState.analyser);
+                    SystemState.analyser.connect(SystemState.audioContext.destination);
                     
                     document.getElementById("liveSampleRate").textContent = `${SystemState.audioContext.sampleRate / 1000} kHz`;
                     voiceModuleStatus.textContent = "Signal Live";
                     voiceModuleStatus.style.background = "rgba(0, 243, 255, 0.1)";
                     voiceModuleStatus.style.color = "var(--neon-blue)";
                     
+                    applyMorphSettings();
                     runLiveVoiceDataPipeline();
                     return true;
                 } catch (err) {
@@ -687,14 +769,66 @@
                 }
             }
 
-            // Centralized Operational State Router Engine
+            function applyMorphSettings() {
+                if (!SystemState.audioContext) return;
+                
+                const mode = SystemState.morphMode;
+                const now = SystemState.audioContext.currentTime;
+
+                if (mode === "normal") {
+                    SystemState.filterNode.frequency.setValueAtTime(1000, now);
+                    SystemState.filterNode.gain.setValueAtTime(0, now);
+                    SystemState.delayNode.delayTime.setValueAtTime(0, now);
+                    SystemState.feedbackGain.gain.setValueAtTime(0, now);
+                    cognitiveModality.textContent = "Adaptive Base";
+                    cognitiveModality.style.color = "var(--neon-blue)";
+                } 
+                else if (mode === "deep") {
+                    SystemState.filterNode.type = "lowpass";
+                    SystemState.filterNode.frequency.setValueAtTime(200, now);
+                    SystemState.delayNode.delayTime.setValueAtTime(0.03, now);
+                    SystemState.feedbackGain.gain.setValueAtTime(0.4, now);
+                    cognitiveModality.textContent = "SUB-HARMONIC";
+                    cognitiveModality.style.color = "var(--neon-purple)";
+                } 
+                else if (mode === "robot") {
+                    SystemState.filterNode.type = "peaking";
+                    SystemState.filterNode.frequency.setValueAtTime(1400, now); 
+                    SystemState.filterNode.Q.setValueAtTime(18, now);
+                    SystemState.filterNode.gain.setValueAtTime(18, now);
+                    SystemState.delayNode.delayTime.setValueAtTime(0.015, now);
+                    SystemState.feedbackGain.gain.setValueAtTime(0.7, now);
+                    cognitiveModality.textContent = "SYNTHETIC METRIC";
+                    cognitiveModality.style.color = "var(--neon-green)";
+                }
+            }
+
+            const morphButtons = {
+                normal: document.getElementById("morphNormal"),
+                deep: document.getElementById("morphDeep"),
+                robot: document.getElementById("morphRobot")
+            };
+
+            Object.keys(morphButtons).forEach(key => {
+                morphButtons[key].addEventListener("click", async () => {
+                    Object.values(morphButtons).forEach(btn => btn.classList.remove("active"));
+                    morphButtons[key].classList.add("active");
+                    
+                    SystemState.morphMode = key;
+                    if (SystemState.audioContext) {
+                        applyMorphSettings();
+                    } else {
+                        await initActualVoiceStream();
+                    }
+                });
+            });
+
             function activateSystemSession(targetModule, modeName, operationalDetails) {
                 SystemState.activeModule = targetModule;
                 SystemState.workingMode = modeName;
                 document.querySelectorAll('.dashboard-box').forEach(box => box.classList.remove('voice-pulse-highlight'));
                 
                 voiceStatusText.textContent = `MODE: ${modeName}`;
-                cognitiveModality.textContent = modeName;
                 
                 const targetBox = document.getElementById(`${targetModule}Box`);
                 const targetDesc = document.getElementById(`${targetModule}Desc`);
@@ -709,7 +843,6 @@
                 }
             }
 
-            // High-Performance Natural Voice Recognition Setup API Loop
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (SpeechRecognition) {
                 const recognitionEngine = new SpeechRecognition();
@@ -757,7 +890,6 @@
             function runGlobalSyncRoutine() {
                 SystemState.activeModule = "ALL";
                 voiceStatusText.textContent = "MODE: SYSTEM UNIFICATION";
-                cognitiveModality.textContent = "UNIFICATION";
                 document.querySelectorAll('.dashboard-box').forEach(box => box.classList.add('voice-pulse-highlight'));
             }
 
@@ -766,7 +898,6 @@
                 runGlobalSyncRoutine();
             });
 
-            // Live Core Real-time Mathematics Audio Pipeline Calculator Frame
             function runLiveVoiceDataPipeline() {
                 function computeEngineState() {
                     requestAnimationFrame(computeEngineState);
@@ -785,11 +916,27 @@
                         bar.style.height = `${Math.max(15, (SystemState.dataArray[targetDataIndex] / 255) * 100)}%`;
                     });
 
-                    // Parse mathematical frequencies if mic detects live ambient voice signal metrics
+                    // Reactive Voice Emotion Detection Logic block
                     if (signalAverage > 5) {
-                        const dynamicCalm = Math.min(100, Math.max(40, 98 - (signalAverage * 0.4)));
-                        const dynamicStress = Math.min(85, Math.max(5, (signalAverage * 0.5)));
-                        const dynamicLoad = Math.min(100, Math.max(20, 15 + (signalAverage * 0.8)));
+                        let dynamicCalm, dynamicStress, dynamicLoad;
+
+                        // Recalculate metrics depending on morph parameters
+                        if (SystemState.morphMode === "robot") {
+                            // Cyber Robot has flat mechanical stability but highly resonant frequency friction
+                            dynamicCalm = Math.min(100, Math.max(15, 25 + (signalAverage * 0.1)));
+                            dynamicStress = Math.min(98, Math.max(75, 80 + (signalAverage * 0.15)));
+                            dynamicLoad = Math.min(100, Math.max(85, 90 + (signalAverage * 0.05)));
+                        } else if (SystemState.morphMode === "deep") {
+                            // Cosmic Deep has massive flat structural stability weight but low surface friction
+                            dynamicCalm = Math.min(100, Math.max(80, 92 - (signalAverage * 0.1)));
+                            dynamicStress = Math.min(30, Math.max(5, (signalAverage * 0.2)));
+                            dynamicLoad = Math.min(100, Math.max(45, 40 + (signalAverage * 0.5)));
+                        } else {
+                            // Normal / Natural Adaptive Baseline values
+                            dynamicCalm = Math.min(100, Math.max(40, 98 - (signalAverage * 0.4)));
+                            dynamicStress = Math.min(85, Math.max(5, (signalAverage * 0.5)));
+                            dynamicLoad = Math.min(100, Math.max(20, 15 + (signalAverage * 0.8)));
+                        }
 
                         elementsMatrix.calm.bar.style.width = `${Math.floor(dynamicCalm)}%`;
                         elementsMatrix.calm.txt.textContent = `${Math.floor(dynamicCalm)}%`;
@@ -800,7 +947,6 @@
 
                         const voiceWeight = Math.floor((signalAverage / 255) * 100);
 
-                        // Injection matrix paths for secondary sub-panels based on dynamic active token conditions
                         if (SystemState.activeModule === "neural" || SystemState.activeModule === "ALL") {
                             const v1 = Math.min(100, 60 + Math.floor(voiceWeight * 0.4));
                             metricLabels.neuralVelocity.textContent = `${v1}%`;
@@ -823,18 +969,26 @@
                             metricLabels.automationBar.style.width = `${au1}%`;
                         }
                     } else {
-                        // Return automatically to peaceful equilibrium values when user is silent
                         const time = Date.now() * 0.002;
-                        elementsMatrix.calm.bar.style.width = `${Math.floor(85 + Math.sin(time) * 2)}%`;
-                        elementsMatrix.calm.txt.textContent = `${Math.floor(85 + Math.sin(time) * 2)}%`;
-                        elementsMatrix.stress.bar.style.width = `${Math.floor(8 + Math.cos(time) * 1)}%`;
-                        elementsMatrix.stress.txt.textContent = `${Math.floor(8 + Math.cos(time) * 1)}%`;
+                        if (SystemState.morphMode === "robot") {
+                            elementsMatrix.calm.bar.style.width = "20%"; elementsMatrix.calm.txt.textContent = "20%";
+                            elementsMatrix.stress.bar.style.width = "85%"; elementsMatrix.stress.txt.textContent = "85%";
+                            elementsMatrix.load.bar.style.width = "90%"; elementsMatrix.load.txt.textContent = "90%";
+                        } else if (SystemState.morphMode === "deep") {
+                            elementsMatrix.calm.bar.style.width = "95%"; elementsMatrix.calm.txt.textContent = "95%";
+                            elementsMatrix.stress.bar.style.width = "5%"; elementsMatrix.stress.txt.textContent = "5%";
+                            elementsMatrix.load.bar.style.width = "35%"; elementsMatrix.load.txt.textContent = "35%";
+                        } else {
+                            elementsMatrix.calm.bar.style.width = `${Math.floor(85 + Math.sin(time) * 2)}%`;
+                            elementsMatrix.calm.txt.textContent = `${Math.floor(85 + Math.sin(time) * 2)}%`;
+                            elementsMatrix.stress.bar.style.width = `${Math.floor(8 + Math.cos(time) * 1)}%`;
+                            elementsMatrix.stress.txt.textContent = `${Math.floor(8 + Math.cos(time) * 1)}%`;
+                        }
                     }
                 }
                 computeEngineState();
             }
 
-            // Lower Core System Telemetry Canvas Engine Drawing Loops
             function runLiveVoiceVisualizer(canvasId, modName) {
                 const canvas = document.getElementById(canvasId);
                 if (!canvas) return;
@@ -848,8 +1002,14 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.beginPath();
                     const isCurrent = (SystemState.activeModule === modName || SystemState.activeModule === "ALL");
-                    ctx.lineWidth = isCurrent ? 2.5 : 1.0;
-                    ctx.strokeStyle = modName === "neural" ? "#00f3ff" : modName === "analytics" ? "#8b5cf6" : "#10b981";
+                    
+                    // Adjust thickness based on active status
+                    ctx.lineWidth = isCurrent ? 3.0 : 1.2;
+                    
+                    // Canvas color mappings
+                    if (SystemState.morphMode === "robot") ctx.strokeStyle = "#10b981";
+                    else if (SystemState.morphMode === "deep") ctx.strokeStyle = "#8b5cf6";
+                    else ctx.strokeStyle = "#00f3ff";
 
                     if (SystemState.analyser && SystemState.dataArray) {
                         SystemState.analyser.getByteTimeDomainData(SystemState.dataArray);

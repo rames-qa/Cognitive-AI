@@ -152,8 +152,14 @@
 
         .chart-wrapper {
             position: relative;
-            height: 250px;
+            height: 260px;
             width: 100%;
+            margin: 0 auto;
+        }
+
+        #emotionChart {
+            width: 100% !important;
+            height: 100% !important;
         }
 
         .voice-status-indicator {
@@ -652,7 +658,7 @@
     </section>
 
     <footer> 
-        &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
+        &copy; 2026 Cognitive AI Advanced Web Project
     </footer>
 
    <script>
@@ -753,13 +759,13 @@
                         labels: emotionLabels,
                         datasets: [{
                             label: 'Acoustic Frequency Trace',
-                            data: [20, 15, 30, 45, 65], 
-                            backgroundColor: 'rgba(0, 243, 255, 0.15)',
+                            data: [45, 35, 55, 60, 50], 
+                            backgroundColor: 'rgba(0, 243, 255, 0.12)',
                             borderColor: '#00f3ff',
                             borderWidth: 2,
                             pointBackgroundColor: '#8b5cf6',
                             pointBorderColor: '#00f3ff',
-                            pointRadius: 4
+                            pointRadius: 3
                         }]
                     },
                     options: {
@@ -771,7 +777,7 @@
                                 grid: { color: '#1e2942' },
                                 pointLabels: {
                                     color: '#8a99ad',
-                                    font: { family: 'Poppins', size: 11, weight: '500' }
+                                    font: { family: 'Poppins', size: 10, weight: '500' }
                                 },
                                 ticks: { display: false },
                                 suggestedMin: 0,
@@ -839,12 +845,19 @@
                 const dbDisplay = averageDb > 0 ? `-${Math.round(100 - (averageDb/2.55))} dB` : "-Inf dB";
                 liveDecibel.textContent = dbDisplay;
 
-                // Drive some semantic variation metrics dynamically from user's voice volume
                 if(averageDb > 20) {
                     elementsMatrix.stress.bar.style.width = `${Math.min(100, averageDb / 1.5)}%`;
                     elementsMatrix.stress.txt.textContent = `${Math.round(Math.min(100, averageDb / 1.5))}%`;
                     elementsMatrix.calm.bar.style.width = `${Math.max(0, 100 - (averageDb))}%`;
                     elementsMatrix.calm.txt.textContent = `${Math.round(Math.max(0, 100 - (averageDb)))}%`;
+                    
+                    // Allow voice input volume spikes to map into radar node mutations
+                    if (emotionChart) {
+                        emotionChart.data.datasets[0].data = emotionChart.data.datasets[0].data.map(val => {
+                            return Math.max(10, Math.min(95, val + (Math.random() - 0.4) * (averageDb / 10)));
+                        });
+                        emotionChart.update('none');
+                    }
                 }
             }
 
@@ -869,12 +882,12 @@
                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
                 }
 
-                // Mutate the Radar Chart weights based on selected system path profile
+                // Base configurations when core commands lock down 
                 if(emotionChart) {
-                    let mockDataArray = [10, 10, 10, 10, 10];
-                    if(targetModule === "neural") { mockDataArray = [20, 85, 40, 90, 30]; document.getElementById("dominantEmotion").textContent = "Commending"; }
-                    if(targetModule === "analytics") { mockDataArray = [30, 20, 80, 45, 95]; document.getElementById("dominantEmotion").textContent = "Polite"; }
-                    if(targetModule === "automation") { mockDataArray = [90, 40, 30, 60, 50]; document.getElementById("dominantEmotion").textContent = "Sad"; }
+                    let mockDataArray = [50, 50, 50, 50, 50];
+                    if(targetModule === "neural") { mockDataArray = [25, 85, 45, 90, 35]; document.getElementById("dominantEmotion").textContent = "Commending"; }
+                    if(targetModule === "analytics") { mockDataArray = [35, 25, 80, 50, 95]; document.getElementById("dominantEmotion").textContent = "Polite"; }
+                    if(targetModule === "automation") { mockDataArray = [90, 45, 35, 65, 55]; document.getElementById("dominantEmotion").textContent = "Sad"; }
                     
                     emotionChart.data.datasets[0].data = mockDataArray;
                     emotionChart.data.datasets[0].borderColor = toneColorMap[document.getElementById("dominantEmotion").textContent] || '#00f3ff';
@@ -941,7 +954,6 @@
                 }
             }
 
-            // Click Handlers
             voiceBtn.addEventListener("click", () => {
                 if (!SpeechRecognition) {
                     voiceTranscript.textContent = "Web Speech Native API missing in current client layout environment container.";
@@ -954,7 +966,6 @@
                 }
             });
 
-            // Manual Simulation Sync Engine System Link
             const mockPhrases = [
                 "Execute cluster neural matrices computation",
                 "Deploy real time smart analytics pattern logs",
@@ -967,7 +978,6 @@
                 mockIndex = (mockIndex + 1) % mockPhrases.length;
                 evaluateVoiceCommand(speechString);
                 
-                // Fire fake eq spike on sync trigger
                 if(SystemState.isSimulatingVoice) {
                     eqBars.forEach(bar => {
                         bar.style.height = `${Math.floor(Math.random() * 60) + 40}%`;
@@ -976,14 +986,25 @@
                 }
             });
 
-            // Global Data Simulator Engine loop for Background Sparklines & Dynamic Progress
+            // Global Data Simulator Engine loop for Background Sparklines & Radar Map Tracking Loops
             function startGlobalTelemetryLoop() {
                 setInterval(() => {
-                    // 1. Render Audio EQ simulation bars if mic stream is not active
+                    // 1. Live Radar Chart Real-time Telemetry Processing Wave Mutation
+                    if (emotionChart) {
+                        emotionChart.data.datasets[0].data = emotionChart.data.datasets[0].data.map(val => {
+                            // High performance minor telemetry drift changes to signify live tracing calculations
+                            let varianceAmplitude = isListening ? 6 : 2;
+                            let change = (Math.random() - 0.5) * varianceAmplitude; 
+                            return Math.max(10, Math.min(95, val + change));
+                        });
+                        emotionChart.update('none'); // Update without full recalculation flashes
+                    }
+
+                    // 2. Render Audio EQ simulation bars if mic stream is not active
                     if (SystemState.isSimulatingVoice) {
                         eqBars.forEach(bar => {
                             let randomHeight = Math.floor(Math.random() * 25) + 12;
-                            if (SystemState.activeModule) randomHeight += 20; // boost slightly if active
+                            if (SystemState.activeModule) randomHeight += 20; 
                             bar.style.height = `${randomHeight}%`;
                         });
                         if(!isListening && SystemState.workingMode === "STANDBY") {
@@ -991,7 +1012,7 @@
                         }
                     }
 
-                    // 2. Drive running dashboard random variations values dynamically
+                    // 3. Drive running dashboard random variations values dynamically
                     if(SystemState.activeModule === "neural" || Math.random() > 0.6) {
                         const v1 = Math.floor(Math.random() * 30) + 40;
                         metricLabels.neuralVelocity.textContent = `${v1}%`;
@@ -1008,23 +1029,20 @@
                         metricLabels.automationBar.style.width = `${v3}%`;
                     }
 
-                    // 3. Render Canvas Sparklines Vector Waves Graphs
+                    // 4. Render Canvas Sparklines Vector Waves Graphs
                     Object.keys(canvasNodes).forEach(key => {
                         const node = canvasNodes[key];
                         const ctx = node.ctx;
                         const w = node.el.width;
                         const h = node.el.height;
 
-                        // Shift historical points array matrix left
                         node.history.shift();
                         let nextPoint = Math.random() * h;
-                        // Clamp values closer to center if the target section is focused
                         if (SystemState.activeModule === key) {
                             nextPoint = (h / 2) + (Math.sin(Date.now() / 200) * (h / 3));
                         }
                         node.history.push(nextPoint);
 
-                        // Clear & Draw Vector Path Track Lines
                         ctx.clearRect(0, 0, w, h);
                         ctx.beginPath();
                         ctx.strokeStyle = node.color;
@@ -1041,8 +1059,16 @@
                         ctx.stroke();
                     });
 
-                }, 160); // Roughly ~60 updates per 10 seconds tracking cycle
+                }, 160);
             }
+
+            // Recalculate sparkline sizes dynamically if display size updates
+            window.addEventListener('resize', () => {
+                Object.values(canvasNodes).forEach(node => {
+                    node.el.width = node.el.clientWidth;
+                    node.el.height = node.el.clientHeight;
+                });
+            });
         });
     </script>
 </body>

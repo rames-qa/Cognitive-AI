@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive AI - Robotic Emotion Control Matrix</title>
+    <title>Cognitive AI - Automated Voice & Emotion Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -442,55 +442,16 @@
             background: #090d16;
         }
 
-        /* ======================================================== */
-        /* MEDIA BREAKPOINTS FOR FULL LAPTOP / PC DISPLAYS           */
-        /* ======================================================== */
         @media (min-width: 768px) {
-            nav {
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 18px 8%;
-            }
-
-            .hero {
-                padding: 60px 8% 30px;
-            }
-
-            .hero h1 {
-                font-size: 2.6rem;
-            }
-
-            .hero-buttons {
-                flex-direction: row;
-                max-width: 100%;
-            }
-
-            .sub-panel-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .audio-pill-badge {
-                align-self: center;
-            }
-
-            .cognitive-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 25px;
-            }
-
-            .dashboard-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 25px;
-            }
-
-            .section-title {
-                font-size: 2rem;
-                margin-bottom: 40px;
-            }
+            nav { flex-direction: row; justify-content: space-between; padding: 18px 8%; }
+            .hero { padding: 60px 8% 30px; }
+            .hero h1 { font-size: 2.6rem; }
+            .hero-buttons { flex-direction: row; max-width: 100%; }
+            .sub-panel-header { flex-direction: row; justify-content: space-between; align-items: center; }
+            .audio-pill-badge { align-self: center; }
+            .cognitive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+            .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+            .section-title { font-size: 2rem; margin-bottom: 40px; }
         }
     </style>
 </head>
@@ -505,7 +466,7 @@
     </nav>
 
     <section class="hero" id="home">
-        <h1> Cognitive Speech AI </h1>
+        <h1>Future Generation Cognitive Artificial Intelligence Center</h1>
         <p>Speak to deploy system tracking and route focus parameters dynamically across processing cores.</p>
 
         <div class="voice-console-card">
@@ -698,6 +659,12 @@
                 automationBar: document.getElementById("automationBar")
             };
 
+            const morphButtons = {
+                normal: document.getElementById("morphNormal"),
+                deep: document.getElementById("morphDeep"),
+                robot: document.getElementById("morphRobot")
+            };
+
             resetDashboardMetrics();
 
             function resetDashboardMetrics() {
@@ -803,23 +770,20 @@
                 }
             }
 
-            const morphButtons = {
-                normal: document.getElementById("morphNormal"),
-                deep: document.getElementById("morphDeep"),
-                robot: document.getElementById("morphRobot")
-            };
+            // Central function to update active profile programmatically
+            function updateMorphProfile(profileKey) {
+                Object.values(morphButtons).forEach(btn => btn.classList.remove("active"));
+                if(morphButtons[profileKey]) {
+                    morphButtons[profileKey].classList.add("active");
+                }
+                SystemState.morphMode = profileKey;
+                applyMorphSettings();
+            }
 
             Object.keys(morphButtons).forEach(key => {
                 morphButtons[key].addEventListener("click", async () => {
-                    Object.values(morphButtons).forEach(btn => btn.classList.remove("active"));
-                    morphButtons[key].classList.add("active");
-                    
-                    SystemState.morphMode = key;
-                    if (SystemState.audioContext) {
-                        applyMorphSettings();
-                    } else {
-                        await initActualVoiceStream();
-                    }
+                    if (!SystemState.audioContext) await initActualVoiceStream();
+                    updateMorphProfile(key);
                 });
             });
 
@@ -854,6 +818,16 @@
                     const cmd = rawUtterance.toLowerCase().trim();
                     voiceTranscript.innerHTML = `Captured: "<span style='color: #00ffff;'>${rawUtterance}</span>"`;
 
+                    // --- AUTOMATED ACOUSTIC PROFILE SWITCHING LOGIC ---
+                    if (cmd.includes("robot") || cmd.includes("cyber") || cmd.includes("synthetic")) {
+                        updateMorphProfile("robot");
+                    } else if (cmd.includes("deep") || cmd.includes("cosmic") || cmd.includes("bass")) {
+                        updateMorphProfile("deep");
+                    } else if (cmd.includes("normal") || cmd.includes("standard") || cmd.includes("base")) {
+                        updateMorphProfile("normal");
+                    }
+
+                    // --- INTERFACE VIEWPORT SCROLLING ROUTINES ---
                     if (cmd.includes("neural") || cmd.includes("processing") || cmd.includes("brain")) {
                         activateSystemSession("neural", "NEURAL SYNAPSE", "Acoustic variations rendering logic weights.");
                     } else if (cmd.includes("analytics") || cmd.includes("smart") || cmd.includes("data")) {
@@ -890,7 +864,7 @@
             function runGlobalSyncRoutine() {
                 SystemState.activeModule = "ALL";
                 voiceStatusText.textContent = "MODE: SYSTEM UNIFICATION";
-                document.querySelectorAll('.dashboard-box').forEach(box => box.classList.add('voice-pulse-highlight'));
+                document.querySelectorAll('.dashboard-box').forEach(box => box.add('voice-pulse-highlight'));
             }
 
             document.getElementById("btnManualSync").addEventListener("click", async () => {
@@ -916,23 +890,18 @@
                         bar.style.height = `${Math.max(15, (SystemState.dataArray[targetDataIndex] / 255) * 100)}%`;
                     });
 
-                    // Reactive Voice Emotion Detection Logic block
                     if (signalAverage > 5) {
                         let dynamicCalm, dynamicStress, dynamicLoad;
 
-                        // Recalculate metrics depending on morph parameters
                         if (SystemState.morphMode === "robot") {
-                            // Cyber Robot has flat mechanical stability but highly resonant frequency friction
                             dynamicCalm = Math.min(100, Math.max(15, 25 + (signalAverage * 0.1)));
                             dynamicStress = Math.min(98, Math.max(75, 80 + (signalAverage * 0.15)));
                             dynamicLoad = Math.min(100, Math.max(85, 90 + (signalAverage * 0.05)));
                         } else if (SystemState.morphMode === "deep") {
-                            // Cosmic Deep has massive flat structural stability weight but low surface friction
                             dynamicCalm = Math.min(100, Math.max(80, 92 - (signalAverage * 0.1)));
                             dynamicStress = Math.min(30, Math.max(5, (signalAverage * 0.2)));
                             dynamicLoad = Math.min(100, Math.max(45, 40 + (signalAverage * 0.5)));
                         } else {
-                            // Normal / Natural Adaptive Baseline values
                             dynamicCalm = Math.min(100, Math.max(40, 98 - (signalAverage * 0.4)));
                             dynamicStress = Math.min(85, Math.max(5, (signalAverage * 0.5)));
                             dynamicLoad = Math.min(100, Math.max(20, 15 + (signalAverage * 0.8)));
@@ -1002,11 +971,8 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.beginPath();
                     const isCurrent = (SystemState.activeModule === modName || SystemState.activeModule === "ALL");
-                    
-                    // Adjust thickness based on active status
                     ctx.lineWidth = isCurrent ? 3.0 : 1.2;
                     
-                    // Canvas color mappings
                     if (SystemState.morphMode === "robot") ctx.strokeStyle = "#10b981";
                     else if (SystemState.morphMode === "deep") ctx.strokeStyle = "#8b5cf6";
                     else ctx.strokeStyle = "#00f3ff";

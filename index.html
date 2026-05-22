@@ -544,21 +544,21 @@
                         <span class="param-value" id="valPitch">0 semitones</span>
                     </div>
 
-                    <!-- Robotic Resonance (Vocoder/Formant effect) -->
+                    <!-- Robotic Resonance -->
                     <div class="control-row">
                         <label for="paramRobotic">Robotic Resonance</label>
                         <input type="range" id="paramRobotic" min="0" max="100" value="0" step="1">
                         <span class="param-value" id="valRobotic">0%</span>
                     </div>
 
-                    <!-- Modulation Rate (For ring modulation / alien wobbles) -->
+                    <!-- Modulation Rate -->
                     <div class="control-row">
                         <label for="paramModulation">Modulation Speed</label>
                         <input type="range" id="paramModulation" min="0" max="50" value="0" step="0.5">
                         <span class="param-value" id="valModulation">0 Hz</span>
                     </div>
 
-                    <!-- Mix / Wetness (How much effect to apply) -->
+                    <!-- Mix / Wetness -->
                     <div class="control-row">
                         <label for="paramDryWet">Effect Mix (Wet/Dry)</label>
                         <input type="range" id="paramDryWet" min="0" max="100" value="100" step="1">
@@ -571,28 +571,16 @@
         </div>
 
         <div class="hero-buttons">
-           <!-- VOICE BUTTON -->
-<button class="btn voice-btn" id="btnVoiceTrigger">
-
-    <svg width="18" height="18" viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-
-        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-        <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
-        <line x1="12" x2="12" y1="19" y2="22"/>
-
-    </svg>
-
-    <span id="voiceText">
-        Initialize Voice Listening
-    </span>
-
-</button>
- <button class="btn secondary-btn" id="btnManualSync">Trigger Manual Sync</button>
+            <!-- VOICE BUTTON -->
+            <button class="btn voice-btn" id="btnVoiceTrigger">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                    <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+                    <line x1="12" x2="12" y1="19" y2="22"/>
+                </svg>
+                <span id="voiceText">Initialize Voice Listening</span>
+            </button>
+            <button class="btn secondary-btn" id="btnManualSync">Trigger Manual Sync</button>
         </div>
     </section>
 
@@ -600,10 +588,9 @@
         <h2 class="section-title">System Live Operations Control Center</h2>
         
         <div class="cognitive-grid">
-            
             <div class="sub-panel" id="voiceProcessingPanel">
                 <div class="sub-panel-header">
-                    <h3><span class="live-pulse-dot active" id="voicePulseDot"></span> Real-Time Voice Processing</h3>
+                    <h3><span class="live-pulse-dot" id="voicePulseDot"></span> Real-Time Voice Processing</h3>
                     <span class="audio-pill-badge" id="voiceModuleStatus">Standby Monitoring</span>
                 </div>
                 <div class="voice-bar-container" id="eqContainer">
@@ -660,11 +647,10 @@
         </div>
 
         <div class="dashboard-container">
-
             <div class="dashboard-box" id="neuralBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Neural Processing</h3>
-                    <p class="live-description" id="neuralDesc"> Continuously evaluating complex learning matrices across array logic tracks.</p>
+                    <p class="live-description" id="neuralDesc">Continuously evaluating complex learning matrices across array logic tracks.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="neuralBar"></div></div>
                 <div class="stats-matrix">
@@ -678,7 +664,7 @@
             <div class="dashboard-box" id="analyticsBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Smart Analytics</h3>
-                    <p class="live-description" id="analyticsDesc"> Processing predictive pattern vectors matching operations metrics.</p>
+                    <p class="live-description" id="analyticsDesc">Processing predictive pattern vectors matching operations metrics.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="analyticsBar"></div></div>
                 <div class="stats-matrix">
@@ -692,7 +678,7 @@
             <div class="dashboard-box" id="automationBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Automation Engine</h3>
-                    <p class="live-description" id="automationDesc"> Automated background threads mapping scaling orchestration.</p>
+                    <p class="live-description" id="automationDesc">Automated background threads mapping scaling orchestration.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="automationBar"></div></div>
                 <div class="stats-matrix">
@@ -702,7 +688,6 @@
                 </div>
                 <canvas id="automationCanvas" class="live-telemetry-canvas"></canvas>
             </div>
-
         </div>
     </section>
 
@@ -712,7 +697,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-        
             const SystemState = {
                 isListening: false,
                 audioContext: null,
@@ -722,7 +706,6 @@
                 stream: null,
                 morphMode: "normal",
                 
-                // Web Audio Nodes
                 filterNode: null,
                 delayNode: null,
                 feedbackGain: null,
@@ -747,19 +730,20 @@
             const cognitiveModality = document.getElementById("cognitiveModality");
             const eqBars = document.querySelectorAll(".eq-bar");
             const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
+            const voicePulseDot = document.getElementById("voicePulseDot");
             
             const elementsMatrix = {
                 calm: { 
-                    bar: document.getElementById("barCalm") || document.getElementById("calmBar"), 
-                    txt: document.getElementById("txtCalm") || document.getElementById("valCalm") 
+                    bar: document.getElementById("barCalm"), 
+                    txt: document.getElementById("txtCalm") 
                 },
                 stress: { 
-                    bar: document.getElementById("barStress") || document.getElementById("stressBar") || document.getElementById("frictionBar"), 
-                    txt: document.getElementById("txtStress") || document.getElementById("valStress") || document.getElementById("valFriction")
+                    bar: document.getElementById("barStress"), 
+                    txt: document.getElementById("txtStress")
                 },
                 load: { 
-                    bar: document.getElementById("barLoad") || document.getElementById("loadBar"), 
-                    txt: document.getElementById("txtLoad") || document.getElementById("valLoad") 
+                    bar: document.getElementById("barLoad"), 
+                    txt: document.getElementById("txtLoad") 
                 }
             };
 
@@ -812,6 +796,7 @@
                     cObj.el.width = rect.width * window.devicePixelRatio;
                     cObj.el.height = rect.height * window.devicePixelRatio;
                     cObj.ctx = cObj.el.getContext("2d");
+                    cObj.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
                     
                     cObj.points = new Array(60).fill(0.5); 
                 });
@@ -822,7 +807,6 @@
             }
 
             function setupControlEventListeners() {
-                // Presets implementation
                 Object.keys(morphButtons).forEach(mode => {
                     if (morphButtons[mode]) {
                         morphButtons[mode].addEventListener("click", () => {
@@ -834,7 +818,6 @@
                     }
                 });
 
-                // Range slider listeners
                 Object.keys(sliders).forEach(key => {
                     if (sliders[key]) {
                         sliders[key].addEventListener("input", (e) => {
@@ -851,25 +834,6 @@
                 }
             }
 
-            function applyPresetParameters(mode) {
-                const presets = {
-                    normal: { pitch: 0, robotic: 0, modulation: 0, wet: 100 },
-                    deep: { pitch: -5, robotic: 10, modulation: 5, wet: 85 },
-                    robot: { pitch: -2, robotic: 80, modulation: 15, wet: 100 },
-                    alien: { pitch: 4, robotic: 40, modulation: 35, wet: 90 },
-                    echo: { pitch: 1, robotic: 15, modulation: 8, wet: 75 },
-                    radio: { pitch: 2, robotic: 30, modulation: 0, wet: 100 }
-                };
-
-                const config = presets[mode] || presets.normal;
-                if (sliders.pitch) sliders.pitch.value = config.pitch;
-                if (sliders.robotic) sliders.robotic.value = config.robotic;
-                if (sliders.modulation) sliders.modulation.value = config.modulation;
-                if (sliders.dryWet) sliders.dryWet.value = config.wet;
-
-                Object.keys(sliders).forEach(key => updateSliderLabel(key, sliders[key].value));
-            }
-
             function updateSliderLabel(key, val) {
                 if (!sliderValues[key]) return;
                 if (key === 'pitch') sliderValues[key].textContent = `${val} semitones`;
@@ -877,237 +841,156 @@
                 else sliderValues[key].textContent = `${val}%`;
             }
 
-            function toggleVoiceCaptureSystem() {
-                if (!SystemState.isListening) {
-                    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-                        .then(stream => {
-                            SystemState.isListening = true;
-                            SystemState.stream = stream;
-                            
-                            voiceBtn.classList.add("listening");
-                            voiceBtn.innerHTML = `<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/></svg> Terminate Core Session`;
-                            
-                            voiceStatusDot.classList.add("active");
-                            voiceStatusText.textContent = "Acoustic Stream Active";
-                            voiceModuleStatus.textContent = "Processing Audio";
-                            voiceProcessingPanel.classList.add("voice-pulse-highlight");
-                            voiceTranscript.textContent = "Listening to audio feed channel link setup...";
+            function applyPresetParameters(mode) {
+                const presets = {
+                    normal: { pitch: 0, robotic: 0, modulation: 0, dryWet: 100 },
+                    deep: { pitch: -5, robotic: 10, modulation: 5, dryWet: 85 },
+                    robot: { pitch: -2, robotic: 80, modulation: 15, dryWet: 100 },
+                    alien: { pitch: 4, robotic: 40, modulation: 35, dryWet: 90 },
+                    echo: { pitch: 1, robotic: 15, modulation: 8, dryWet: 75 },
+                    radio: { pitch: 2, robotic: 30, modulation: 2, dryWet: 60 }
+                };
 
-                            // Initialize Audio Web Nodes
-                            SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                            SystemState.analyser = SystemState.audioContext.createAnalyser();
-                            SystemState.analyser.fftSize = 64;
-                            SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
-                            
-                            SystemState.source = SystemState.audioContext.createMediaStreamSource(stream);
-                            SystemState.source.connect(SystemState.analyser);
-                            
-                            if (liveSampleRate) {
-                                liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-                            }
-                        })
-                        .catch(err => {
-                            console.error("Audio Access Revoked:", err);
-                            voiceTranscript.textContent = "Access Denied. Check mic context logic hooks.";
-                        });
-                } else {
-                    deactivateVoiceSystem();
-                }
-            }
-
-           function deactivateVoiceSystem() {
-
-    SystemState.isListening = false;
-
-    if (SystemState.stream) {
-
-        SystemState.stream
-            .getTracks()
-            .forEach(track => track.stop());
-    }
-
-    if (SystemState.audioContext) {
-
-        SystemState.audioContext.close();
-    }
-
-    /* ADD THIS PART */
-    if (SystemState.recognition) {
-
-        SystemState.recognition.stop();
-    }
-
-    const voiceText =
-        document.getElementById("voiceText");
-
-    if (voiceText) {
-
-        voiceText.innerText =
-            "Initialize Voice Listening";
-    }
-
-    voiceBtn.classList.remove("listening");
-
-    voiceStatusDot.classList.remove("active");
-
-    voiceStatusText.textContent =
-        "Acoustic Engine Offline";
-
-    voiceModuleStatus.textContent =
-        "Standby Monitoring";
-
-    voiceProcessingPanel.classList.remove(
-        "voice-pulse-highlight"
-    );
-
-    if (liveDecibel) {
-
-        liveDecibel.textContent = "-Inf dB";
-    }
-
-    if (liveSampleRate) {
-
-        liveSampleRate.textContent = "0.0 kHz";
-    }
-
-    eqBars.forEach(bar => {
-
-        bar.style.height = "25%";
-    });
-
-    updateVoiceMatrixMetrics();
-}
-                }
-                
-                voiceBtn.classList.remove("listening");
-                voiceBtn.innerHTML = `<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><path d=\"M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z\"/><path d=\"M19 10v1a7 7 0 0 1-14 0v-1\"/><line x1=\"12\" x2=\"12\" y1=\"19\" y2=\"22\"/></svg> Initialize Voice Listening`;
-                
-                voiceStatusDot.classList.remove("active");
-                voiceStatusText.textContent = "Acoustic Engine Offline";
-                voiceModuleStatus.textContent = "Standby Monitoring";
-                voiceProcessingPanel.classList.remove("voice-pulse-highlight");
-                if (liveDecibel) liveDecibel.textContent = "-Inf dB";
-                if (liveSampleRate) liveSampleRate.textContent = "0.0 kHz";
-                
-                eqBars.forEach(bar => bar.style.height = "25%");
-                updateVoiceMatrixMetrics();
-            }
-
-            function triggerManualSystemSync() {
-                const prevText = voiceTranscript.textContent;
-                voiceTranscript.textContent = "Executing algorithmic matrix re-alignment loop across cores...";
-                setTimeout(() => {
-                    voiceTranscript.textContent = prevText;
-                }, 1500);
+                const selected = presets[mode] || presets.normal;
+                Object.keys(selected).forEach(key => {
+                    if (sliders[key]) {
+                        sliders[key].value = selected[key];
+                        updateSliderLabel(key, selected[key]);
+                    }
+                });
             }
 
             function updateVoiceMatrixMetrics() {
-                let c = 0, s = 0, l = 0;
-                if (SystemState.isListening) {
-                    c = Math.floor(45 + Math.random() * 40);
-                    s = Math.floor(10 + Math.random() * 30);
-                    l = Math.floor(50 + Math.random() * 35);
-                    if (cognitiveModality) cognitiveModality.textContent = "Dynamic Shift";
-                } else {
-                    if (cognitiveModality) cognitiveModality.textContent = "Adaptive Base";
-                }
+                const randomVal = () => Math.floor(Math.random() * 40) + (SystemState.isListening ? 40 : 10);
+                
+                const cVal = randomVal();
+                const sVal = SystemState.isListening ? Math.floor(Math.random() * 30) + 15 : Math.floor(Math.random() * 15);
+                const lVal = SystemState.isListening ? Math.floor(Math.random() * 50) + 40 : Math.floor(Math.random() * 20);
 
-                if (elementsMatrix.calm.bar) elementsMatrix.calm.bar.style.width = `${c}%`;
-                if (elementsMatrix.calm.txt) elementsMatrix.calm.txt.textContent = `${c}%`;
-                if (elementsMatrix.stress.bar) elementsMatrix.stress.bar.style.width = `${s}%`;
-                if (elementsMatrix.stress.txt) elementsMatrix.stress.txt.textContent = `${s}%`;
-                if (elementsMatrix.load.bar) elementsMatrix.load.bar.style.width = `${l}%`;
-                if (elementsMatrix.load.txt) elementsMatrix.load.txt.textContent = `${l}%`;
+                if(elementsMatrix.calm.bar) elementsMatrix.calm.bar.style.width = `${cVal}%`;
+                if(elementsMatrix.calm.txt) elementsMatrix.calm.txt.textContent = `${cVal}%`;
+                
+                if(elementsMatrix.stress.bar) elementsMatrix.stress.bar.style.width = `${sVal}%`;
+                if(elementsMatrix.stress.txt) elementsMatrix.stress.txt.textContent = `${sVal}%`;
+                
+                if(elementsMatrix.load.bar) elementsMatrix.load.bar.style.width = `${lVal}%`;
+                if(elementsMatrix.load.txt) elementsMatrix.load.txt.textContent = `${lVal}%`;
+            }
+
+            function toggleVoiceCaptureSystem() {
+                if (!SystemState.isListening) {
+                    SystemState.isListening = true;
+                    voiceBtn.classList.add("listening");
+                    document.getElementById("voiceText").textContent = "Terminate System Sync";
+                    voiceStatusDot.classList.add("active");
+                    voicePulseDot?.classList.add("active");
+                    voiceStatusText.textContent = "Acoustic Core Routing Live";
+                    voiceModuleStatus.textContent = "Processing Signal Stream";
+                    voiceProcessingPanel?.classList.add("voice-pulse-highlight");
+                    voiceTranscript.textContent = '"Analyzing matrix structural parameters across active sub-grids..."';
+                    
+                    if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                            SystemState.stream = stream;
+                            SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                            SystemState.analyser = SystemState.audioContext.createAnalyser();
+                            SystemState.source = SystemState.audioContext.createMediaStreamSource(stream);
+                            SystemState.source.connect(SystemState.analyser);
+                            liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
+                        }).catch(() => {
+                            liveSampleRate.textContent = "44.1 kHz";
+                        });
+                    } else {
+                        liveSampleRate.textContent = "44.1 kHz";
+                    }
+                } else {
+                    shutdownVoiceCapture();
+                }
+            }
+
+            function shutdownVoiceCapture() {
+                SystemState.isListening = false;
+                voiceBtn.classList.remove("listening");
+                document.getElementById("voiceText").textContent = "Initialize Voice Listening";
+                voiceStatusDot.classList.remove("active");
+                voicePulseDot?.classList.remove("active");
+                voiceStatusText.textContent = "Acoustic Engine Offline";
+                voiceModuleStatus.textContent = "Standby Monitoring";
+                voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                voiceTranscript.textContent = "Click below and say a control path phrase...";
+                liveDecibel.textContent = "-Inf dB";
+                liveSampleRate.textContent = "0.0 kHz";
+                
+                if(SystemState.stream) {
+                    SystemState.stream.getTracks().forEach(t => t.stop());
+                }
+                eqBars.forEach(b => b.style.height = "25%");
+            }
+
+            function triggerManualSystemSync() {
+                manualSyncBtn.textContent = "Syncing Realtime Matrix...";
+                manualSyncBtn.disabled = true;
+                setTimeout(() => {
+                    manualSyncBtn.textContent = "Trigger Manual Sync";
+                    manualSyncBtn.disabled = false;
+                    updateVoiceMatrixMetrics();
+                }, 800);
             }
 
             function runLiveTelemetryUIUpdate() {
-                const timestamp = Date.now();
-
-                // 1. Telemetry Calculations
-                const velocityVal = Math.floor(82 + Math.sin(timestamp / 600) * 4 + Math.sin(timestamp / 200) * 2);
-                const indexVal    = Math.floor(67 + Math.cos(timestamp / 900) * 3 + Math.sin(timestamp / 400) * 1.5);
-                const activeVal   = Math.floor(93 + Math.sin(timestamp / 1200) * 2);
-                
-                if(metricLabels.neuralVelocity) metricLabels.neuralVelocity.textContent = `${velocityVal}%`;
-                if(metricLabels.neuralIndex)    metricLabels.neuralIndex.textContent = `${indexVal}%`;
-                if(metricLabels.neuralActive)   metricLabels.neuralActive.textContent = `${activeVal}%`;
-                if(metricLabels.neuralBar)      metricLabels.neuralBar.style.width = `${velocityVal}%`;
-
-                const accuracyVal   = Math.floor(96 + Math.sin(timestamp / 2000) * 1.5);
-                const forecastVal   = Math.floor(86 + Math.cos(timestamp / 1500) * 3);
-                const efficiencyVal = Math.floor(101 + Math.sin(timestamp / 1800) * 2);
-                
-                if(metricLabels.analyticsAccuracy)   metricLabels.analyticsAccuracy.textContent = `${accuracyVal}%`;
-                if(metricLabels.analyticsForecast)   metricLabels.analyticsForecast.textContent = `${forecastVal}%`;
-                if(metricLabels.analyticsEfficiency) metricLabels.analyticsEfficiency.textContent = `${efficiencyVal}%`;
-                if(metricLabels.analyticsBar)        metricLabels.analyticsBar.style.width = `${forecastVal}%`;
-
-                const doneVal = Math.floor(74 + Math.sin(timestamp / 800) * 5);
-                const loadVal = Math.floor(41 + Math.cos(timestamp / 700) * 8);
-                const flowVal = Math.floor(88 + Math.sin(timestamp / 1000) * 3);
-
-                if(metricLabels.automationDone) metricLabels.automationDone.textContent = `${doneVal}%`;
-                if(metricLabels.automationLoad) metricLabels.automationLoad.textContent = `${loadVal}%`;
-                if(metricLabels.automationFlow) metricLabels.automationFlow.textContent = `${flowVal}%`;
-                if(metricLabels.automationBar)  metricLabels.automationBar.style.width = `${doneVal}%`;
-
-                // 2. Real-Time Web Audio Equalizer Display Logic
-                if (SystemState.isListening && SystemState.analyser && SystemState.dataArray) {
-                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    let sum = 0;
-                    
-                    for (let i = 0; i < eqBars.length; i++) {
-                        const val = SystemState.dataArray[i * 2] || 0;
-                        sum += val;
-                        const heightPercent = Math.max(15, (val / 255) * 100);
-                        eqBars[i].style.height = `${heightPercent}%`;
-                    }
-
-                    const average = sum / eqBars.length;
-                    const db = average > 0 ? Math.floor((average / 255) * 40) - 40 : -90;
-                    if (liveDecibel) liveDecibel.textContent = `${db} dB`;
-
-                    if (Math.random() < 0.15) {
-                        updateVoiceMatrixMetrics();
-                    }
+                // Update EQ Animation Elements
+                if (SystemState.isListening) {
+                    eqBars.forEach(bar => {
+                        const hVal = Math.floor(Math.random() * 75) + 20;
+                        bar.style.height = `${hVal}%`;
+                    });
+                    liveDecibel.textContent = `${-(Math.floor(Math.random() * 30) + 10)} dB`;
+                    if(Math.random() > 0.8) updateVoiceMatrixMetrics();
                 }
 
-                // 3. Render Canvas Tracks Line Topology
+                // Update Grid Data nodes
                 Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const cObj = telemetryCanvasEngines[key];
-                    if (!cObj.ctx || !cObj.el) return;
+                    const engine = telemetryCanvasEngines[key];
+                    if (!engine.ctx) return;
 
-                    const ctx = cObj.ctx;
-                    const W = cObj.el.width;
-                    const H = cObj.el.height;
+                    const width = engine.el.width / window.devicePixelRatio;
+                    const height = engine.el.height / window.devicePixelRatio;
+                    
+                    engine.ctx.clearRect(0, 0, width, height);
 
-                    ctx.clearRect(0, 0, W, H);
+                    engine.points.shift();
+                    const nextVal = engine.points[engine.points.length - 1] + (Math.random() - 0.5) * 0.15;
+                    engine.points.push(Math.max(0.1, Math.min(0.9, nextVal)));
 
-                    let targetNext = 0.5;
-                    if (key === 'neural') targetNext = (velocityVal - 60) / 40;
-                    else if (key === 'analytics') targetNext = (forecastVal - 60) / 50;
-                    else targetNext = (doneVal - 50) / 45;
-
-                    targetNext += (Math.random() - 0.5) * 0.15;
-                    targetNext = Math.max(0.1, Math.min(0.9, targetNext));
-
-                    cObj.points.push(targetNext);
-                    if (cObj.points.length > 80) cObj.points.shift();
-
-                    ctx.beginPath();
-                    ctx.strokeStyle = `hsl(${cObj.hue}, 100%, 60%)`;
-                    ctx.lineWidth = 2.5 * window.devicePixelRatio;
-                    ctx.lineJoin = "round";
-
-                    const slice = W / (cObj.points.length - 1);
-                    for (let i = 0; i < cObj.points.length; i++) {
-                        const x = i * slice;
-                        const y = H - (cObj.points[i] * H);
-                        if (i === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
+                    engine.ctx.beginPath();
+                    engine.ctx.strokeStyle = `hsl(${engine.hue}, 100%, 50%)`;
+                    engine.ctx.lineWidth = 2;
+                    
+                    for (let i = 0; i < engine.points.length; i++) {
+                        const x = (i / (engine.points.length - 1)) * width;
+                        const y = engine.points[i] * height;
+                        if (i === 0) engine.ctx.moveTo(x, y);
+                        else engine.ctx.lineTo(x, y);
                     }
-                    ctx.stroke();
+                    engine.ctx.stroke();
                 });
+
+                // Periodic dynamic values rotation
+                const t = Date.now();
+                if(metricLabels.neuralVelocity) metricLabels.neuralVelocity.textContent = `${Math.floor((Math.sin(t/1000)+1)*40+15)}%`;
+                if(metricLabels.neuralIndex) metricLabels.neuralIndex.textContent = `${Math.floor((Math.cos(t/1200)+1)*35+20)}%`;
+                if(metricLabels.neuralActive) metricLabels.neuralActive.textContent = `${Math.floor((Math.sin(t/800)+1)*25+40)}%`;
+                if(metricLabels.neuralBar) metricLabels.neuralBar.style.width = metricLabels.neuralActive.textContent;
+
+                if(metricLabels.analyticsAccuracy) metricLabels.analyticsAccuracy.textContent = `${Math.floor((Math.cos(t/1500)+1)*5+90)}%`;
+                if(metricLabels.analyticsForecast) metricLabels.analyticsForecast.textContent = `${Math.floor((Math.sin(t/900)+1)*15+70)}%`;
+                if(metricLabels.analyticsEfficiency) metricLabels.analyticsEfficiency.textContent = `${Math.floor((Math.cos(t/2000)+1)*10+80)}%`;
+                if(metricLabels.analyticsBar) metricLabels.analyticsBar.style.width = metricLabels.analyticsEfficiency.textContent;
+
+                if(metricLabels.automationDone) metricLabels.automationDone.textContent = `${Math.floor((Math.sin(t/1800)+1)*15+65)}%`;
+                if(metricLabels.automationLoad) metricLabels.automationLoad.textContent = `${Math.floor((Math.cos(t/1100)+1)*20+30)}%`;
+                if(metricLabels.automationFlow) metricLabels.automationFlow.textContent = `${Math.floor((Math.sin(t/1400)+1)*10+85)}%`;
+                if(metricLabels.automationBar) metricLabels.automationBar.style.width = metricLabels.automationFlow.textContent;
 
                 requestAnimationFrame(runLiveTelemetryUIUpdate);
             }

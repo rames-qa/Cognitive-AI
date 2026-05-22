@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cognitive AI - Robotics & Vision Systems Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark-main: #0b0f19;
@@ -27,7 +28,8 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            /* Updated to Plus Jakarta Sans */
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-dark-main);
             color: var(--text-primary);
             overflow-x: hidden;
@@ -51,8 +53,8 @@
 
         nav .logo {
             font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-weight: 800; /* Made slightly heavier for tracking look */
+            letter-spacing: 1.5px;
             background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -67,10 +69,11 @@
         nav ul li a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
+            font-weight: 600;
+            font-size: 0.9rem;
             transition: color 0.3s ease;
             padding: 5px 10px;
+            letter-spacing: 0.5px;
         }
 
         nav ul li a:hover {
@@ -85,16 +88,18 @@
         }
 
         .hero h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.9rem;
+            font-weight: 800;
             margin-bottom: 12px;
             line-height: 1.3;
+            letter-spacing: -0.02em; /* Gives clean premium tech spacing */
         }
 
         .hero p {
             color: var(--text-secondary);
             margin-bottom: 25px;
             font-size: 0.95rem;
+            font-weight: 400;
         }
 
         .voice-console-card {
@@ -112,8 +117,10 @@
             justify-content: center;
             gap: 10px;
             margin-bottom: 15px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .status-dot {
@@ -167,7 +174,7 @@
             width: 100%;
             padding: 15px 20px;
             border-radius: 8px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             border: none;
             display: flex;
@@ -176,6 +183,7 @@
             gap: 10px;
             transition: all 0.3s ease;
             font-size: 0.95rem;
+            letter-spacing: 0.5px;
         }
 
         .voice-btn {
@@ -195,8 +203,10 @@
 
         .section-title {
             font-size: 1.5rem;
+            font-weight: 800;
             text-align: center;
             margin-bottom: 30px;
+            letter-spacing: -0.01em;
         }
 
         .cognitive-grid, .dashboard-container {
@@ -233,10 +243,11 @@
 
         .sub-panel-header h3, .glow-title {
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
+            letter-spacing: -0.01em;
         }
 
         .audio-pill-badge {
@@ -246,8 +257,10 @@
             padding: 3px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             border: 1px solid rgba(16, 185, 129, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .audio-pill-badge.active {
@@ -272,6 +285,7 @@
 
         .emotion-tracker-label {
             font-size: 0.75rem;
+            font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -290,6 +304,7 @@
             font-size: 0.85rem;
             color: var(--text-secondary);
             min-height: 48px;
+            font-weight: 400;
         }
 
         .voice-bar-container {
@@ -322,7 +337,8 @@
         .metric-label-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
             color: var(--text-secondary);
             margin-bottom: 5px;
         }
@@ -330,7 +346,7 @@
         .metric-label-row .metric-value {
             font-family: 'JetBrains Mono', monospace;
             color: #fff;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .track-bg, .progress-bar {
@@ -377,6 +393,7 @@
 
         .sub-metric-card p, .stat-node small {
             font-size: 0.65rem;
+            font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -386,7 +403,7 @@
         .sub-metric-card h5, .stat-node span {
             font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             color: #fff;
             margin-top: 2px;
         }
@@ -407,6 +424,8 @@
             border-top: 1px solid var(--border-color);
             font-size: 0.8rem;
             background: #090d16;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
 
         @media (min-width: 768px) {
@@ -421,491 +440,3 @@
         }
     </style>
 </head>
-<body>
-
-    <nav>
-        <div class="logo">Cognitive AI</div>
-        <ul>
-            <li><a href="#home">Console</a></li>
-            <li><a href="#dashboard">Live Matrix</a></li>
-        </ul>
-    </nav>
-
-    <section class="hero" id="home">
-        <h1>Cognitive Speech AI</h1>
-        <p>Stream voice acoustics directly to store metrics, model vocal signatures, and track telemetry dynamically.</p>
-
-        <div class="voice-console-card">
-            <div class="voice-status-indicator">
-                <span class="status-dot" id="voiceStatusDot"></span>
-                <span id="voiceStatusText">Acoustic Audio Input Closed</span>
-            </div>
-
-            <div class="voice-transcript-box" id="voiceTranscript">
-                <span class="transcript-placeholder">Initialize audio input to stream structural analytics tokens...</span>
-            </div>
-        </div>
-
-        <div class="hero-buttons">
-            <button class="btn voice-btn" id="btnVoiceTrigger">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                    <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
-                    <line x1="12" x2="12" y1="19" y2="22"/>
-                </svg>
-                <span id="voiceText">Open Voice Audio Capture</span>
-            </button>
-        </div>
-    </section>
-
-    <section class="dashboard" id="dashboard">
-        <h2 class="section-title">Cognitive Operations Interface Matrix</h2>
-        
-        <div class="cognitive-grid">
-            <div class="sub-panel" id="voiceProcessingPanel">
-                <div class="sub-panel-header">
-                    <h3>Acoustic Capture Buffer</h3>
-                    <span class="audio-pill-badge" id="voiceModuleStatus">Standby</span>
-                </div>
-                <div class="voice-bar-container" id="eqContainer">
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                    <div class="eq-bar"></div>
-                </div>
-                <div class="dashboard-metrics-grid">
-                    <div class="sub-metric-card">
-                        <p>Acoustic Decibels</p>
-                        <h5 id="liveDecibel">-Inf dB</h5>
-                    </div>
-                    <div class="sub-metric-card">
-                        <p>Stream Frequency</p>
-                        <h5 id="liveSampleRate">0.0 kHz</h5>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-panel">
-                <div class="sub-panel-header">
-                    <h3>Cognitive Voice Emotion</h3>
-                    <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight:600;" id="cognitiveModality">Acoustic Signal Processing</span>
-                </div>
-                
-                <div class="emotion-tracker-container">
-                    <div class="emotion-tracker-label">Detected Emotion Signature</div>
-                    <div class="emotion-token-display" id="emotionTokenDisplay">SYSTEM OFFLINE</div>
-                </div>
-
-                <div class="matrix-track-wrapper">
-                    <div class="metric-bar-group">
-                        <div class="metric-label-row">
-                            <span>Calm Stability</span>
-                            <span class="metric-value" id="txtCalm">0%</span>
-                        </div>
-                        <div class="track-bg"><div class="track-fill calm" id="barCalm"></div></div>
-                    </div>
-                    <div class="metric-bar-group">
-                        <div class="metric-label-row">
-                            <span>Vocal Friction</span>
-                            <span class="metric-value" id="txtFriction">0%</span>
-                        </div>
-                        <div class="track-bg"><div class="track-fill friction" id="barFriction"></div></div>
-                    </div>
-                    <div class="metric-bar-group">
-                        <div class="metric-label-row">
-                            <span>Dynamic Processing Load</span>
-                            <span class="metric-value" id="txtLoad">0%</span>
-                        </div>
-                        <div class="track-bg"><div class="track-fill load" id="barLoad"></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="dashboard-container">
-            <div class="dashboard-box" id="neuralBox">
-                <div class="dashboard-header-group">
-                    <h3 class="glow-title" style="color: var(--neon-blue);">Neural Processing</h3>
-                    <p class="live-description">Evaluating language tokens and acoustic matrices across hardware array tracks.</p>
-                </div>
-                <div class="progress-bar"><div class="progress" id="neuralBar"></div></div>
-                <div class="stats-matrix">
-                    <div class="stat-node"><span id="valNeuralVelocity">0%</span><small>Velocity</small></div>
-                    <div class="stat-node"><span id="valNeuralIndex">0%</span><small>Index</small></div>
-                    <div class="stat-node"><span id="valNeuralActive">0%</span><small>Active</small></div>
-                </div>
-                <canvas id="neuralCanvas" class="live-telemetry-canvas"></canvas>
-            </div>
-
-            <div class="dashboard-box" id="analyticsBox">
-                <div class="dashboard-header-group">
-                    <h3 class="glow-title" style="color: var(--neon-purple);">Vision AI Matrix</h3>
-                    <p class="live-description">Processing spatial environment tracking, matrix frameworks, and vector points.</p>
-                </div>
-                <div class="progress-bar"><div class="progress" id="analyticsBar"></div></div>
-                <div class="stats-matrix">
-                    <div class="stat-node"><span id="valVisionFPS">0 FPS</span><small>FPS Feed</small></div>
-                    <div class="stat-node"><span id="valVisionAccuracy">0%</span><small>Accuracy</small></div>
-                    <div class="stat-node"><span id="valVisionTracking">0%</span><small>Tracking</small></div>
-                </div>
-                <canvas id="analyticsCanvas" class="live-telemetry-canvas"></canvas>
-            </div>
-
-            <div class="dashboard-box" id="automationBox">
-                <div class="dashboard-header-group">
-                    <h3 class="glow-title" style="color: var(--neon-green);">Robotics Core</h3>
-                    <p class="live-description">Automated kinematics telemetry, hardware mapping, and thread scheduling loops.</p>
-                </div>
-                <div class="progress-bar"><div class="progress" id="automationBar"></div></div>
-                <div class="stats-matrix">
-                    <div class="stat-node"><span id="valRobotTasks">0%</span><small>Tasks</small></div>
-                    <div class="stat-node"><span id="valRobotLoad">0%</span><small>Load</small></div>
-                    <div class="stat-node"><span id="valRobotFlow">0%</span><small>Flow</small></div>
-                </div>
-                <canvas id="automationCanvas" class="live-telemetry-canvas"></canvas>
-            </div>
-        </div>
-    </section>
-
-    <footer> 
-        &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
-    </footer>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const SystemState = {
-                isListening: false,
-                audioContext: null,
-                analyser: null,
-                dataArray: null,
-                stream: null,
-                recognition: null,
-                currentVolume: 0
-            };
-
-            const telemetryCanvasEngines = {
-                neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff' },
-                analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6' },
-                automation: { el: document.getElementById("automationCanvas"), points: [], color: '#10b981' }
-            };
-
-            const voiceBtn = document.getElementById("btnVoiceTrigger");
-            const voiceStatusDot = document.getElementById("voiceStatusDot");
-            const voiceStatusText = document.getElementById("voiceStatusText");
-            const voiceTranscript = document.getElementById("voiceTranscript");
-            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
-            const liveDecibel = document.getElementById("liveDecibel");
-            const liveSampleRate = document.getElementById("liveSampleRate");
-            const eqBars = document.querySelectorAll(".eq-bar");
-            const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
-            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-            
-            const emotionBars = {
-                calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
-                frictionBar: document.getElementById("barFriction"), frictionTxt: document.getElementById("txtFriction"),
-                loadBar: document.getElementById("barLoad"), loadTxt: document.getElementById("txtLoad")
-            };
-
-            const metricLabels = {
-                neuralVelocity: document.getElementById("valNeuralVelocity"),
-                neuralIndex: document.getElementById("valNeuralIndex"),
-                neuralActive: document.getElementById("valNeuralActive"),
-                neuralBar: document.getElementById("neuralBar"),
-                visionFPS: document.getElementById("valVisionFPS"),
-                visionAccuracy: document.getElementById("valVisionAccuracy"),
-                visionTracking: document.getElementById("valVisionTracking"),
-                analyticsBar: document.getElementById("analyticsBar"),
-                robotTasks: document.getElementById("valRobotTasks"),
-                robotLoad: document.getElementById("valRobotLoad"),
-                robotFlow: document.getElementById("valRobotFlow"),
-                automationBar: document.getElementById("automationBar")
-            };
-
-            initLiveTelemetryEngine();
-
-            function initLiveTelemetryEngine() {
-                Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const cObj = telemetryCanvasEngines[key];
-                    if (!cObj.el) return;
-                    
-                    const rect = cObj.el.getBoundingClientRect();
-                    cObj.el.width = rect.width * window.devicePixelRatio;
-                    cObj.el.height = rect.height * window.devicePixelRatio;
-                    cObj.ctx = cObj.el.getContext("2d");
-                    cObj.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                    
-                    cObj.points = new Array(60).fill(25); 
-                });
-
-                resetAllUIValues();
-                setupControlEventListeners();
-                runLiveTelemetryUIUpdate();
-            }
-
-            function resetAllUIValues() {
-                eqBars.forEach(b => b.style.height = "10%");
-                Object.keys(emotionBars).forEach(k => {
-                    if(k.includes('Bar')) emotionBars[k].style.width = "0%";
-                    if(k.includes('Txt')) emotionBars[k].textContent = "0%";
-                });
-                
-                if(emotionTokenDisplay) {
-                    emotionTokenDisplay.textContent = "SYSTEM OFFLINE";
-                    emotionTokenDisplay.style.color = "var(--text-secondary)";
-                }
-
-                metricLabels.neuralVelocity.textContent = "0%";
-                metricLabels.neuralIndex.textContent = "0%";
-                metricLabels.neuralActive.textContent = "0%";
-                metricLabels.neuralBar.style.width = "0%";
-
-                metricLabels.visionFPS.textContent = "0 FPS";
-                metricLabels.visionAccuracy.textContent = "0%";
-                metricLabels.visionTracking.textContent = "0%";
-                metricLabels.analyticsBar.style.width = "0%";
-
-                metricLabels.robotTasks.textContent = "0%";
-                metricLabels.robotLoad.textContent = "0%";
-                metricLabels.robotFlow.textContent = "0%";
-                metricLabels.automationBar.style.width = "0%";
-            }
-
-            function setupControlEventListeners() {
-                if (voiceBtn) {
-                    voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
-                }
-            }
-
-            function toggleVoiceCaptureSystem() {
-                if (!SystemState.isListening) {
-                    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                        SystemState.isListening = true;
-                        SystemState.stream = stream;
-                        
-                        voiceBtn.classList.add("listening");
-                        document.getElementById("voiceText").textContent = "Close System Interface";
-                        voiceStatusDot.classList.add("active");
-                        voiceStatusText.textContent = "Voice Capture & Emotion Logging Active";
-                        voiceModuleStatus.textContent = "Analyzing Signature";
-                        voiceModuleStatus.classList.add("active");
-                        voiceProcessingPanel?.classList.add("voice-pulse-highlight");
-                        
-                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Processing system tokens...]</span>';
-
-                        SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        SystemState.analyser = SystemState.audioContext.createAnalyser();
-                        SystemState.analyser.fftSize = 64;
-                        const bufferLength = SystemState.analyser.frequencyBinCount;
-                        SystemState.dataArray = new Uint8Array(bufferLength);
-                        
-                        const source = SystemState.audioContext.createMediaStreamSource(stream);
-                        source.connect(SystemState.analyser);
-                        
-                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-
-                        if ('webkitSpeechRecognition' in window || 'speechRecognition' in window) {
-                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                            SystemState.recognition = new SpeechRecognition();
-                            SystemState.recognition.continuous = true;
-                            SystemState.recognition.interimResults = true;
-                            
-                            SystemState.recognition.onresult = (event) => {
-                                let cleanBuffer = '';
-                                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                                    cleanBuffer += event.results[i][0].transcript;
-                                }
-                                voiceTranscript.textContent = cleanBuffer;
-                            };
-                            SystemState.recognition.start();
-                        } else {
-                            voiceTranscript.textContent = "Speech Engine active. (Web Speech API fallbacks running seamlessly).";
-                        }
-                    }).catch(err => {
-                        console.error("Audio Access Rejected:", err);
-                        voiceTranscript.textContent = "Error: Access to audio stream interface was denied.";
-                    });
-                } else {
-                    shutdownVoiceCapture();
-                }
-            }
-
-            function shutdownVoiceCapture() {
-                SystemState.isListening = false;
-                voiceBtn.classList.remove("listening");
-                document.getElementById("voiceText").textContent = "Open Voice Audio Capture";
-                voiceStatusDot.classList.remove("active");
-                voiceStatusText.textContent = "Acoustic Audio Input Closed";
-                voiceModuleStatus.textContent = "Standby";
-                voiceModuleStatus.classList.remove("active");
-                voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                
-                voiceTranscript.innerHTML = '<span class="transcript-placeholder">Initialize audio input to stream structural analytics tokens...</span>';
-                liveDecibel.textContent = "-Inf dB";
-                liveSampleRate.textContent = "0.0 kHz";
-                
-                if (SystemState.recognition) {
-                    SystemState.recognition.stop();
-                }
-                if (SystemState.stream) {
-                    SystemState.stream.getTracks().forEach(t => t.stop());
-                }
-                if (SystemState.audioContext) {
-                    SystemState.audioContext.close();
-                }
-                
-                SystemState.currentVolume = 0;
-                resetAllUIValues();
-            }
-
-            function runLiveTelemetryUIUpdate() {
-                requestAnimationFrame(runLiveTelemetryUIUpdate);
-
-                let volSeed = 0;
-
-                if (SystemState.isListening && SystemState.analyser) {
-                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    
-                    let totalAmplitude = 0;
-                    const len = SystemState.dataArray.length;
-                    
-                    eqBars.forEach((bar, idx) => {
-                        const dataIndex = Math.floor((idx / eqBars.length) * len);
-                        const rawVal = SystemState.dataArray[dataIndex] || 0;
-                        totalAmplitude += rawVal;
-                        
-                        const heightPercentage = Math.max(10, Math.floor((rawVal / 255) * 100));
-                        bar.style.height = `${heightPercentage}%`;
-                    });
-
-                    const averageNormalizedVolume = totalAmplitude / (len * 255); 
-                    SystemState.currentVolume = averageNormalizedVolume; 
-                    volSeed = averageNormalizedVolume;
-
-                    const computedDb = averageNormalizedVolume > 0 ? Math.round(20 * Math.log10(averageNormalizedVolume)) : -100;
-                    liveDecibel.textContent = computedDb > -60 ? `${computedDb} dB` : "-Inf dB";
-
-                    // Audio-driven emotional processing matrix algorithms
-                    let calmFactor = 0;
-                    let frictionFactor = 0;
-                    let loadFactor = 0;
-
-                    if (averageNormalizedVolume > 0.01) {
-                        calmFactor = Math.max(15, Math.min(98, Math.round(100 - (averageNormalizedVolume * 150))));
-                        frictionFactor = Math.min(100, Math.round(averageNormalizedVolume * 280));
-                        loadFactor = Math.max(20, Math.min(95, Math.round(30 + (averageNormalizedVolume * 110))));
-                        
-                        // Pick token states
-                        if(frictionFactor > 55) {
-                            emotionTokenDisplay.textContent = "EXCITED / AGITATED";
-                            emotionTokenDisplay.style.color = "var(--neon-rose)";
-                        } else {
-                            emotionTokenDisplay.textContent = "NARRATIVE CALM";
-                            emotionTokenDisplay.style.color = "var(--neon-green)";
-                        }
-                    } else {
-                        calmFactor = 85;
-                        frictionFactor = 4;
-                        loadFactor = 12;
-                        emotionTokenDisplay.textContent = "AWAITING TELEMETRY";
-                        emotionTokenDisplay.style.color = "var(--neon-blue)";
-                    }
-
-                    emotionBars.calmBar.style.width = `${calmFactor}%`;
-                    emotionBars.calmTxt.textContent = `${calmFactor}%`;
-                    emotionBars.frictionBar.style.width = `${frictionFactor}%`;
-                    emotionBars.frictionTxt.textContent = `${frictionFactor}%`;
-                    emotionBars.loadBar.style.width = `${loadFactor}%`;
-                    emotionBars.loadTxt.textContent = `${loadFactor}%`;
-
-                } else {
-                    // System Offline mode resets EQ heights
-                    eqBars.forEach(bar => {
-                        bar.style.height = "10%";
-                    });
-                }
-
-                // Render Live Canvas Telemetry Waves
-                Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const engine = telemetryCanvasEngines[key];
-                    if (!engine.ctx) return;
-
-                    const ctx = engine.ctx;
-                    const w = engine.el.getBoundingClientRect().width;
-                    const h = engine.el.getBoundingClientRect().height;
-
-                    ctx.clearRect(0, 0, w, h);
-
-                    // Push a simulated next point weighted by active volume spikes
-                    let nextValue;
-                    if (SystemState.isListening) {
-                        if (key === 'neural') nextValue = h * 0.7 - (volSeed * h * 0.5) - (Math.random() * 8);
-                        if (key === 'analytics') nextValue = h * 0.5 - (volSeed * h * 0.2) - (Math.sin(Date.now() / 200) * 12);
-                        if (key === 'automation') nextValue = h * 0.4 + (Math.cos(Date.now() / 400) * h * 0.3) * (volSeed + 0.2);
-                    } else {
-                        // Flatline idle wave
-                        nextValue = h * 0.5 + Math.sin((Date.now() / 300) + (w * 0.1)) * 2;
-                    }
-
-                    engine.points.push(nextValue);
-                    if (engine.points.length > w / 4) engine.points.shift();
-
-                    // Render lines
-                    ctx.beginPath();
-                    ctx.strokeStyle = engine.color;
-                    ctx.lineWidth = 2;
-                    ctx.lineJoin = "round";
-
-                    const sliceWidth = w / (engine.points.length - 1);
-                    for (let i = 0; i < engine.points.length; i++) {
-                        const x = i * sliceWidth;
-                        const y = engine.points[i];
-                        if (i === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
-                    }
-                    ctx.stroke();
-
-                    // Modern bottom ambient translucent gradient filling underneath wave paths
-                    ctx.lineTo(w, h);
-                    ctx.lineTo(0, h);
-                    ctx.closePath();
-                    ctx.fillStyle = engine.color === '#00f3ff' ? 'rgba(0,243,255,0.03)' : 
-                                    engine.color === '#8b5cf6' ? 'rgba(139,92,246,0.03)' : 'rgba(16,185,129,0.03)';
-                    ctx.fill();
-
-                    // Animate Sub-panel bars and metrics dynamically if active
-                    if (SystemState.isListening) {
-                        const pulseMod = Math.sin(Date.now() / 150);
-                        if (key === 'neural') {
-                            const vel = Math.round(55 + (volSeed * 40) + (pulseMod * 3));
-                            metricLabels.neuralVelocity.textContent = `${vel}%`;
-                            metricLabels.neuralIndex.textContent = Math.round(72 + (pulseMod * 2)) + "%";
-                            metricLabels.neuralActive.textContent = Math.round(88 + (volSeed * 10)) + "%";
-                            metricLabels.neuralBar.style.width = `${vel}%`;
-                        }
-                        if (key === 'analytics') {
-                            const fps = Math.round(58 + (pulseMod * 2));
-                            metricLabels.visionFPS.textContent = `${fps} FPS`;
-                            metricLabels.visionAccuracy.textContent = Math.round(94 + (volSeed * 4)) + "%";
-                            metricLabels.visionTracking.textContent = Math.round(82 + (pulseMod * 4)) + "%";
-                            metricLabels.analyticsBar.style.width = `${Math.round(80 + (volSeed * 15))}%`;
-                        }
-                        if (key === 'automation') {
-                            const load = Math.round(41 + (volSeed * 45) + (pulseMod * 5));
-                            metricLabels.robotTasks.textContent = Math.round(65 + (pulseMod * 2)) + "%";
-                            metricLabels.robotLoad.textContent = `${load}%`;
-                            metricLabels.robotFlow.textContent = Math.round(91 - (volSeed * 12)) + "%";
-                            metricLabels.automationBar.style.width = `${load}%`;
-                        }
-                    }
-                });
-            }
-        });
-    </script>
-</body>
-</html>

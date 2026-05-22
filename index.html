@@ -256,6 +256,36 @@
             border: 1px solid rgba(255, 51, 102, 0.2);
         }
 
+        /* NEW EMOTION DISPLAY STYLING */
+        .emotion-tracker-container {
+            background: #090d16;
+            border: 1px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90px;
+        }
+
+        .emotion-tracker-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .emotion-token-display {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
         .live-description {
             font-size: 0.85rem;
             color: var(--text-secondary);
@@ -466,6 +496,13 @@
                     <h3>Cognitive Voice Emotion</h3>
                     <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight:600;" id="cognitiveModality">Acoustic Signal Processing</span>
                 </div>
+                
+                <!-- VISUAL EMOTION TRACKER COMPONENT -->
+                <div class="emotion-tracker-container">
+                    <div class="emotion-tracker-label">Detected Emotion Signature</div>
+                    <div class="emotion-token-display" id="emotionTokenDisplay">SYSTEM OFFLINE</div>
+                </div>
+
                 <div class="matrix-track-wrapper">
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
@@ -571,6 +608,7 @@
             const liveSampleRate = document.getElementById("liveSampleRate");
             const eqBars = document.querySelectorAll(".eq-bar");
             const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
+            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
             
             const emotionBars = {
                 calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
@@ -621,6 +659,11 @@
                     if(k.includes('Txt')) emotionBars[k].textContent = "0%";
                 });
                 
+                if(emotionTokenDisplay) {
+                    emotionTokenDisplay.textContent = "SYSTEM OFFLINE";
+                    emotionTokenDisplay.style.color = "var(--text-secondary)";
+                }
+
                 metricLabels.neuralVelocity.textContent = "0%";
                 metricLabels.neuralIndex.textContent = "0%";
                 metricLabels.neuralActive.textContent = "0%";
@@ -755,11 +798,26 @@
                         calmFactor = Math.max(30, Math.min(98, Math.round(100 - (averageNormalizedVolume * 120))));
                         frictionFactor = Math.min(100, Math.round(averageNormalizedVolume * 220));
                         loadFactor = Math.max(35, Math.min(95, Math.round(40 + (averageNormalizedVolume * 110))));
+
+                        // LOGIC FOR DETERMINING EXPLICIT EMOTION LABEL BASED ON VOLUME MATRICES
+                        if (frictionFactor > 55) {
+                            emotionTokenDisplay.textContent = "STRESSED / ENERGETIC";
+                            emotionTokenDisplay.style.color = "var(--neon-rose)";
+                        } else if (calmFactor > 70) {
+                            emotionTokenDisplay.textContent = "CALM / STABLE";
+                            emotionTokenDisplay.style.color = "var(--neon-green)";
+                        } else {
+                            emotionTokenDisplay.textContent = "PROCESSING EXPRESSION";
+                            emotionTokenDisplay.style.color = "var(--neon-blue)";
+                        }
                     } else {
                         // Ambient tracking floor when open but silent
                         calmFactor = 95;
                         frictionFactor = 2;
                         loadFactor = 15;
+                        
+                        emotionTokenDisplay.textContent = "LISTENING (SILENT)";
+                        emotionTokenDisplay.style.color = "var(--text-secondary)";
                     }
 
                     emotionBars.calmBar.style.width = `${calmFactor}%`;
@@ -813,7 +871,6 @@
 
                     engine.points.shift();
                     
-                    // The line graphics are mapped perfectly to amplitude: Zero input means a solid flat baseline.
                     let targetPointHeight = 0.8; 
                     if (SystemState.isListening && SystemState.currentVolume > 0.01) {
                         const randomWobble = (Math.random() - 0.5) * (SystemState.currentVolume * 0.9);

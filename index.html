@@ -256,6 +256,7 @@
             border: 1px solid rgba(255, 51, 102, 0.2);
         }
 
+        /* NEW EMOTION DISPLAY STYLING */
         .emotion-tracker-container {
             background: #090d16;
             border: 1px dashed var(--border-color);
@@ -343,7 +344,7 @@
             height: 100%;
             width: 0%;
             border-radius: 4px;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.1s linear;
         }
 
         .progress { background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); }
@@ -421,7 +422,7 @@
 <body>
 
     <nav>
-        <div class="logo">Cognitive AI</div>
+        <div class="logo">Cognitive AI </div>
         <ul>
             <li><a href="#home">Console</a></li>
             <li><a href="#dashboard">Live Matrix</a></li>
@@ -429,7 +430,7 @@
     </nav>
 
     <section class="hero" id="home">
-        <h1>Cognitive Speech AI</h1>
+        <h1> Cognitive Speech AI </h1>
         <p>Stream voice acoustics directly to store metrics, model vocal signatures, and track telemetry dynamically.</p>
 
         <div class="voice-console-card">
@@ -582,7 +583,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // CENTRALIZED INTELLIGENCE MODULE & COGNITIVE DATABASE
             const SystemState = {
                 isListening: false,
                 audioContext: null,
@@ -590,39 +590,13 @@
                 dataArray: null,
                 stream: null,
                 recognition: null,
-                currentVolume: 0,
-                animationFrameId: null,
-                
-                // Context Awareness & AI Learning Memory Pools
-                sessionContext: {
-                    activeIntent: "idle",
-                    confidenceScore: 0.0,
-                    interactionCount: 0,
-                    lastHeuristicUpdate: Date.now()
-                },
-                aiWeights: {
-                    neural: { velocity: 15, index: 22, active: 10, targetProgress: 15 },
-                    vision: { fps: 0, accuracy: 45, tracking: 30, targetProgress: 25 },
-                    robotics: { tasks: 12, load: 18, flow: 25, targetProgress: 20 }
-                },
-                intentMapping: [
-                    { keywords: ["neural", "process", "brain", "language", "token", "speech"], target: "neural" },
-                    { keywords: ["vision", "camera", "track", "spatial", "accuracy", "feed", "see"], target: "vision" },
-                    { keywords: ["robot", "kinematics", "engine", "move", "hardware", "task", "automation"], target: "robotics" },
-                    { keywords: ["system", "all", "sync", "matrix", "core", "optimize", "cognitive"], target: "global" }
-                ],
-                emotionVocabulary: [
-                    { name: "ANALYTICAL BLISS", color: "var(--neon-blue)", calm: 85, friction: 15, load: 45 },
-                    { name: "COGNITIVE STRESS", color: "var(--neon-rose)", calm: 20, friction: 80, load: 90 },
-                    { name: "DYNAMIC FOCUS", color: "var(--neon-purple)", calm: 55, friction: 35, load: 75 },
-                    { name: "STABLE STANDBY", color: "var(--neon-green)", calm: 95, friction: 5, load: 10 }
-                ]
+                currentVolume: 0
             };
 
             const telemetryCanvasEngines = {
-                neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff', phase: 0 },
-                analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6', phase: 0 },
-                automation: { el: document.getElementById("automationCanvas"), points: [], color: '#10b981', phase: 0 }
+                neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff' },
+                analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6' },
+                automation: { el: document.getElementById("automationCanvas"), points: [], color: '#10b981' }
             };
 
             const voiceBtn = document.getElementById("btnVoiceTrigger");
@@ -669,13 +643,12 @@
                     cObj.el.height = rect.height * window.devicePixelRatio;
                     cObj.ctx = cObj.el.getContext("2d");
                     cObj.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                    cObj.points = new Array(60).fill(0); 
+                    
+                    cObj.points = new Array(50).fill(0); 
                 });
 
                 resetAllUIValues();
                 setupControlEventListeners();
-                
-                // Fire optimization loop
                 runLiveTelemetryUIUpdate();
             }
 
@@ -691,27 +664,26 @@
                     emotionTokenDisplay.style.color = "var(--text-secondary)";
                 }
 
-                // Initial non-zero adaptive weights for system context baseline
-                updateUIDomElements();
+                metricLabels.neuralVelocity.textContent = "0%";
+                metricLabels.neuralIndex.textContent = "0%";
+                metricLabels.neuralActive.textContent = "0%";
+                metricLabels.neuralBar.style.width = "0%";
+
+                metricLabels.visionFPS.textContent = "0 FPS";
+                metricLabels.visionAccuracy.textContent = "0%";
+                metricLabels.visionTracking.textContent = "0%";
+                metricLabels.analyticsBar.style.width = "0%";
+
+                metricLabels.robotTasks.textContent = "0%";
+                metricLabels.robotLoad.textContent = "0%";
+                metricLabels.robotFlow.textContent = "0%";
+                metricLabels.automationBar.style.width = "0%";
             }
 
             function setupControlEventListeners() {
                 if (voiceBtn) {
                     voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
                 }
-                
-                // Adaptive layout resizing safety mechanism
-                window.addEventListener("resize", () => {
-                    Object.keys(telemetryCanvasEngines).forEach(key => {
-                        const cObj = telemetryCanvasEngines[key];
-                        if (!cObj.el) return;
-                        const rect = cObj.el.getBoundingClientRect();
-                        cObj.el.width = rect.width * window.devicePixelRatio;
-                        cObj.el.height = rect.height * window.devicePixelRatio;
-                        cObj.ctx = cObj.el.getContext("2d");
-                        cObj.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                    });
-                });
             }
 
             function toggleVoiceCaptureSystem() {
@@ -728,7 +700,7 @@
                         voiceModuleStatus.classList.add("active");
                         voiceProcessingPanel?.classList.add("voice-pulse-highlight");
                         
-                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Listening for system routing keywords...]</span>';
+                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Processing system tokens...]</span>';
 
                         SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                         SystemState.analyser = SystemState.audioContext.createAnalyser();
@@ -753,19 +725,10 @@
                                     cleanBuffer += event.results[i][0].transcript;
                                 }
                                 voiceTranscript.textContent = cleanBuffer;
-                                
-                                // Real-Time AI NLP Command Classifier execution
-                                processContextualIntent(cleanBuffer.toLowerCase());
                             };
-                            
-                            SystemState.recognition.onerror = (err) => console.log("Speech Core Warning: ", err.error);
-                            SystemState.recognition.onend = () => { 
-                                if(SystemState.isListening) SystemState.recognition.start(); 
-                            };
-                            
                             SystemState.recognition.start();
                         } else {
-                            voiceTranscript.textContent = "Speech Engine active. (Context models parsing system frequency variations).";
+                            voiceTranscript.textContent = "Speech Engine active. (Mock Web-Speech fallback template active for un-supported platforms).";
                         }
                     }).catch(err => {
                         console.error("Audio Access Rejected:", err);
@@ -776,54 +739,11 @@
                 }
             }
 
-            // ALIVE CONTEXT PARSER & INTENT RECOGNITION (AI Learning Core)
-            function processContextualIntent(text) {
-                SystemState.sessionContext.interactionCount++;
-                let detectedTarget = "none";
-                
-                // Heuristic Pattern Matching Engine
-                for (const route of SystemState.intentMapping) {
-                    const match = route.keywords.some(keyword => text.includes(keyword));
-                    if (match) {
-                        detectedTarget = route.target;
-                        break;
-                    }
-                }
-
-                SystemState.sessionContext.activeIntent = detectedTarget;
-                SystemState.sessionContext.lastHeuristicUpdate = Date.now();
-
-                // Adaptive Weights Calibration Loop (Machine Learning Heuristics simulation)
-                if (detectedTarget === "neural") {
-                    SystemState.aiWeights.neural.velocity = Math.min(100, SystemState.aiWeights.neural.velocity + 15);
-                    SystemState.aiWeights.neural.index = Math.min(100, SystemState.aiWeights.neural.index + 8);
-                    SystemState.aiWeights.neural.active = Math.min(100, SystemState.aiWeights.neural.active + 12);
-                    SystemState.aiWeights.neural.targetProgress = 92;
-                } else if (detectedTarget === "vision") {
-                    SystemState.aiWeights.vision.fps = 60;
-                    SystemState.aiWeights.vision.accuracy = Math.min(100, SystemState.aiWeights.vision.accuracy + 10);
-                    SystemState.aiWeights.vision.tracking = Math.min(100, SystemState.aiWeights.vision.tracking + 14);
-                    SystemState.aiWeights.vision.targetProgress = 96;
-                } else if (detectedTarget === "robotics") {
-                    SystemState.aiWeights.robotics.tasks = Math.min(100, SystemState.aiWeights.robotics.tasks + 18);
-                    SystemState.aiWeights.robotics.load = Math.min(100, SystemState.aiWeights.robotics.load + 9);
-                    SystemState.aiWeights.robotics.flow = Math.min(100, SystemState.aiWeights.robotics.flow + 11);
-                    SystemState.aiWeights.robotics.targetProgress = 88;
-                } else if (detectedTarget === "global") {
-                    // Hyper-drive alignment matrix
-                    Object.keys(SystemState.aiWeights).forEach(m => {
-                        SystemState.aiWeights[m].targetProgress = 99;
-                        if(SystemState.aiWeights[m].fps !== undefined) SystemState.aiWeights[m].fps = 60;
-                    });
-                }
-            }
-
             function shutdownVoiceCapture() {
                 SystemState.isListening = false;
                 voiceBtn.classList.remove("listening");
                 document.getElementById("voiceText").textContent = "Open Voice Audio Capture";
-                voiceStatusDot.classList.remove("remove");
-                voiceStatusDot.className = "status-dot";
+                voiceStatusDot.classList.remove("active");
                 voiceStatusText.textContent = "Acoustic Audio Input Closed";
                 voiceModuleStatus.textContent = "Standby";
                 voiceModuleStatus.classList.remove("active");
@@ -834,7 +754,6 @@
                 liveSampleRate.textContent = "0.0 kHz";
                 
                 if (SystemState.recognition) {
-                    SystemState.recognition.onend = null;
                     SystemState.recognition.stop();
                 }
                 if (SystemState.stream) {
@@ -845,84 +764,62 @@
                 }
                 
                 SystemState.currentVolume = 0;
-                if(SystemState.animationFrameId) {
-                    cancelAnimationFrame(SystemState.animationFrameId);
-                }
-                
-                // Decay target vectors gracefully back to initial system baseline balances
-                SystemState.aiWeights.neural = { velocity: 0, index: 0, active: 0, targetProgress: 0 };
-                SystemState.aiWeights.vision = { fps: 0, accuracy: 0, tracking: 0, targetProgress: 0 };
-                SystemState.aiWeights.robotics = { tasks: 0, load: 0, flow: 0, targetProgress: 0 };
-                
                 resetAllUIValues();
             }
 
-            function updateUIDomElements() {
-                // Neural Renderer Mapping
-                metricLabels.neuralVelocity.textContent = `${Math.round(SystemState.aiWeights.neural.velocity)}%`;
-                metricLabels.neuralIndex.textContent = `${Math.round(SystemState.aiWeights.neural.index)}%`;
-                metricLabels.neuralActive.textContent = `${Math.round(SystemState.aiWeights.neural.active)}%`;
-                metricLabels.neuralBar.style.width = `${SystemState.aiWeights.neural.targetProgress}%`;
-
-                // Vision AI Renderer Mapping
-                metricLabels.visionFPS.textContent = `${Math.round(SystemState.aiWeights.vision.fps)} FPS`;
-                metricLabels.visionAccuracy.textContent = `${Math.round(SystemState.aiWeights.vision.accuracy)}%`;
-                metricLabels.visionTracking.textContent = `${Math.round(SystemState.aiWeights.vision.tracking)}%`;
-                metricLabels.analyticsBar.style.width = `${SystemState.aiWeights.vision.targetProgress}%`;
-
-                // Robotics System Mapping
-                metricLabels.robotTasks.textContent = `${Math.round(SystemState.aiWeights.robotics.tasks)}%`;
-                metricLabels.robotLoad.textContent = `${Math.round(SystemState.aiWeights.robotics.load)}%`;
-                metricLabels.robotFlow.textContent = `${Math.round(SystemState.aiWeights.robotics.flow)}%`;
-                metricLabels.automationBar.style.width = `${SystemState.aiWeights.robotics.targetProgress}%`;
-            }
-
             function runLiveTelemetryUIUpdate() {
-                // Re-queue frame efficiently
-                SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
-
-                let rawVolumeSum = 0;
-
                 if (SystemState.isListening && SystemState.analyser) {
                     SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                    
+                    let totalAmplitude = 0;
                     const len = SystemState.dataArray.length;
                     
                     eqBars.forEach((bar, idx) => {
                         const dataIndex = Math.floor((idx / eqBars.length) * len);
                         const rawVal = SystemState.dataArray[dataIndex] || 0;
-                        rawVolumeSum += rawVal;
+                        totalAmplitude += rawVal;
                         
                         const heightPercentage = Math.max(10, Math.floor((rawVal / 255) * 100));
                         bar.style.height = `${heightPercentage}%`;
                     });
 
-                    const averageNormalizedVolume = rawVolumeSum / (len * 255); 
+                    const averageNormalizedVolume = totalAmplitude / (len * 255); 
                     SystemState.currentVolume = averageNormalizedVolume; 
 
                     const computedDb = averageNormalizedVolume > 0 ? Math.round(20 * Math.log10(averageNormalizedVolume)) : -100;
                     liveDecibel.textContent = computedDb > -60 ? `${computedDb} dB` : "-Inf dB";
 
-                    // Acoustic Profile Classification & Matrix Telemetry Mapping
+                    // Calculate Emotional Telemetry purely from voice parameters
                     let calmFactor = 0;
                     let frictionFactor = 0;
                     let loadFactor = 0;
 
-                    if (averageNormalizedVolume > 0.01) {
-                        calmFactor = Math.max(15, Math.min(98, Math.round(100 - (averageNormalizedVolume * 140))));
-                        frictionFactor = Math.min(100, Math.round(averageNormalizedVolume * 280 + (Math.random() * 8)));
-                        loadFactor = Math.min(100, Math.round(averageNormalizedVolume * 190 + 20));
-                        
-                        // Feed voice telemetry changes into local learning metrics matrix dynamically
-                        SystemState.aiWeights.neural.velocity = Math.min(100, SystemState.aiWeights.neural.velocity + averageNormalizedVolume * 2);
-                        SystemState.aiWeights.robotics.load = Math.min(100, SystemState.aiWeights.robotics.load + averageNormalizedVolume * 1.5);
+                    if (averageNormalizedVolume > 0.02) {
+                        calmFactor = Math.max(30, Math.min(98, Math.round(100 - (averageNormalizedVolume * 120))));
+                        frictionFactor = Math.min(100, Math.round(averageNormalizedVolume * 220));
+                        loadFactor = Math.max(35, Math.min(95, Math.round(40 + (averageNormalizedVolume * 110))));
+
+                        // LOGIC FOR DETERMINING EXPLICIT EMOTION LABEL BASED ON VOLUME MATRICES
+                        if (frictionFactor > 55) {
+                            emotionTokenDisplay.textContent = "STRESSED / ENERGETIC";
+                            emotionTokenDisplay.style.color = "var(--neon-rose)";
+                        } else if (calmFactor > 70) {
+                            emotionTokenDisplay.textContent = "CALM / STABLE";
+                            emotionTokenDisplay.style.color = "var(--neon-green)";
+                        } else {
+                            emotionTokenDisplay.textContent = "PROCESSING EXPRESSION";
+                            emotionTokenDisplay.style.color = "var(--neon-blue)";
+                        }
                     } else {
-                        // Ambient structural background noise normalization values
-                        calmFactor = 92;
-                        frictionFactor = 4;
-                        loadFactor = 12;
+                        // Ambient tracking floor when open but silent
+                        calmFactor = 95;
+                        frictionFactor = 2;
+                        loadFactor = 15;
+                        
+                        emotionTokenDisplay.textContent = "LISTENING (SILENT)";
+                        emotionTokenDisplay.style.color = "var(--text-secondary)";
                     }
 
-                    // Soft smooth transition weights calculation
                     emotionBars.calmBar.style.width = `${calmFactor}%`;
                     emotionBars.calmTxt.textContent = `${calmFactor}%`;
                     emotionBars.frictionBar.style.width = `${frictionFactor}%`;
@@ -930,126 +827,71 @@
                     emotionBars.loadBar.style.width = `${loadFactor}%`;
                     emotionBars.loadTxt.textContent = `${loadFactor}%`;
 
-                    // Context Vocabulary Signature Assignment Engine
-                    let selectedProfile = SystemState.emotionVocabulary[3]; // Standby default
-                    if (frictionFactor > 55) {
-                        selectedProfile = SystemState.emotionVocabulary[1]; // Stress
-                    } else if (loadFactor > 40 && calmFactor > 50) {
-                        selectedProfile = SystemState.emotionVocabulary[0]; // Bliss
-                    } else if (loadFactor > 30) {
-                        selectedProfile = SystemState.emotionVocabulary[2]; // Focus
-                    }
-
-                    if (emotionTokenDisplay) {
-                        emotionTokenDisplay.textContent = selectedProfile.name;
-                        emotionTokenDisplay.style.color = selectedProfile.color;
-                    }
+                    // Drive Processing Subsystem Metrics purely from raw speech volume signatures
+                    const velocityVal = Math.max(10, Math.round(averageNormalizedVolume * 160 + (Math.random() * 8)));
+                    const indexVal = Math.max(5, Math.round(averageNormalizedVolume * 90 + 12));
+                    const activeVal = Math.max(20, Math.round(averageNormalizedVolume * 110 + 35));
                     
-                    // Continuous algorithmic baseline growth for unselected fields
-                    if(Math.random() > 0.7) {
-                        SystemState.aiWeights.vision.fps = SystemState.sessionContext.activeIntent === "vision" ? 60 : Math.floor(Math.random() * 12) + 24;
-                        SystemState.aiWeights.vision.accuracy = Math.min(99, Math.max(70, SystemState.aiWeights.vision.accuracy + (Math.random() * 2 - 1)));
-                        SystemState.aiWeights.vision.tracking = Math.min(99, Math.max(65, SystemState.aiWeights.vision.tracking + (Math.random() * 2 - 1)));
-                        
-                        SystemState.aiWeights.neural.index = Math.min(98, Math.max(40, SystemState.aiWeights.neural.index + (Math.random() * 2 - 1)));
-                        SystemState.aiWeights.neural.active = Math.min(95, Math.max(30, SystemState.aiWeights.neural.active + (Math.random() * 2 - 1)));
-                        
-                        SystemState.aiWeights.robotics.tasks = Math.min(97, Math.max(50, SystemState.aiWeights.robotics.tasks + (Math.random() * 2 - 1)));
-                        SystemState.aiWeights.robotics.flow = Math.min(99, Math.max(60, SystemState.aiWeights.robotics.flow + (Math.random() * 2 - 1)));
-                        
-                        // Slow structural crawl updates toward target progressive states
-                        ["neural", "vision", "robotics"].forEach(m => {
-                            if(SystemState.aiWeights[m].targetProgress < 80) {
-                                SystemState.aiWeights[m].targetProgress += 0.5;
-                            }
-                        });
-                    }
-                } else {
-                    // System Offline structural baseline animation updates
-                    Object.keys(SystemState.aiWeights).forEach(m => {
-                        SystemState.aiWeights[m].targetProgress = Math.max(0, SystemState.aiWeights[m].targetProgress - 0.2);
-                    });
+                    metricLabels.neuralVelocity.textContent = `${Math.min(100, velocityVal)}%`;
+                    metricLabels.neuralIndex.textContent = `${Math.min(100, indexVal)}%`;
+                    metricLabels.neuralActive.textContent = `${Math.min(100, activeVal)}%`;
+                    metricLabels.neuralBar.style.width = `${Math.min(100, activeVal)}%`;
+
+                    const visionFpsVal = averageNormalizedVolume > 0.02 ? Math.round(58 + (Math.random() * 2)) : 0;
+                    const visionAccVal = averageNormalizedVolume > 0.02 ? Math.round(92 + (averageNormalizedVolume * 12)) : 0;
+                    const visionTrackVal = averageNormalizedVolume > 0.02 ? Math.round(80 + (averageNormalizedVolume * 25)) : 0;
+                    
+                    metricLabels.visionFPS.textContent = visionFpsVal > 0 ? `${visionFpsVal} FPS` : "0 FPS";
+                    metricLabels.visionAccuracy.textContent = `${Math.min(100, visionAccVal)}%`;
+                    metricLabels.visionTracking.textContent = `${Math.min(100, visionTrackVal)}%`;
+                    metricLabels.analyticsBar.style.width = `${Math.min(100, visionTrackVal)}%`;
+
+                    const robotTasksVal = Math.max(0, Math.round(averageNormalizedVolume * 130 + 10));
+                    const robotLoadVal = Math.max(0, Math.round(averageNormalizedVolume * 150 + 15));
+                    const robotFlowVal = Math.max(0, Math.round(averageNormalizedVolume * 80 + 45));
+
+                    metricLabels.robotTasks.textContent = averageNormalizedVolume > 0.02 ? `${Math.min(100, robotTasksVal)}%` : "0%";
+                    metricLabels.robotLoad.textContent = averageNormalizedVolume > 0.02 ? `${Math.min(100, robotLoadVal)}%` : "0%";
+                    metricLabels.robotFlow.textContent = averageNormalizedVolume > 0.02 ? `${Math.min(100, robotFlowVal)}%` : "0%";
+                    metricLabels.automationBar.style.width = averageNormalizedVolume > 0.02 ? `${Math.min(100, robotFlowVal)}%` : "0%";
+
+                } else if (!SystemState.isListening) {
+                    SystemState.currentVolume = 0;
                 }
 
-                // Render Changes down to DOM
-                updateUIDomElements();
-
-                // MULTI-CHANNEL TELEMETRY CANVAS RENDER ENGINE
+                // Render dynamic canvas telemetry maps using voice velocity parameters
                 Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const cObj = telemetryCanvasEngines[key];
-                    if (!cObj.ctx) return;
+                    const engine = telemetryCanvasEngines[key];
+                    if (!engine.ctx) return;
 
-                    const w = cObj.el.width / window.devicePixelRatio;
-                    const h = cObj.el.height / window.devicePixelRatio;
-                    const ctx = cObj.ctx;
+                    const width = engine.el.width / window.devicePixelRatio;
+                    const height = engine.el.height / window.devicePixelRatio;
+                    
+                    engine.ctx.clearRect(0, 0, width, height);
 
-                    ctx.clearRect(0, 0, w, h);
-
-                    // Shift points coordinate history track
-                    cObj.points.shift();
-                    let generatedWaveHeight = 0;
-
-                    if (SystemState.isListening) {
-                        // Cross-reference current voice wave context directly with canvas calculations
-                        const intentionalBoost = SystemState.sessionContext.activeIntent === key ? 2.5 : 1.0;
-                        generatedWaveHeight = (SystemState.currentVolume * (h * 0.75)) * intentionalBoost;
-                        // Add organic randomized noise thresholds
-                        generatedWaveHeight += (Math.random() * 4 - 2);
-                        generatedWaveHeight = Math.max(2, Math.min(h - 10, generatedWaveHeight));
-                    } else {
-                        generatedWaveHeight = 2; // Flatline baseline standby
+                    engine.points.shift();
+                    
+                    let targetPointHeight = 0.8; 
+                    if (SystemState.isListening && SystemState.currentVolume > 0.01) {
+                        const randomWobble = (Math.random() - 0.5) * (SystemState.currentVolume * 0.9);
+                        targetPointHeight = 0.5 - (SystemState.currentVolume * 0.6) + randomWobble;
                     }
-                    cObj.points.push(generatedWaveHeight);
+                    engine.points.push(Math.max(0.05, Math.min(0.95, targetPointHeight)));
 
-                    // Draw Background grid lines within canvas bounds
-                    ctx.strokeStyle = "rgba(34, 47, 76, 0.25)";
-                    ctx.lineWidth = 0.5;
-                    for (let i = 20; i < w; i += 20) {
-                        ctx.beginPath();
-                        ctx.moveTo(i, 0);
-                        ctx.lineTo(i, h);
-                        ctx.stroke();
+                    engine.ctx.beginPath();
+                    engine.ctx.strokeStyle = engine.color;
+                    engine.ctx.lineWidth = 2.5;
+                    
+                    for (let i = 0; i < engine.points.length; i++) {
+                        const x = (i / (engine.points.length - 1)) * width;
+                        const y = engine.points[i] * height;
+                        if (i === 0) engine.ctx.moveTo(x, y);
+                        else engine.ctx.lineTo(x, y);
                     }
-
-                    // Render Glowing Vector Track Curves
-                    ctx.beginPath();
-                    ctx.strokeStyle = cObj.color;
-                    ctx.lineWidth = SystemState.sessionContext.activeIntent === key ? 2.5 : 1.5;
-                    ctx.lineJoin = "round";
-
-                    cObj.phase += SystemState.isListening ? 0.08 : 0.02;
-                    const totalPointsCount = cObj.points.length;
-                    const horizontalSliceStep = w / (totalPointsCount - 1);
-
-                    for (let i = 0; i < totalPointsCount; i++) {
-                        const xCoordinate = i * horizontalSliceStep;
-                        // Inject specialized mathematical offset based on runtime key identities
-                        let waveSineOscillation = 0;
-                        if (SystemState.isListening) {
-                            const frequencyModulator = key === "neural" ? 0.3 : key === "analytics" ? 0.4 : 0.2;
-                            waveSineOscillation = Math.sin(i * frequencyModulator + cObj.phase) * (cObj.points[i] * 0.4);
-                        }
-                        
-                        const yCoordinate = (h / 2) + waveSineOscillation + (Math.random() * 0.5);
-
-                        if (i === 0) {
-                            ctx.moveTo(xCoordinate, yCoordinate);
-                        } else {
-                            ctx.lineTo(xCoordinate, yCoordinate);
-                        }
-                    }
-                    ctx.stroke();
-
-                    // Establish high density neon overlay if actively requested by intent mapping
-                    if (SystemState.sessionContext.activeIntent === key) {
-                        ctx.shadowBlur = 8;
-                        ctx.shadowColor = cObj.color;
-                        ctx.strokeStyle = "#ffffff";
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                        ctx.shadowBlur = 0; // Restore baseline path variables
-                    }
+                    engine.ctx.stroke();
                 });
+
+                requestAnimationFrame(runLiveTelemetryUIUpdate);
             }
         });
     </script>

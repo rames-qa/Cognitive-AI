@@ -830,17 +830,49 @@
                 }
             }
 
-            function processAutomatedSemanticResponse(text) {
-                if (text.includes("system") || text.includes("assist")) {
-                    if (text.includes("status") || text.includes("scan")) {
-                        executeRoboticSpeech("Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops.");
-                    } else if (text.includes("hello") || text.includes("hi")) {
-                        executeRoboticSpeech("Greetings user. Systems initialization check complete. All matrices are operational.");
-                    } else {
-                        executeRoboticSpeech("System keyword processed. Parsing command string.");
-                    }
-                }
-            }
+         function processAutomatedSemanticResponse(text) {
+    // 1. Normalize the string immediately at the top
+    text = text.toLowerCase().trim();
+    console.log("Processing text:", text);
+
+    // 2. Send command to Python backend 
+    // TIP: If running purely in Codespaces browser preview, you may need to replace 'http://127.0.0.1:8000'
+    // with 'https://shiny-space-memory-q7w4rgrg79prc9jv9-8000.app.github.dev'
+    fetch("http://127.0.0.1:8000/command", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            command: text
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Backend Response:", data);
+        // Optional: If your backend returns a speech string, you can trigger it here!
+    })
+    .catch(error => {
+        console.error("Connection Error:", error);
+    });
+
+    // 3. Frontend fallback/immediate semantic speech matching
+    if (text.includes("system") || text.includes("assist")) {
+        if (text.includes("status") || text.includes("scan")) {
+            executeRoboticSpeech(
+                "Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops."
+            );
+        } else if (text.includes("hello") || text.includes("hi")) {
+            executeRoboticSpeech(
+                "Greetings user. Systems initialization check complete. All matrices are operational."
+            );
+        } else {
+            executeRoboticSpeech(
+                "System keyword processed. Parsing command string."
+            );
+        }
+    }
+}
 
             function runLiveTelemetryUIUpdate() {
                 requestAnimationFrame(runLiveTelemetryUIUpdate);

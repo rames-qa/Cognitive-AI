@@ -829,18 +829,53 @@
                     resetAllUIValues();
                 }
             }
+function processAutomatedSemanticResponse(text) {
 
-            function processAutomatedSemanticResponse(text) {
-                if (text.includes("system") || text.includes("assist")) {
-                    if (text.includes("status") || text.includes("scan")) {
-                        executeRoboticSpeech("Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops.");
-                    } else if (text.includes("hello") || text.includes("hi")) {
-                        executeRoboticSpeech("Greetings user. Systems initialization check complete. All matrices are operational.");
-                    } else {
-                        executeRoboticSpeech("System keyword processed. Parsing command string.");
-                    }
-                }
-            }
+    // Send command to Python backend
+    fetch("http://127.0.0.1:8000/command", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            command: text
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Backend Response:", data);
+    })
+    .catch(error => {
+        console.error("Connection Error:", error);
+    });
+
+    // Your existing frontend logic
+    text = text.toLowerCase().trim();
+
+    console.log(text);
+
+    if (text.includes("system") || text.includes("assist")) {
+
+        if (text.includes("status") || text.includes("scan")) {
+
+            executeRoboticSpeech(
+                "Scanning core operations. Vision grids stable."
+            );
+
+        } else if (text.includes("hello") || text.includes("hi")) {
+
+            executeRoboticSpeech(
+                "Greetings user. All matrices are operational."
+            );
+
+        } else {
+
+            executeRoboticSpeech(
+                "System keyword processed. Parsing command string."
+            );
+        }
+    }
+}
 
             function runLiveTelemetryUIUpdate() {
                 requestAnimationFrame(runLiveTelemetryUIUpdate);

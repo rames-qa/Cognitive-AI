@@ -571,11 +571,28 @@
         </div>
 
         <div class="hero-buttons">
-            <button class="btn voice-btn" id="btnVoiceTrigger">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                Initialize Voice Listening
-            </button>
-            <button class="btn secondary-btn" id="btnManualSync">Trigger Manual Sync</button>
+           <!-- VOICE BUTTON -->
+<button class="btn voice-btn" id="btnVoiceTrigger">
+
+    <svg width="18" height="18" viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+        <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+        <line x1="12" x2="12" y1="19" y2="22"/>
+
+    </svg>
+
+    <span id="voiceText">
+        Initialize Voice Listening
+    </span>
+
+</button>
+ <button class="btn secondary-btn" id="btnManualSync">Trigger Manual Sync</button>
         </div>
     </section>
 
@@ -647,7 +664,7 @@
             <div class="dashboard-box" id="neuralBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Neural Processing</h3>
-                    <p class="live-description" id="neuralDesc">⚡ Continuously evaluating complex learning matrices across array logic tracks.</p>
+                    <p class="live-description" id="neuralDesc"> Continuously evaluating complex learning matrices across array logic tracks.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="neuralBar"></div></div>
                 <div class="stats-matrix">
@@ -661,7 +678,7 @@
             <div class="dashboard-box" id="analyticsBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Smart Analytics</h3>
-                    <p class="live-description" id="analyticsDesc">📊 Processing predictive pattern vectors matching operations metrics.</p>
+                    <p class="live-description" id="analyticsDesc"> Processing predictive pattern vectors matching operations metrics.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="analyticsBar"></div></div>
                 <div class="stats-matrix">
@@ -675,7 +692,7 @@
             <div class="dashboard-box" id="automationBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Automation Engine</h3>
-                    <p class="live-description" id="automationDesc">🤖 Automated background threads mapping scaling orchestration.</p>
+                    <p class="live-description" id="automationDesc"> Automated background threads mapping scaling orchestration.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="automationBar"></div></div>
                 <div class="stats-matrix">
@@ -898,13 +915,68 @@
                 }
             }
 
-            function deactivateVoiceSystem() {
-                SystemState.isListening = false;
-                if (SystemState.stream) {
-                    SystemState.stream.getTracks().forEach(track => track.stop());
-                }
-                if (SystemState.audioContext) {
-                    SystemState.audioContext.close();
+           function deactivateVoiceSystem() {
+
+    SystemState.isListening = false;
+
+    if (SystemState.stream) {
+
+        SystemState.stream
+            .getTracks()
+            .forEach(track => track.stop());
+    }
+
+    if (SystemState.audioContext) {
+
+        SystemState.audioContext.close();
+    }
+
+    /* ADD THIS PART */
+    if (SystemState.recognition) {
+
+        SystemState.recognition.stop();
+    }
+
+    const voiceText =
+        document.getElementById("voiceText");
+
+    if (voiceText) {
+
+        voiceText.innerText =
+            "Initialize Voice Listening";
+    }
+
+    voiceBtn.classList.remove("listening");
+
+    voiceStatusDot.classList.remove("active");
+
+    voiceStatusText.textContent =
+        "Acoustic Engine Offline";
+
+    voiceModuleStatus.textContent =
+        "Standby Monitoring";
+
+    voiceProcessingPanel.classList.remove(
+        "voice-pulse-highlight"
+    );
+
+    if (liveDecibel) {
+
+        liveDecibel.textContent = "-Inf dB";
+    }
+
+    if (liveSampleRate) {
+
+        liveSampleRate.textContent = "0.0 kHz";
+    }
+
+    eqBars.forEach(bar => {
+
+        bar.style.height = "25%";
+    });
+
+    updateVoiceMatrixMetrics();
+}
                 }
                 
                 voiceBtn.classList.remove("listening");

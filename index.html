@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive AI - Automated Voice & Emotion Matrix</title>
+    <title>Cognitive AI - Clean Speech to Text Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -127,8 +127,8 @@
         }
 
         .status-dot.active {
-            background-color: var(--neon-rose);
-            box-shadow: 0 0 12px var(--neon-rose);
+            background-color: var(--neon-blue);
+            box-shadow: 0 0 12px var(--neon-blue);
             animation: pulseGlow 1.5s infinite alternate;
         }
 
@@ -236,10 +236,17 @@
             border-radius: 10px;
             font-family: monospace;
             min-height: 65px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+            font-size: 0.95rem;
+            color: #ffffff;
             border: 1px solid #1a243a;
             word-break: break-word;
+            text-align: left;
+            position: relative;
+        }
+
+        .transcript-placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
         }
 
         .hero-buttons {
@@ -347,7 +354,7 @@
         }
 
         @keyframes trackingPulse {
-            0% { transform: scale(0.8); opacity: 0.5; }
+            0 { transform: scale(0.8); opacity: 0.5; }
             100% { transform: scale(1.2); opacity: 1; }
         }
 
@@ -360,6 +367,12 @@
             font-size: 0.75rem;
             font-weight: 600;
             border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .audio-pill-badge.stripped {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-blue);
+            border: 1px solid rgba(0, 243, 255, 0.2);
         }
 
         .live-description {
@@ -429,8 +442,8 @@
         #analyticsBox .progress { background: linear-gradient(to right, var(--neon-purple), var(--neon-green)); }
         #automationBox .progress { background: linear-gradient(to right, var(--neon-green), var(--neon-blue)); }
 
-        .track-fill.calm { background: var(--neon-green); width: 0%; }
-        .track-fill.stress { background: var(--neon-rose); width: 0%; }
+        .track-fill.calm { background: #475569; width: 100%; }
+        .track-fill.stress { background: #475569; width: 0%; }
         .track-fill.load { background: var(--neon-blue); width: 0%; }
 
         /* --- Internal Grid Metrics Display --- */
@@ -523,7 +536,6 @@
             <div class="morph-control-wrapper">
                 <span class="morph-label">Acoustic Voice Morphing Profile</span>
                 
-                <!-- Expanded Profile Presets Grid -->
                 <div class="morph-grid">
                     <button class="morph-btn active" id="morphNormal">Normal</button>
                     <button class="morph-btn" id="morphDeep">Cosmic Deep</button>
@@ -533,32 +545,27 @@
                     <button class="morph-btn" id="morphRadio">Lo-Fi Comms</button>
                 </div>
 
-                <!-- Advanced Fine-Tuning Controls -->
                 <div class="advanced-morph-controls">
                     <span class="sub-label">Advanced Parameters</span>
                     
-                    <!-- Pitch Shifter -->
                     <div class="control-row">
                         <label for="paramPitch">Pitch Shift</label>
                         <input type="range" id="paramPitch" min="-12" max="12" value="0" step="1">
                         <span class="param-value" id="valPitch">0 semitones</span>
                     </div>
 
-                    <!-- Robotic Resonance -->
                     <div class="control-row">
                         <label for="paramRobotic">Robotic Resonance</label>
                         <input type="range" id="paramRobotic" min="0" max="100" value="0" step="1">
                         <span class="param-value" id="valRobotic">0%</span>
                     </div>
 
-                    <!-- Modulation Rate -->
                     <div class="control-row">
                         <label for="paramModulation">Modulation Speed</label>
                         <input type="range" id="paramModulation" min="0" max="50" value="0" step="0.5">
                         <span class="param-value" id="valModulation">0 Hz</span>
                     </div>
 
-                    <!-- Mix / Wetness -->
                     <div class="control-row">
                         <label for="paramDryWet">Effect Mix (Wet/Dry)</label>
                         <input type="range" id="paramDryWet" min="0" max="100" value="100" step="1">
@@ -567,11 +574,13 @@
                 </div>
             </div>
 
-            <div class="voice-transcript-box" id="voiceTranscript">Click below and say a control path phrase...</div>
+            <!-- Speech to Text Output Box Container -->
+            <div class="voice-transcript-box" id="voiceTranscript">
+                <span class="transcript-placeholder">Click below and say a control path phrase...</span>
+            </div>
         </div>
 
         <div class="hero-buttons">
-            <!-- VOICE BUTTON -->
             <button class="btn voice-btn" id="btnVoiceTrigger">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
@@ -591,7 +600,7 @@
             <div class="sub-panel" id="voiceProcessingPanel">
                 <div class="sub-panel-header">
                     <h3><span class="live-pulse-dot" id="voicePulseDot"></span> Real-Time Voice Processing</h3>
-                    <span class="audio-pill-badge" id="voiceModuleStatus">Standby Monitoring</span>
+                    <span class="audio-pill-badge stripped" id="voiceModuleStatus">Standby Monitoring</span>
                 </div>
                 <div class="voice-bar-container" id="eqContainer">
                     <div class="eq-bar"></div>
@@ -618,22 +627,22 @@
             <div class="sub-panel">
                 <div class="sub-panel-header">
                     <h3>Cognitive Voice Emotion</h3>
-                    <span style="font-size: 0.8rem; color: var(--neon-blue); font-weight:600;" id="cognitiveModality">Adaptive Base</span>
+                    <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight:600;" id="cognitiveModality">Acoustic Telemetry Stripped</span>
                 </div>
                 <div class="matrix-track-wrapper">
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
-                            <span>Calm Stability</span>
-                            <span class="metric-value" id="txtCalm">0%</span>
+                            <span>Calm Stability (Neutralized)</span>
+                            <span class="metric-value" id="txtCalm">100%</span>
                         </div>
-                        <div class="track-bg"><div class="track-fill calm" id="barCalm"></div></div>
+                        <div class="track-bg"><div class="track-fill calm" id="barCalm" style="width: 100%;"></div></div>
                     </div>
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
-                            <span>Vocal Friction</span>
+                            <span>Vocal Friction (Stripped)</span>
                             <span class="metric-value" id="txtStress">0%</span>
                         </div>
-                        <div class="track-bg"><div class="track-fill stress" id="barStress"></div></div>
+                        <div class="track-bg"><div class="track-fill stress" id="barStress" style="width: 0%;"></div></div>
                     </div>
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
@@ -701,17 +710,20 @@
                 isListening: false,
                 audioContext: null,
                 analyser: null,
-                dataArray: null,
                 source: null,
                 stream: null,
                 morphMode: "normal",
-                
-                filterNode: null,
-                delayNode: null,
-                feedbackGain: null,
-                oscillatorNode: null, 
-                oscGain: null
+                transcriptInterval: null
             };
+
+            // Sample clean control path statements to feed the text recorder simulation
+            const controlPhrases = [
+                "Deploy complete framework structural logic across secondary processing arrays...",
+                "Initialize cross-platform load balancing vectors...",
+                "Execute automated test suite suite sequence seven...",
+                "Sync pipeline parameters directly into the cloud hub engine...",
+                "Bypass voice metric layers and route clean text logs to the tracking UI..."
+            ];
 
             const telemetryCanvasEngines = {
                 neural: { el: document.getElementById("neuralCanvas"), points: [], hue: 190 },
@@ -727,24 +739,13 @@
             const voiceModuleStatus = document.getElementById("voiceModuleStatus");
             const liveDecibel = document.getElementById("liveDecibel");
             const liveSampleRate = document.getElementById("liveSampleRate");
-            const cognitiveModality = document.getElementById("cognitiveModality");
             const eqBars = document.querySelectorAll(".eq-bar");
             const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
             const voicePulseDot = document.getElementById("voicePulseDot");
             
-            const elementsMatrix = {
-                calm: { 
-                    bar: document.getElementById("barCalm"), 
-                    txt: document.getElementById("txtCalm") 
-                },
-                stress: { 
-                    bar: document.getElementById("barStress"), 
-                    txt: document.getElementById("txtStress")
-                },
-                load: { 
-                    bar: document.getElementById("barLoad"), 
-                    txt: document.getElementById("txtLoad") 
-                }
+            const elementLoad = {
+                bar: document.getElementById("barLoad"), 
+                txt: document.getElementById("txtLoad") 
             };
 
             const metricLabels = {
@@ -801,7 +802,6 @@
                     cObj.points = new Array(60).fill(0.5); 
                 });
 
-                updateVoiceMatrixMetrics();
                 setupControlEventListeners();
                 runLiveTelemetryUIUpdate();
             }
@@ -860,23 +860,6 @@
                 });
             }
 
-            function updateVoiceMatrixMetrics() {
-                const randomVal = () => Math.floor(Math.random() * 40) + (SystemState.isListening ? 40 : 10);
-                
-                const cVal = randomVal();
-                const sVal = SystemState.isListening ? Math.floor(Math.random() * 30) + 15 : Math.floor(Math.random() * 15);
-                const lVal = SystemState.isListening ? Math.floor(Math.random() * 50) + 40 : Math.floor(Math.random() * 20);
-
-                if(elementsMatrix.calm.bar) elementsMatrix.calm.bar.style.width = `${cVal}%`;
-                if(elementsMatrix.calm.txt) elementsMatrix.calm.txt.textContent = `${cVal}%`;
-                
-                if(elementsMatrix.stress.bar) elementsMatrix.stress.bar.style.width = `${sVal}%`;
-                if(elementsMatrix.stress.txt) elementsMatrix.stress.txt.textContent = `${sVal}%`;
-                
-                if(elementsMatrix.load.bar) elementsMatrix.load.bar.style.width = `${lVal}%`;
-                if(elementsMatrix.load.txt) elementsMatrix.load.txt.textContent = `${lVal}%`;
-            }
-
             function toggleVoiceCaptureSystem() {
                 if (!SystemState.isListening) {
                     SystemState.isListening = true;
@@ -884,11 +867,37 @@
                     document.getElementById("voiceText").textContent = "Terminate System Sync";
                     voiceStatusDot.classList.add("active");
                     voicePulseDot?.classList.add("active");
-                    voiceStatusText.textContent = "Acoustic Core Routing Live";
-                    voiceModuleStatus.textContent = "Processing Signal Stream";
+                    voiceStatusText.textContent = "Acoustic Text Capture Live";
+                    voiceModuleStatus.textContent = "Recording Clean Speech (No Emotion)";
                     voiceProcessingPanel?.classList.add("voice-pulse-highlight");
-                    voiceTranscript.textContent = '"Analyzing matrix structural parameters across active sub-grids..."';
                     
+                    voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Initializing clean text buffer...]</span>';
+
+                    // Web Speech API / Mock stream fall-through configuration
+                    if ('webkitSpeechRecognition' in window || 'speechRecognition' in window) {
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        SystemState.recognition = new SpeechRecognition();
+                        SystemState.recognition.continuous = true;
+                        SystemState.recognition.interimResults = true;
+                        
+                        SystemState.recognition.onresult = (event) => {
+                            let cleanBuffer = '';
+                            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                cleanBuffer += event.results[i][0].transcript;
+                            }
+                            voiceTranscript.textContent = cleanBuffer;
+                        };
+                        
+                        SystemState.recognition.start();
+                    } else {
+                        // Interactive Fallback simulation if engine runs without system microphones
+                        let sentenceIndex = 0;
+                        SystemState.transcriptInterval = setInterval(() => {
+                            voiceTranscript.textContent = controlPhrases[sentenceIndex % controlPhrases.length];
+                            sentenceIndex++;
+                        }, 2800);
+                    }
+
                     if (location.protocol === 'https:' || location.hostname === 'localhost') {
                         navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
                             SystemState.stream = stream;
@@ -917,14 +926,23 @@
                 voiceStatusText.textContent = "Acoustic Engine Offline";
                 voiceModuleStatus.textContent = "Standby Monitoring";
                 voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                voiceTranscript.textContent = "Click below and say a control path phrase...";
+                
+                voiceTranscript.innerHTML = '<span class="transcript-placeholder">Click below and say a control path phrase...</span>';
                 liveDecibel.textContent = "-Inf dB";
                 liveSampleRate.textContent = "0.0 kHz";
                 
-                if(SystemState.stream) {
+                if (SystemState.recognition) {
+                    SystemState.recognition.stop();
+                }
+                if (SystemState.transcriptInterval) {
+                    clearInterval(SystemState.transcriptInterval);
+                }
+                if (SystemState.stream) {
                     SystemState.stream.getTracks().forEach(t => t.stop());
                 }
                 eqBars.forEach(b => b.style.height = "25%");
+                if(elementLoad.bar) elementLoad.bar.style.width = "0%";
+                if(elementLoad.txt) elementLoad.txt.textContent = "0%";
             }
 
             function triggerManualSystemSync() {
@@ -933,22 +951,23 @@
                 setTimeout(() => {
                     manualSyncBtn.textContent = "Trigger Manual Sync";
                     manualSyncBtn.disabled = false;
-                    updateVoiceMatrixMetrics();
-                }, 800);
+                }, 600);
             }
 
             function runLiveTelemetryUIUpdate() {
-                // Update EQ Animation Elements
                 if (SystemState.isListening) {
                     eqBars.forEach(bar => {
-                        const hVal = Math.floor(Math.random() * 75) + 20;
+                        const hVal = Math.floor(Math.random() * 65) + 20;
                         bar.style.height = `${hVal}%`;
                     });
-                    liveDecibel.textContent = `${-(Math.floor(Math.random() * 30) + 10)} dB`;
-                    if(Math.random() > 0.8) updateVoiceMatrixMetrics();
+                    liveDecibel.textContent = `${-(Math.floor(Math.random() * 25) + 12)} dB`;
+                    
+                    // Maintain standard application load matrix metrics dynamically
+                    const lVal = Math.floor(Math.random() * 30) + 35;
+                    if(elementLoad.bar) elementLoad.bar.style.width = `${lVal}%`;
+                    if(elementLoad.txt) elementLoad.txt.textContent = `${lVal}%`;
                 }
 
-                // Update Grid Data nodes
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
                     if (!engine.ctx) return;
@@ -975,7 +994,6 @@
                     engine.ctx.stroke();
                 });
 
-                // Periodic dynamic values rotation
                 const t = Date.now();
                 if(metricLabels.neuralVelocity) metricLabels.neuralVelocity.textContent = `${Math.floor((Math.sin(t/1000)+1)*40+15)}%`;
                 if(metricLabels.neuralIndex) metricLabels.neuralIndex.textContent = `${Math.floor((Math.cos(t/1200)+1)*35+20)}%`;

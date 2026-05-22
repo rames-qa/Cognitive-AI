@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cognitive AI - Robotics & Vision Systems Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&family=JetBrains+Mono:wght=400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark-main: #0b0f19;
@@ -19,13 +19,13 @@
             --text-primary: #f0f4f8;
             --text-secondary: #8a99ad;
         }
-
+ 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
+ 
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-dark-main);
@@ -34,7 +34,7 @@
             line-height: 1.6;
             -webkit-tap-highlight-color: transparent;
         }
-
+ 
         nav {
             display: flex;
             flex-direction: column;
@@ -48,7 +48,7 @@
             top: 0;
             z-index: 100;
         }
-
+ 
         nav .logo {
             font-size: 1.4rem;
             font-weight: 700;
@@ -57,13 +57,13 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
+ 
         nav ul {
             display: flex;
             list-style: none;
             gap: 20px;
         }
-
+ 
         nav ul li a {
             color: var(--text-secondary);
             text-decoration: none;
@@ -72,31 +72,31 @@
             transition: color 0.3s ease;
             padding: 5px 10px;
         }
-
+ 
         nav ul li a:hover {
             color: var(--neon-blue);
         }
-
+ 
         .hero {
             padding: 40px 5% 20px;
             text-align: center;
             max-width: 1000px;
             margin: 0 auto;
         }
-
+ 
         .hero h1 {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 12px;
             line-height: 1.3;
         }
-
+ 
         .hero p {
             color: var(--text-secondary);
             margin-bottom: 25px;
             font-size: 0.95rem;
         }
-
+ 
         .voice-console-card {
             background: var(--bg-dark-panel);
             border: 1px solid var(--border-color);
@@ -105,7 +105,7 @@
             margin-bottom: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
-
+ 
         .voice-status-indicator {
             display: flex;
             align-items: center;
@@ -115,7 +115,7 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
-
+ 
         .status-dot {
             width: 10px;
             height: 10px;
@@ -123,18 +123,24 @@
             border-radius: 50%;
             transition: all 0.4s ease;
         }
-
+ 
         .status-dot.active {
-            background-color: var(--neon-rose);
-            box-shadow: 0 0 12px var(--neon-rose);
+            background-color: var(--neon-green);
+            box-shadow: 0 0 12px var(--neon-green);
             animation: pulseGlow 1.5s infinite alternate;
         }
 
+        .status-dot.speaking {
+            background-color: var(--neon-blue);
+            box-shadow: 0 0 12px var(--neon-blue);
+            animation: pulseGlow 0.5s infinite alternate;
+        }
+ 
         @keyframes pulseGlow {
             0% { opacity: 0.6; }
             100% { opacity: 1; }
         }
-
+ 
         .voice-transcript-box {
             background: #090d16;
             padding: 15px;
@@ -148,12 +154,12 @@
             text-align: left;
             position: relative;
         }
-
+ 
         .transcript-placeholder {
             color: var(--text-secondary);
             font-style: italic;
         }
-
+ 
         .hero-buttons {
             display: flex;
             flex-direction: column;
@@ -162,7 +168,7 @@
             max-width: 400px;
             margin: 0 auto;
         }
-
+ 
         .btn {
             width: 100%;
             padding: 15px 20px;
@@ -177,28 +183,28 @@
             transition: all 0.3s ease;
             font-size: 0.95rem;
         }
-
+ 
         .voice-btn {
             background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
             color: #fff;
             box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
         }
-
+ 
         .voice-btn.listening {
             background: var(--neon-rose);
             box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
         }
-
+ 
         .dashboard {
             padding: 20px 5% 40px;
         }
-
+ 
         .section-title {
             font-size: 1.5rem;
             text-align: center;
             margin-bottom: 30px;
         }
-
+ 
         .cognitive-grid, .dashboard-container {
             display: flex;
             flex-direction: column;
@@ -206,7 +212,7 @@
             width: 100%;
             margin-bottom: 25px;
         }
-
+ 
         .sub-panel, .dashboard-box {
             background: var(--bg-dark-panel);
             border: 1px solid var(--border-color);
@@ -216,12 +222,12 @@
             overflow: hidden;
             transition: border-color 0.4s ease, box-shadow 0.4s ease;
         }
-
+ 
         .voice-pulse-highlight {
-            border-color: var(--neon-rose) !important;
-            box-shadow: 0 0 20px rgba(255, 51, 102, 0.25);
+            border-color: var(--neon-blue) !important;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.25);
         }
-
+ 
         .sub-panel-header, .dashboard-header-group {
             display: flex;
             flex-direction: column;
@@ -230,7 +236,7 @@
             padding-bottom: 12px;
             margin-bottom: 15px;
         }
-
+ 
         .sub-panel-header h3, .glow-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -238,7 +244,7 @@
             align-items: center;
             gap: 8px;
         }
-
+ 
         .audio-pill-badge {
             align-self: flex-start;
             background: rgba(16, 185, 129, 0.1);
@@ -249,13 +255,13 @@
             font-weight: 600;
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
-
+ 
         .audio-pill-badge.active {
-            background: rgba(255, 51, 102, 0.1);
-            color: var(--neon-rose);
-            border: 1px solid rgba(255, 51, 102, 0.2);
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-blue);
+            border: 1px solid rgba(0, 243, 255, 0.2);
         }
-
+ 
         .emotion-tracker-container {
             background: #090d16;
             border: 1px dashed var(--border-color);
@@ -269,7 +275,7 @@
             justify-content: center;
             min-height: 90px;
         }
-
+ 
         .emotion-tracker-label {
             font-size: 0.75rem;
             color: var(--text-secondary);
@@ -277,21 +283,21 @@
             letter-spacing: 1px;
             margin-bottom: 5px;
         }
-
+ 
         .emotion-token-display {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-secondary);
             transition: all 0.3s ease;
         }
-
+ 
         .live-description {
             font-size: 0.85rem;
             color: var(--text-secondary);
             min-height: 48px;
         }
-
+ 
         .voice-bar-container {
             display: flex;
             align-items: center;
@@ -303,7 +309,7 @@
             border-radius: 8px;
             padding: 0 10px;
         }
-
+ 
         .eq-bar {
             flex: 1;
             max-width: 8px;
@@ -312,13 +318,13 @@
             border-radius: 3px;
             transition: height 0.05s ease;
         }
-
+ 
         .matrix-track-wrapper {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-
+ 
         .metric-label-row {
             display: flex;
             justify-content: space-between;
@@ -326,13 +332,13 @@
             color: var(--text-secondary);
             margin-bottom: 5px;
         }
-
+ 
         .metric-label-row .metric-value {
             font-family: 'JetBrains Mono', monospace;
             color: #fff;
             font-weight: 600;
         }
-
+ 
         .track-bg, .progress-bar {
             background: #090d16;
             height: 8px;
@@ -340,33 +346,33 @@
             overflow: hidden;
             margin-bottom: 12px;
         }
-
+ 
         .track-fill, .progress {
             height: 100%;
             width: 0%;
             border-radius: 4px;
             transition: width 0.2s ease-out;
         }
-
+ 
         .progress { background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); }
         #analyticsBox .progress { background: linear-gradient(to right, var(--neon-purple), var(--neon-green)); }
         #automationBox .progress { background: linear-gradient(to right, var(--neon-green), var(--neon-blue)); }
-
+ 
         .track-fill.calm { background: var(--neon-green); }
         .track-fill.friction { background: var(--neon-amber); }
         .track-fill.load { background: var(--neon-purple); }
-
+ 
         .dashboard-metrics-grid, .stats-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin: 15px 0;
         }
-
+ 
         .dashboard-metrics-grid {
             grid-template-columns: 1fr 1fr;
         }
-
+ 
         .sub-metric-card, .stat-node {
             background: #090d16;
             padding: 10px;
@@ -374,7 +380,7 @@
             border: 1px solid #1a243a;
             text-align: center;
         }
-
+ 
         .sub-metric-card p, .stat-node small {
             font-size: 0.65rem;
             color: var(--text-secondary);
@@ -382,7 +388,7 @@
             letter-spacing: 0.5px;
             display: block;
         }
-
+ 
         .sub-metric-card h5, .stat-node span {
             font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
@@ -390,7 +396,7 @@
             color: #fff;
             margin-top: 2px;
         }
-
+ 
         .live-telemetry-canvas {
             width: 100%;
             height: 65px;
@@ -399,7 +405,7 @@
             display: block;
             margin-top: 10px;
         }
-
+ 
         footer {
             text-align: center;
             padding: 30px 20px;
@@ -408,7 +414,7 @@
             font-size: 0.8rem;
             background: #090d16;
         }
-
+ 
         @media (min-width: 768px) {
             nav { flex-direction: row; justify-content: space-between; padding: 18px 8%; }
             .hero { padding: 60px 8% 30px; }
@@ -422,7 +428,7 @@
     </style>
 </head>
 <body>
-
+ 
     <nav>
         <div class="logo">Cognitive AI Systems</div>
         <ul>
@@ -430,22 +436,22 @@
             <li><a href="#dashboard">Live Matrix</a></li>
         </ul>
     </nav>
-
+ 
     <section class="hero" id="home">
-        <h1>Cognitive Speech AI </h1>
+        <h1>Advanced Cognitive Speech Engine</h1>
         <p>A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.</p>
-
+ 
         <div class="voice-console-card">
             <div class="voice-status-indicator">
                 <span class="status-dot" id="voiceStatusDot"></span>
                 <span id="voiceStatusText">Acoustic Core Offline</span>
             </div>
-
+ 
             <div class="voice-transcript-box" id="voiceTranscript">
-                <span class="transcript-placeholder">Awaiting neural input initialization hook... Click the capture trigger control path below.</span>
+                <span class="transcript-placeholder">Say "SYSTEM" followed by a command (e.g., "System, run status scan" or "System, hello"). Click initialization trigger below to begin.</span>
             </div>
         </div>
-
+ 
         <div class="hero-buttons">
             <button class="btn voice-btn" id="btnVoiceTrigger">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -453,11 +459,11 @@
                     <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
                     <line x1="12" x2="12" y1="19" y2="22"/>
                 </svg>
-                <span id="voiceText">Initialize Core Matrix</span>
+                <span id="voiceText">Initialize Ambient Assistant Loop</span>
             </button>
         </div>
     </section>
-
+ 
     <section class="dashboard" id="dashboard">
         <h2 class="section-title">Cognitive Operations Interface Matrix</h2>
         
@@ -490,18 +496,18 @@
                     </div>
                 </div>
             </div>
-
+ 
             <div class="sub-panel">
                 <div class="sub-panel-header">
                     <h3>Cognitive Vocal Signature</h3>
                     <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight:600;" id="cognitiveModality">Acoustic Signal Processing</span>
                 </div>
-                
+                 
                 <div class="emotion-tracker-container">
-                    <div class="emotion-tracker-label">Current Node Cognitive Output</div>
+                    <div class="emotion-tracker-label">Current Node Assistant Status</div>
                     <div class="emotion-token-display" id="emotionTokenDisplay">SYSTEM SILENT</div>
                 </div>
-
+ 
                 <div class="matrix-track-wrapper">
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
@@ -527,7 +533,7 @@
                 </div>
             </div>
         </div>
-
+ 
         <div class="dashboard-container">
             <div class="dashboard-box" id="neuralBox">
                 <div class="dashboard-header-group">
@@ -542,7 +548,7 @@
                 </div>
                 <canvas id="neuralCanvas" class="live-telemetry-canvas"></canvas>
             </div>
-
+ 
             <div class="dashboard-box" id="analyticsBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title" style="color: var(--neon-purple);">Vision AI Matrix</h3>
@@ -556,7 +562,7 @@
                 </div>
                 <canvas id="analyticsCanvas" class="live-telemetry-canvas"></canvas>
             </div>
-
+ 
             <div class="dashboard-box" id="automationBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title" style="color: var(--neon-green);">Robotics Core</h3>
@@ -572,11 +578,11 @@
             </div>
         </div>
     </section>
-
+ 
     <footer> 
         &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
     </footer>
-
+ 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const SystemState = {
@@ -588,15 +594,16 @@
                 recognition: null,
                 currentVolume: 0,
                 voiceSynth: window.speechSynthesis,
-                roboticVoice: null
+                roboticVoice: null,
+                shouldRestartRecognition: true // Controls ambient looping
             };
-
+ 
             const telemetryCanvasEngines = {
                 neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff' },
                 analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6' },
                 automation: { el: document.getElementById("automationCanvas"), points: [], color: '#10b981' }
             };
-
+ 
             const voiceBtn = document.getElementById("btnVoiceTrigger");
             const voiceStatusDot = document.getElementById("voiceStatusDot");
             const voiceStatusText = document.getElementById("voiceStatusText");
@@ -607,13 +614,13 @@
             const eqBars = document.querySelectorAll(".eq-bar");
             const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
             const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-            
+             
             const emotionBars = {
                 calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
                 frictionBar: document.getElementById("barFriction"), frictionTxt: document.getElementById("txtFriction"),
                 loadBar: document.getElementById("barLoad"), loadTxt: document.getElementById("txtLoad")
             };
-
+ 
             const metricLabels = {
                 neuralVelocity: document.getElementById("valNeuralVelocity"),
                 neuralIndex: document.getElementById("valNeuralIndex"),
@@ -628,158 +635,178 @@
                 robotFlow: document.getElementById("valRobotFlow"),
                 automationBar: document.getElementById("automationBar")
             };
-
-            // Initialize Robotic Speech Synthesis Profiles
+ 
             function initVoiceProfiles() {
                 if (!SystemState.voiceSynth) return;
                 let voices = SystemState.voiceSynth.getVoices();
-                // Select an optimal localized or deep-pitch automated voice option
                 SystemState.roboticVoice = voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('google')) || voices[0];
             }
             if (window.speechSynthesis) {
                 window.speechSynthesis.onvoiceschanged = initVoiceProfiles;
                 initVoiceProfiles();
             }
-
-            // Robotic Speech Engine Synthesis
+ 
             function executeRoboticSpeech(phrase) {
                 if (!SystemState.voiceSynth) return;
                 
-                // Cancel active auditory pipelines to maximize synchronization performance
+                // Stop recognition loop temporarily while assistant speaks to prevent self-triggering
+                if (SystemState.recognition) {
+                    SystemState.shouldRestartRecognition = false;
+                    SystemState.recognition.abort();
+                }
+
                 SystemState.voiceSynth.cancel();
-                
+                 
                 const utterance = new SpeechSynthesisUtterance(phrase);
                 if (SystemState.roboticVoice) {
                     utterance.voice = SystemState.roboticVoice;
                 }
-                
-                // Configure processing attributes for structural robotic execution models
-                utterance.pitch = 0.65;  // Low deep acoustic structural frequency
-                utterance.rate = 0.92;   // Measured rhythmic tracking pace
-                utterance.volume = 1.0;  // Normalized target power coefficient
-                
+                 
+                utterance.pitch = 0.70; 
+                utterance.rate = 0.95;   
+                utterance.volume = 1.0;  
+                 
                 utterance.onstart = () => {
-                    emotionTokenDisplay.textContent = "TRANSMITTING AUDIO";
+                    emotionTokenDisplay.textContent = "TRANSMITTING RESPONSE";
                     emotionTokenDisplay.style.color = "var(--neon-blue)";
+                    voiceStatusDot.className = "status-dot speaking";
+                    voiceStatusText.textContent = "Broadcasting Audio Output Array...";
                 };
-
+ 
                 utterance.onend = () => {
-                    emotionTokenDisplay.textContent = "LISTENING ARRAY ACTIVE";
+                    emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
                     emotionTokenDisplay.style.color = "var(--neon-green)";
+                    voiceStatusDot.className = "status-dot active";
+                    voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
+                    
+                    // Resume ambient background listening
+                    SystemState.shouldRestartRecognition = true;
+                    if (SystemState.isListening && SystemState.recognition) {
+                        try { SystemState.recognition.start(); } catch(e){}
+                    }
                 };
-
+ 
                 SystemState.voiceSynth.speak(utterance);
             }
-
-            initLiveTelemetryEngine();
-
+ 
             function initLiveTelemetryEngine() {
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const cObj = telemetryCanvasEngines[key];
                     if (!cObj.el) return;
-                    
+                     
                     const rect = cObj.el.getBoundingClientRect();
                     cObj.el.width = rect.width * window.devicePixelRatio;
                     cObj.el.height = rect.height * window.devicePixelRatio;
                     cObj.ctx = cObj.el.getContext("2d");
                     cObj.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                    
+                     
                     cObj.points = new Array(60).fill(25); 
                 });
-
+ 
                 resetAllUIValues();
                 setupControlEventListeners();
                 runLiveTelemetryUIUpdate();
             }
-
+ 
             function resetAllUIValues() {
                 eqBars.forEach(b => b.style.height = "10%");
                 Object.keys(emotionBars).forEach(k => {
                     if(k.includes('Bar')) emotionBars[k].style.width = "0%";
                     if(k.includes('Txt')) emotionBars[k].textContent = "0%";
                 });
-                
+                 
                 if(emotionTokenDisplay) {
                     emotionTokenDisplay.textContent = "SYSTEM OFFLINE";
                     emotionTokenDisplay.style.color = "var(--text-secondary)";
                 }
-
+ 
                 metricLabels.neuralVelocity.textContent = "0%";
                 metricLabels.neuralIndex.textContent = "0%";
                 metricLabels.neuralActive.textContent = "0%";
                 metricLabels.neuralBar.style.width = "0%";
-
                 metricLabels.visionFPS.textContent = "0 FPS";
                 metricLabels.visionAccuracy.textContent = "0%";
                 metricLabels.visionTracking.textContent = "0%";
                 metricLabels.analyticsBar.style.width = "0%";
-
                 metricLabels.robotTasks.textContent = "0%";
                 metricLabels.robotLoad.textContent = "0%";
                 metricLabels.robotFlow.textContent = "0%";
                 metricLabels.automationBar.style.width = "0%";
             }
-
+ 
             function setupControlEventListeners() {
                 if (voiceBtn) {
                     voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
                 }
             }
-
+ 
             function toggleVoiceCaptureSystem() {
                 if (!SystemState.isListening) {
                     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
                         SystemState.isListening = true;
                         SystemState.stream = stream;
-                        
+                        SystemState.shouldRestartRecognition = true;
+                         
                         voiceBtn.classList.add("listening");
-                        document.getElementById("voiceText").textContent = "Terminate System Array";
-                        voiceStatusDot.classList.add("active");
-                        voiceStatusText.textContent = "Cognitive Processing Core Operational";
-                        voiceModuleStatus.textContent = "ANALYZING SIGNAL";
+                        document.getElementById("voiceText").textContent = "Terminate System Loop";
+                        voiceStatusDot.className = "status-dot active";
+                        voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
+                        voiceModuleStatus.textContent = "AMBIENT WATCH";
                         voiceModuleStatus.classList.add("active");
                         voiceProcessingPanel?.classList.add("voice-pulse-highlight");
-                        
-                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Initializing acoustic processing arrays... Core Online.]</span>';
-
+                         
+                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Core Online. Say "SYSTEM..." followed by your request.]</span>';
+ 
                         SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                         SystemState.analyser = SystemState.audioContext.createAnalyser();
                         SystemState.analyser.fftSize = 64;
                         const bufferLength = SystemState.analyser.frequencyBinCount;
                         SystemState.dataArray = new Uint8Array(bufferLength);
-                        
+                         
                         const source = SystemState.audioContext.createMediaStreamSource(stream);
                         source.connect(SystemState.analyser);
-                        
+                         
                         liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-
-                        // Execute welcome speech pathing response sequence
+ 
                         setTimeout(() => {
-                            executeRoboticSpeech("Cognitive system initialization verified. Acoustic capture and behavioral telemetry matrices are now fully operational, Ramesh.");
+                            executeRoboticSpeech("Ambient listener activated. Say system, followed by your command matrix parameters.");
                         }, 400);
-
+ 
                         if ('webkitSpeechRecognition' in window || 'speechRecognition' in window) {
                             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                             SystemState.recognition = new SpeechRecognition();
-                            SystemState.recognition.continuous = true;
+                            SystemState.recognition.continuous = false; // Using crisp sequential slices for wake detection
                             SystemState.recognition.interimResults = true;
-                            
+                             
                             SystemState.recognition.onresult = (event) => {
                                 let cleanBuffer = '';
                                 for (let i = event.resultIndex; i < event.results.length; ++i) {
                                     cleanBuffer += event.results[i][0].transcript;
                                 }
                                 voiceTranscript.textContent = cleanBuffer;
-
-                                // Autonomous Reactive Conversational Triggers
+ 
                                 if (event.results[event.results.length - 1].isFinal) {
-                                    const processedText = cleanBuffer.toLowerCase();
+                                    const processedText = cleanBuffer.toLowerCase().trim();
                                     processAutomatedSemanticResponse(processedText);
                                 }
                             };
+
+                            // Alexa Style Continuous Ambient Re-Loop Configuration
+                            SystemState.recognition.onend = () => {
+                                if (SystemState.isListening && SystemState.shouldRestartRecognition) {
+                                    try { SystemState.recognition.start(); } catch(e) {}
+                                }
+                            };
+                            
+                            SystemState.recognition.onerror = (err) => {
+                                if (err.error !== 'no-speech') {
+                                    console.log("Speech Core Warning: ", err.error);
+                                }
+                            };
+
                             SystemState.recognition.start();
                         } else {
-                            voiceTranscript.textContent = "Speech Engine active. (Web Speech API configuration completed successfully).";
+                            voiceTranscript.textContent = "Speech Engine active. Web Speech API config completed.";
                         }
                     }).catch(err => {
                         console.error("Audio Access Rejected:", err);
@@ -789,168 +816,158 @@
                     shutdownVoiceCapture();
                 }
             }
-
-            // Real-time Semantic Pattern Matching Logic
-            function processAutomatedSemanticResponse(inputPhrase) {
-                let diagnosticSpeech = "";
+ 
+            function shutdownVoiceCapture() {
+                SystemState.isListening = false;
+                SystemState.shouldRestartRecognition = false;
                 
-                if (inputPhrase.includes("hello") || inputPhrase.includes("system")) {
+                if (SystemState.recognition) {
+                    SystemState.recognition.stop();
+                }
+                if (SystemState.voiceSynth) {
+                    SystemState.voiceSynth.cancel();
+                }
+                if (SystemState.stream) {
+                    SystemState.stream.getTracks().forEach(track => track.stop());
+                }
+                if (SystemState.audioContext) {
+                    SystemState.audioContext.close();
+                }
+
+                voiceBtn.classList.remove("listening");
+                document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
+                voiceStatusDot.className = "status-dot";
+                voiceStatusText.textContent = "Acoustic Core Offline";
+                voiceModuleStatus.textContent = "STANDBY";
+                voiceModuleStatus.classList.remove("active");
+                voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                liveDecibel.textContent = "-Inf dB";
+                
+                resetAllUIValues();
+                voiceTranscript.innerHTML = '<span class="transcript-placeholder">Array Offline. Target path tracking initialized shutdown sequence.</span>';
+            }
+
+            function processAutomatedSemanticResponse(inputPhrase) {
+                // Check for wake word prefix "system"
+                const wakeWord = "system";
+                
+                if (!inputPhrase.startsWith(wakeWord)) {
+                    // Ignored transcript if it doesn't address the wake word
+                    return;
+                }
+
+                // Extract command after wake word
+                const command = inputPhrase.replace(wakeWord, "").trim();
+                let diagnosticSpeech = "";
+ 
+                if (command === "" || command === "wake" || command === "listen") {
+                    diagnosticSpeech = "Acknowledged. Standing by for command structural parameters.";
+                    triggerGlowAnimations(80, 20, 40);
+                } else if (command.includes("hello") || command.includes("greet")) {
                     diagnosticSpeech = "Greetings Human User. Sensory tracking metrics remain functional. All background matrix subsystems are green.";
-                } else if (inputPhrase.includes("status") || inputPhrase.includes("metrics")) {
-                    diagnosticSpeech = "Running continuous systemic scan. Neural index velocity is holding nominal parameters, and robotics kinematics tracking loop is stable.";
-                } else if (inputPhrase.includes("vision") || inputPhrase.includes("camera")) {
-                    diagnosticSpeech = "Vision matrix environment arrays are calculating spatial vectors dynamically at sixty frames per second.";
+                    triggerGlowAnimations(95, 10, 20);
+                } else if (command.includes("status") || command.includes("scan") || command.includes("metrics")) {
+                    diagnosticSpeech = "Running continuous systemic scan. Neural index velocity is holding nominal parameters at 94 percent accuracy. Automation load is low.";
+                    triggerGlowAnimations(40, 15, 90);
+                } else if (command.includes("clear") || command.includes("reset")) {
+                    diagnosticSpeech = "Clearing processing telemetry buffers. System values reset.";
+                    resetAllUIValues();
+                    return;
                 } else {
-                    diagnosticSpeech = "Input token payload processed and integrated into systemic working telemetry. Awaiting further instruction patterns.";
+                    // Fallback smart response handler
+                    diagnosticSpeech = `Command received: "${command}". Processing sequence executed successfully via local model loops.`;
+                    triggerGlowAnimations(60, 45, 65);
                 }
 
                 executeRoboticSpeech(diagnosticSpeech);
             }
 
-            function shutdownVoiceCapture() {
-                SystemState.isListening = false;
-                voiceBtn.classList.remove("listening");
-                document.getElementById("voiceText").textContent = "Initialize Core Matrix";
-                voiceStatusDot.classList.remove("active");
-                voiceStatusText.textContent = "Acoustic Core Offline";
-                voiceModuleStatus.textContent = "STANDBY";
-                voiceModuleStatus.classList.remove("active");
-                voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                
-                voiceTranscript.innerHTML = '<span class="transcript-placeholder">Awaiting neural input initialization hook... Click the capture trigger control path below.</span>';
-                liveDecibel.textContent = "-Inf dB";
-                liveSampleRate.textContent = "0.0 kHz";
-                
-                if (SystemState.recognition) {
-                    SystemState.recognition.stop();
-                }
-                if (SystemState.stream) {
-                    SystemState.stream.getTracks().forEach(t => t.stop());
-                }
-                if (SystemState.audioContext) {
-                    SystemState.audioContext.close();
-                }
-                if (SystemState.voiceSynth) {
-                    SystemState.voiceSynth.cancel();
-                }
-                
-                SystemState.currentVolume = 0;
-                resetAllUIValues();
-            }
+            function triggerGlowAnimations(calmVal, frictionVal, loadVal) {
+                emotionBars.calmBar.style.width = calmVal + "%";
+                emotionBars.calmTxt.textContent = calmVal + "%";
+                emotionBars.frictionBar.style.width = frictionVal + "%";
+                emotionBars.frictionTxt.textContent = frictionVal + "%";
+                emotionBars.loadBar.style.width = loadVal + "%";
+                emotionBars.loadTxt.textContent = loadVal + "%";
 
+                // Seed randomize dashboard metrics arrays
+                metricLabels.neuralVelocity.textContent = Math.floor(Math.random() * 40 + 60) + "%";
+                metricLabels.neuralIndex.textContent = Math.floor(Math.random() * 30 + 70) + "%";
+                metricLabels.neuralActive.textContent = Math.floor(Math.random() * 50 + 50) + "%";
+                metricLabels.neuralBar.style.width = "82%";
+
+                metricLabels.visionFPS.textContent = Math.floor(Math.random() * 5 + 58) + " FPS";
+                metricLabels.visionAccuracy.textContent = "98.4%";
+                metricLabels.visionTracking.textContent = "Active";
+                metricLabels.analyticsBar.style.width = "91%";
+
+                metricLabels.robotTasks.textContent = "Nominal";
+                metricLabels.robotLoad.textContent = loadVal + "%";
+                metricLabels.robotFlow.textContent = "Steady";
+                metricLabels.automationBar.style.width = "74%";
+            }
+ 
             function runLiveTelemetryUIUpdate() {
                 requestAnimationFrame(runLiveTelemetryUIUpdate);
-
-                let volSeed = 0;
-
-                if (SystemState.isListening && SystemState.analyser) {
-                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    
-                    let totalAmplitude = 0;
-                    const len = SystemState.dataArray.length;
-                    
-                    eqBars.forEach((bar, idx) => {
-                        const dataIndex = Math.floor((idx / eqBars.length) * len);
-                        const rawVal = SystemState.dataArray[dataIndex] || 0;
-                        totalAmplitude += rawVal;
-                        
-                        const heightPercentage = Math.max(10, Math.floor((rawVal / 255) * 100));
-                        bar.style.height = `${heightPercentage}%`;
-                    });
-
-                    const averageNormalizedVolume = totalAmplitude / (len * 255); 
-                    SystemState.currentVolume = averageNormalizedVolume; 
-                    volSeed = averageNormalizedVolume;
-
-                    const computedDb = averageNormalizedVolume > 0 ? Math.round(20 * Math.log10(averageNormalizedVolume)) : -100;
-                    liveDecibel.textContent = computedDb > -60 ? `${computedDb} dB` : "-Inf dB";
-
-                    // Dynamic Telemetry State Calculations
-                    let calmFactor = 0;
-                    let frictionFactor = 0;
-                    let loadFactor = 0;
-
-                    if (averageNormalizedVolume > 0.01) {
-                        calmFactor = Math.max(15, Math.min(98, Math.round(100 - (averageNormalizedVolume * 150))));
-                        frictionFactor = Math.min(95, Math.round(averageNormalizedVolume * 220));
-                        loadFactor = Math.min(99, Math.round(averageNormalizedVolume * 310 + 10));
-                        
-                        if(!SystemState.voiceSynth.speaking) {
-                            emotionTokenDisplay.textContent = "CAPTURING AUDIO TRANSCRIPT";
-                            emotionTokenDisplay.style.color = "var(--neon-rose)";
-                        }
-                    } else {
-                        if (SystemState.voiceSynth.speaking) {
-                            calmFactor = 30;
-                            frictionFactor = 45;
-                            loadFactor = 85;
-                        } else {
-                            calmFactor = 95;
-                            frictionFactor = 2;
-                            loadFactor = 8;
-                            emotionTokenDisplay.textContent = "LISTENING ARRAY ACTIVE";
-                            emotionTokenDisplay.style.color = "var(--neon-green)";
-                        }
-                    }
-
-                    emotionBars.calmBar.style.width = `${calmFactor}%`;
-                    emotionBars.calmTxt.textContent = `${calmFactor}%`;
-                    emotionBars.frictionBar.style.width = `${frictionFactor}%`;
-                    emotionBars.frictionTxt.textContent = `${frictionFactor}%`;
-                    emotionBars.loadBar.style.width = `${loadFactor}%`;
-                    emotionBars.loadTxt.textContent = `${loadFactor}%`;
+                if (!SystemState.isListening || !SystemState.dataArray) {
+                    // Keep idle animations running on metrics dashboards
+                    updateCanvasIdleTelemetry();
+                    return;
                 }
-
-                // Continuous Telemetry Loop & Canvas Graph Engine Rendering Execution
+ 
+                SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                
+                let total = 0;
+                for (let i = 0; i < SystemState.dataArray.length; i++) {
+                    total += SystemState.dataArray[i];
+                    if (i < eqBars.length) {
+                        let heightPercent = Math.max(10, Math.min(100, (SystemState.dataArray[i] / 255) * 100));
+                        eqBars[i].style.height = `${heightPercent}%`;
+                    }
+                }
+                
+                const rms = total / SystemState.dataArray.length;
+                SystemState.currentVolume = rms;
+                const db = rms > 0 ? 20 * Math.log10(rms / 255) : -Infinity;
+                liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
+ 
+                updateCanvasIdleTelemetry();
+            }
+ 
+            function updateCanvasIdleTelemetry() {
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
                     if (!engine.ctx) return;
-
-                    let targetVal = 0;
-                    const rSeed = Math.random();
-
-                    if (key === 'neural') {
-                        targetVal = SystemState.isListening ? Math.floor(40 + (volSeed * 60)) : Math.floor(20 + Math.sin(Date.now() / 400) * 8);
-                        metricLabels.neuralVelocity.textContent = `${Math.round(targetVal * 1.1)}%`;
-                        metricLabels.neuralIndex.textContent = `${Math.round(targetVal * 0.95)}%`;
-                        metricLabels.neuralActive.textContent = `${Math.round(targetVal)}%`;
-                        metricLabels.neuralBar.style.width = `${targetVal}%`;
-                    } else if (key === 'analytics') {
-                        targetVal = SystemState.isListening ? Math.floor(55 + (volSeed * 40)) : Math.floor(45 + Math.cos(Date.now() / 600) * 5);
-                        metricLabels.visionFPS.textContent = SystemState.isListening ? `${Math.floor(58 + rSeed * 4)} FPS` : "60 FPS";
-                        metricLabels.visionAccuracy.textContent = `${Math.round(85 + (targetVal * 0.15))}%`;
-                        metricLabels.visionTracking.textContent = `${Math.round(targetVal)}%`;
-                        metricLabels.analyticsBar.style.width = `${targetVal}%`;
-                    } else if (key === 'automation') {
-                        targetVal = SystemState.isListening ? Math.floor(30 + (volSeed * 50)) : Math.floor(15 + Math.sin(Date.now() / 800) * 4);
-                        metricLabels.robotTasks.textContent = `${Math.round(targetVal * 1.2)}%`;
-                        metricLabels.robotLoad.textContent = `${Math.round(targetVal)}%`;
-                        metricLabels.robotFlow.textContent = `${Math.round(90 + (targetVal * 0.1))}%`;
-                        metricLabels.automationBar.style.width = `${targetVal}%`;
-                    }
-
-                    engine.points.push(targetVal);
-                    if (engine.points.length > 70) engine.points.shift();
-
+                    
                     const ctx = engine.ctx;
-                    const w = engine.el.width / window.devicePixelRatio;
-                    const h = engine.el.height / window.devicePixelRatio;
-
-                    ctx.clearRect(0, 0, w, h);
+                    const width = engine.el.width / window.devicePixelRatio;
+                    const height = engine.el.height / window.devicePixelRatio;
+                    
+                    ctx.clearRect(0, 0, width, height);
+                    
+                    engine.points.shift();
+                    let factor = SystemState.currentVolume > 5 ? SystemState.currentVolume * 0.4 : 2;
+                    let nextPoint = (height / 2) + (Math.sin(Date.now() * 0.005 + (key === 'neural' ? 1 : key === 'analytics' ? 2 : 3)) * factor);
+                    engine.points.push(nextPoint);
+                    
+                    ctx.beginPath();
                     ctx.strokeStyle = engine.color;
                     ctx.lineWidth = 2;
-                    ctx.beginPath();
-
-                    const step = w / 60;
+                    ctx.lineJoin = "round";
+                    
+                    const sliceWidth = width / engine.points.length;
+                    let x = 0;
+                    
                     for (let i = 0; i < engine.points.length; i++) {
-                        const x = i * step;
-                        const y = h - ((engine.points[i] / 100) * (h - 15)) - 5;
-                        if (i === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
+                        if (i === 0) ctx.moveTo(x, engine.points[i]);
+                        else ctx.lineTo(x, engine.points[i]);
+                        x += sliceWidth;
                     }
                     ctx.stroke();
                 });
             }
+ 
+            initLiveTelemetryEngine();
         });
     </script>
 </body>

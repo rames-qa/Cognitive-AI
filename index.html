@@ -593,9 +593,10 @@
                 recognition: null,
                 voiceSynth: window.speechSynthesis,
                 roboticVoice: null,
-                shouldRestartRecognition: true 
+                shouldRestartRecognition: true,
+                animationFrameId: null
             };
-
+ 
             const telemetryCanvasEngines = {
                 neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff' },
                 analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6' },
@@ -637,8 +638,12 @@
             function initVoiceProfiles() {
                 if (!SystemState.voiceSynth) return;
                 let voices = SystemState.voiceSynth.getVoices();
-                SystemState.roboticVoice = voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('google')) || voices[0];
+                // Select a natural sounding high-quality English voice
+                SystemState.roboticVoice = voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('google')) || 
+                                           voices.find(v => v.lang.includes('en-US')) || 
+                                           voices[0];
             }
+
             if (window.speechSynthesis) {
                 window.speechSynthesis.onvoiceschanged = initVoiceProfiles;
                 initVoiceProfiles();
@@ -647,7 +652,7 @@
             function executeRoboticSpeech(phrase) {
                 if (!SystemState.voiceSynth) return;
                 
-                // Mute recognition to prevent the AI from hearing itself speak
+                // Pause recognition to avoid the assistant picking up its own voice
                 if (SystemState.recognition) {
                     SystemState.shouldRestartRecognition = false;
                     SystemState.recognition.stop();
@@ -660,7 +665,7 @@
                     utterance.voice = SystemState.roboticVoice;
                 }
                  
-                utterance.pitch = 0.90; 
+                utterance.pitch = 1.0; 
                 utterance.rate = 1.0;   
                 utterance.volume = 1.0;  
                  
@@ -677,7 +682,7 @@
                     voiceStatusDot.className = "status-dot active";
                     voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
                     
-                    // Safe restart once audio completes
+                    // Safely reactivate recognition loop once speech finishes
                     SystemState.shouldRestartRecognition = true;
                     if (SystemState.isListening && SystemState.recognition) {
                         try { SystemState.recognition.start(); } catch(e){}
@@ -767,13 +772,13 @@
                         liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
  
                         setTimeout(() => {
-                            executeRoboticSpeech("System initialized. I am listening.");
+                            executeRoboticSpeech("System array online. I am actively monitoring.");
                         }, 400);
  
                         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                             SystemState.recognition = new SpeechRecognition();
-                            
+                             
                             SystemState.recognition.continuous = true; 
                             SystemState.recognition.interimResults = false;
                             SystemState.recognition.lang = 'en-US';
@@ -785,17 +790,16 @@
                                         cleanBuffer += event.results[i][0].transcript;
                                     }
                                 }
-                                
-                                if (!cleanBuffer) return;
+                                 
+                                if (!cleanBuffer || cleanBuffer.trim() === '') return;
                                 processVoicePayload(cleanBuffer);
                             };
-
+ 
                             SystemState.recognition.onerror = (e) => {
-                                console.log("Recognition error:", e.error);
+                                console.error("Recognition baseline error:", e.error);
                             };
-
+ 
                             SystemState.recognition.onend = () => {
-                                // Keep listening continuously unless manually terminated
                                 if (SystemState.isListening && SystemState.shouldRestartRecognition) {
                                     try { SystemState.recognition.start(); } catch(err){}
                                 }
@@ -803,14 +807,14 @@
  
                             SystemState.recognition.start();
                         } else {
-                            voiceTranscript.textContent = "API error: Speech recognition layer missing in this browser architecture.";
+                            voiceTranscript.textContent = "Error: Speech Recognition API unsupported by current client window architecture.";
                         }
                     }).catch(err => {
-                        console.error("Audio Access Denied:", err);
-                        voiceTranscript.textContent = "Error: Peripheral audio acquisition array access refused.";
+                        console.error("Microphone hardware error:", err);
+                        alert("Microphone configuration access denied or unavailable.");
                     });
                 } else {
-                    // Turn off system loop
+                    // Turn off system components gracefully
                     SystemState.isListening = false;
                     SystemState.shouldRestartRecognition = false;
                     
@@ -826,7 +830,9 @@
                     if (SystemState.voiceSynth) {
                         SystemState.voiceSynth.cancel();
                     }
-
+                    
+                    cancelAnimationFrame(SystemState.animationFrameId);
+                    
                     voiceBtn.classList.remove("listening");
                     document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
                     voiceStatusDot.className = "status-dot";
@@ -834,123 +840,150 @@
                     voiceModuleStatus.textContent = "STANDBY";
                     voiceModuleStatus.classList.remove("active");
                     voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">System Hibernating. Initialize loop interface to watch.</span>';
                     
                     resetAllUIValues();
+                    liveDecibel.textContent = "-Inf dB";
+                    liveSampleRate.textContent = "0.0 kHz";
+                    
+                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>';
                 }
             }
-
-            // Alexa command engine processing
-            function processVoicePayload(phraseStr) {
-                const cleanPhrase = phraseStr.trim();
-                const lowerPhrase = cleanPhrase.toLowerCase();
+ 
+            function processVoicePayload(rawText) {
+                const normalizedText = rawText.trim().toLowerCase();
+                voiceTranscript.innerHTML = `User payload capture: <span style="color:#fff; font-weight:700;">"${rawText}"</span>`;
                 
-                voiceTranscript.innerHTML = `<div><span style="color:var(--text-secondary);">Heard:</span> "${cleanPhrase}"</div>`;
+                // Setup wake triggers matching your specification criteria
+                const triggers = ["alexa", "system", "computer", "cognitive"];
+                const localizedWakeFound = triggers.find(t => normalizedText.includes(t));
                 
-                // Wake words check
-                const matchAlexa = lowerPhrase.includes("alexa");
-                const matchSystem = lowerPhrase.includes("system");
-                
-                if (!matchAlexa && !matchSystem) {
-                    // Received vocal inputs but wake token missing
+                if (!localizedWakeFound) {
+                    // Log processing step but filter out environmental noise without answering out loud
+                    console.log("Filtered background voice context stream:", normalizedText);
                     return;
                 }
-
-                // Strip wake token to extract clean actionable command payload
-                let commandPayload = lowerPhrase.replace("alexa", "").replace("system", "").trim();
                 
-                // Visual indicators dynamic scaling block
-                emotionBars.calmBar.style.width = "85%";
-                emotionBars.calmTxt.textContent = "85%";
-                emotionBars.frictionBar.style.width = "15%";
-                emotionBars.frictionTxt.textContent = "15%";
-                emotionBars.loadBar.style.width = "60%";
-                emotionBars.loadTxt.textContent = "60%";
-                emotionTokenDisplay.textContent = "PROCESSING INTENT";
-                emotionTokenDisplay.style.color = "var(--neon-amber)";
-
-                // Intent matching logic framework
-                if (commandPayload.includes("time")) {
-                    const now = new Date();
-                    const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    respondAndShow(`The current time is ${timeStr}.`, "90%", "45%", "25%");
+                // Isolate core command string after wake phrase
+                let directiveClean = normalizedText.split(localizedWakeFound)[1]?.trim() || "";
+                
+                if (directiveClean === "") {
+                    executeRoboticSpeech("Yes? I am online. Tell me how to configure the matrix panels.");
+                    return;
+                }
+ 
+                // Local Intent Processing Layer Matrix Router
+                if (directiveClean.includes("hello") || directiveClean.includes("hi ")) {
+                    executeRoboticSpeech("Greetings operator. Core analytics engines are reporting steady metrics.");
+                    updateUIBehaviorMetrics(85, 30, 45);
                 } 
-                else if (commandPayload.includes("day") || commandPayload.includes("date")) {
-                    const now = new Date();
-                    const dateStr = now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
-                    respondAndShow(`Today is ${dateStr}.`, "95%", "35%", "15%");
+                else if (directiveClean.includes("time")) {
+                    const currentWallClock = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    executeRoboticSpeech(`The current local machine matrix timestamp reads ${currentWallClock}.`);
                 } 
-                else if (commandPayload.includes("light") || commandPayload.includes("turn on")) {
-                    respondAndShow("Executing automated task. Smart grid infrastructure relays have been activated.", "70%", "95%", "85%");
+                else if (directiveClean.includes("calculate") || directiveClean.includes("plus") || directiveClean.includes("minus") || directiveClean.includes("times")) {
+                    // Extract arithmetic targets from text stream
+                    const numericalExtraction = directiveClean.match(/\d+/g);
+                    if (numericalExtraction && numericalExtraction.length >= 2) {
+                        const firstDigit = parseInt(numericalExtraction[0]);
+                        const secondDigit = parseInt(numericalExtraction[1]);
+                        let computationValue = 0;
+                        let semanticOperator = "plus";
+                        
+                        if (directiveClean.includes("minus") || directiveClean.includes("subtract")) {
+                            computationValue = firstDigit - secondDigit;
+                            semanticOperator = "minus";
+                        } else if (directiveClean.includes("times") || directiveClean.includes("multiply")) {
+                            computationValue = firstDigit * secondDigit;
+                            semanticOperator = "multiplied by";
+                        } else {
+                            computationValue = firstDigit + secondDigit;
+                        }
+                        executeRoboticSpeech(`Calculation complete. ${firstDigit} ${semanticOperator} ${secondDigit} resolves exactly to ${computationValue}.`);
+                        updateUIBehaviorMetrics(95, 10, 80);
+                    } else {
+                        executeRoboticSpeech("Arithmetic processing failed. Please clearly state numerical index points.");
+                    }
                 } 
-                else if (commandPayload.includes("status") || commandPayload.includes("diagnostics")) {
-                    respondAndShow("Running complete system diagnostic array. All operations modules are processing normally within accepted variances.", "99%", "90%", "95%");
+                else if (directiveClean.includes("status") || directiveClean.includes("report") || directiveClean.includes("metrics")) {
+                    executeRoboticSpeech("Initiating dynamic hardware infrastructure query. All nodes executing smoothly.");
+                    triggerDashboardSpikePulse();
                 } 
-                else if (commandPayload.includes("joke")) {
-                    const jokes = [
-                        "Why do robots drive down the road? Because they are programmed to.",
-                        "There are ten types of people in this world. Those who understand binary, and those who do not.",
-                        "Why did the computer cross the road? To escape the network firewall loop context."
-                    ];
-                    const selected = jokes[Math.floor(Math.random() * jokes.length)];
-                    respondAndShow(selected, "80%", "75%", "40%");
+                else if (directiveClean.includes("maximize") || directiveClean.includes("overload") || directiveClean.includes("max")) {
+                    executeRoboticSpeech("Warning: Forcing processing units to maximum capacity threshold loops.");
+                    updateUIBehaviorMetrics(10, 95, 100);
                 } 
-                else if (commandPayload === "" || commandPayload === "hello") {
-                    respondAndShow("Acoustic wake token detected. Ready for immediate command.", "80%", "20%", "30%");
+                else if (directiveClean.includes("clear") || directiveClean.includes("reset") || directiveClean.includes("quiet")) {
+                    executeRoboticSpeech("Returning telemetry processing matrix back to baseline quiet values.");
+                    updateUIBehaviorMetrics(90, 5, 15);
                 } 
                 else {
-                    respondAndShow(`I detected the command payload, "${commandPayload}". Processing logic layer via localized automation frameworks.`, "50%", "80%", "70%");
+                    // Global fallback matrix mapping engine
+                    executeRoboticSpeech(`Processing voice instruction: ${directiveClean}. Executing operations on core layers.`);
+                    triggerDashboardSpikePulse();
                 }
             }
-
-            function respondAndShow(replyText, neuralVal, visionVal, robotVal) {
-                // Render text update to console layout structure cleanly
-                const currentHtml = voiceTranscript.innerHTML;
-                voiceTranscript.innerHTML = `${currentHtml}<div style="margin-top:5px;"><span style="color:var(--neon-blue); font-weight:600;">Response:</span> ${replyText}</div>`;
+ 
+            function updateUIBehaviorMetrics(calm, friction, load) {
+                emotionBars.calmBar.style.width = `${calm}%`;
+                emotionBars.calmTxt.textContent = `${calm}%`;
+                emotionBars.frictionBar.style.width = `${friction}%`;
+                emotionBars.frictionTxt.textContent = `${friction}%`;
+                emotionBars.loadBar.style.width = `${load}%`;
+                emotionBars.loadTxt.textContent = `${load}%`;
                 
-                // Dynamically update dashboard interface metrics cards
-                metricLabels.neuralVelocity.textContent = neuralVal;
-                metricLabels.neuralBar.style.width = neuralVal;
-                metricLabels.neuralIndex.textContent = "74%";
-                metricLabels.neuralActive.textContent = "82%";
-
-                metricLabels.visionFPS.textContent = "60 FPS";
-                metricLabels.visionAccuracy.textContent = visionVal;
-                metricLabels.analyticsBar.style.width = visionVal;
-                metricLabels.visionTracking.textContent = "91%";
-
-                metricLabels.robotTasks.textContent = robotVal;
-                metricLabels.automationBar.style.width = robotVal;
-                metricLabels.robotLoad.textContent = "38%";
-                metricLabels.robotFlow.textContent = "94%";
-
-                executeRoboticSpeech(replyText);
+                // Scale corresponding system boxes matching conditions
+                metricLabels.neuralVelocity.textContent = `${Math.floor(load * 0.9)}%`;
+                metricLabels.neuralIndex.textContent = `${Math.floor(calm * 1.1)}%`;
+                metricLabels.neuralActive.textContent = `${load}%`;
+                metricLabels.neuralBar.style.width = `${load}%`;
+                
+                metricLabels.visionFPS.textContent = `${Math.floor(calm / 2) + 20} FPS`;
+                metricLabels.visionAccuracy.textContent = `${calm}%`;
+                metricLabels.visionTracking.textContent = `${Math.floor(friction + load) / 2}%`;
+                metricLabels.analyticsBar.style.width = `${calm}%`;
+                
+                metricLabels.robotTasks.textContent = `${friction}%`;
+                metricLabels.robotLoad.textContent = `${load}%`;
+                metricLabels.robotFlow.textContent = `${Math.floor(calm + 10)}%`;
+                metricLabels.automationBar.style.width = `${friction}%`;
+            }
+ 
+            function triggerDashboardSpikePulse() {
+                updateUIBehaviorMetrics(
+                    Math.floor(Math.random() * 40) + 50,
+                    Math.floor(Math.random() * 30) + 20,
+                    Math.floor(Math.random() * 50) + 40
+                );
             }
  
             function runLiveTelemetryUIUpdate() {
+                // Read continuous volume values from user microphone stream
                 if (SystemState.isListening && SystemState.analyser && SystemState.dataArray) {
                     SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                     
+                    let totalAmplitudeSum = 0;
+                    const arraySize = SystemState.dataArray.length;
                     
-                    // Simple average volume computation
-                    let total = 0;
-                    for (let i = 0; i < SystemState.dataArray.length; i++) {
-                        total += SystemState.dataArray[i];
-                    }
-                    const avgVol = total / SystemState.dataArray.length;
-                    
-                    // Convert into approximate live Decibels metric display safely
-                    const dbValue = avgVol > 0 ? Math.round(20 * Math.log10(avgVol / 255)) : -90;
-                    liveDecibel.textContent = dbValue > -90 ? `${dbValue} dB` : "-Inf dB";
- 
-                    // Update visualizer tracking nodes frequencies mapping
-                    eqBars.forEach((bar, index) => {
-                        const rawVal = SystemState.dataArray[index % SystemState.dataArray.length] || 0;
-                        const calculatedHeight = Math.max(10, Math.min(100, (rawVal / 255) * 100));
-                        bar.style.height = `${calculatedHeight}%`;
+                    eqBars.forEach((bar, idx) => {
+                        const targetValue = SystemState.dataArray[idx % arraySize] || 0;
+                        totalAmplitudeSum += targetValue;
+                        
+                        // Map 0-255 frequency space cleanly over 10-100% css container heights
+                        const scaledHeightPercentage = Math.max(10, Math.floor((targetValue / 255) * 100));
+                        bar.style.height = `${scaledHeightPercentage}%`;
                     });
+ 
+                    const baselineAverage = totalAmplitudeSum / arraySize;
+                    if (baselineAverage > 2) {
+                        // Approximate absolute decibel scales using window signals
+                        const derivedDb = Math.floor(20 * Math.log10(baselineAverage / 255));
+                        liveDecibel.textContent = `${derivedDb} dB`;
+                    } else {
+                        liveDecibel.textContent = "-80 dB";
+                    }
                 }
  
-                // Render synthetic canvas telemetry loops lines drawing routines
+                // Render standard background telemetry canvas graphics lines
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
                     if (!engine.ctx) return;
@@ -961,35 +994,41 @@
  
                     ctx.clearRect(0, 0, w, h);
                     
-                    // Shuffle coordinates backward
-                    engine.points.shift();
-                    let targetNext = h / 2;
-                    
-                    if (SystemState.isListening) {
-                        targetNext = (h / 2) + (Math.random() * (h * 0.6) - (h * 0.3));
+                    // Add modern dark digital background tech grids
+                    ctx.strokeStyle = "rgba(34, 47, 76, 0.25)";
+                    ctx.lineWidth = 1;
+                    for (let x = 0; x < w; x += 25) {
+                        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
                     }
-                    engine.points.push(targetNext);
  
-                    ctx.beginPath();
+                    // Generate fluid system mathematical curves 
+                    engine.points.shift();
+                    let randomFluctuationScale = 5;
+                    if (SystemState.isListening) {
+                        randomFluctuationScale = key === 'neural' ? 14 : key === 'analytics' ? 8 : 11;
+                    }
+                    
+                    const calculatedNextPoint = (h / 2) + (Math.sin(Date.now() / 200) * (randomFluctuationScale / 2)) + (Math.random() * randomFluctuationScale - (randomFluctuationScale / 2));
+                    engine.points.push(calculatedNextPoint);
+ 
                     ctx.strokeStyle = engine.color;
                     ctx.lineWidth = 2;
-                    ctx.lineJoin = "round";
- 
-                    const slice = w / (engine.points.length - 1);
+                    ctx.beginPath();
+                     
+                    const horizontalSliceSegment = w / (engine.points.length - 1);
                     for (let i = 0; i < engine.points.length; i++) {
-                        const currentX = i * slice;
-                        if (i === 0) {
-                            ctx.moveTo(currentX, engine.points[i]);
-                        } else {
-                            ctx.lineTo(currentX, engine.points[i]);
-                        }
+                        const drawX = i * horizontalSliceSegment;
+                        const drawY = engine.points[i];
+                        if (i === 0) ctx.moveTo(drawX, drawY);
+                        else ctx.lineTo(drawX, drawY);
                     }
                     ctx.stroke();
                 });
  
-                requestAnimationFrame(runLiveTelemetryUIUpdate);
+                SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
             }
  
+            // Initialize system execution architecture on windows boot sequences
             initLiveTelemetryEngine();
         });
     </script>

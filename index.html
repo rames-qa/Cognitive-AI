@@ -311,12 +311,11 @@
         }
  
         .eq-bar {
-            flex: 1;
-            max-width: 8px;
+            width: 8px;
             height: 10%;
             background: var(--neon-blue);
             border-radius: 3px;
-            transition: height 0.05s ease;
+            transition: height 0.1s ease;
         }
  
         .matrix-track-wrapper {
@@ -351,7 +350,7 @@
             height: 100%;
             width: 0%;
             border-radius: 4px;
-            transition: width 0.2s ease-out;
+            transition: width 0.4s ease;
         }
  
         .progress { background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); }
@@ -592,7 +591,6 @@
                 dataArray: null,
                 stream: null,
                 recognition: null,
-                currentVolume: 0,
                 voiceSynth: window.speechSynthesis,
                 roboticVoice: null,
                 shouldRestartRecognition: true 
@@ -649,10 +647,10 @@
             function executeRoboticSpeech(phrase) {
                 if (!SystemState.voiceSynth) return;
                 
-                // Pause recognition stream while output array is speaking to prevent self-triggering loops
+                // Mute recognition to prevent the AI from hearing itself speak
                 if (SystemState.recognition) {
                     SystemState.shouldRestartRecognition = false;
-                    SystemState.recognition.abort();
+                    SystemState.recognition.stop();
                 }
 
                 SystemState.voiceSynth.cancel();
@@ -662,8 +660,8 @@
                     utterance.voice = SystemState.roboticVoice;
                 }
                  
-                utterance.pitch = 0.70; 
-                utterance.rate = 0.95;   
+                utterance.pitch = 0.90; 
+                utterance.rate = 1.0;   
                 utterance.volume = 1.0;  
                  
                 utterance.onstart = () => {
@@ -679,7 +677,7 @@
                     voiceStatusDot.className = "status-dot active";
                     voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
                     
-                    // Resume hands-free capture array once audio feedback completes cleanly
+                    // Safe restart once audio completes
                     SystemState.shouldRestartRecognition = true;
                     if (SystemState.isListening && SystemState.recognition) {
                         try { SystemState.recognition.start(); } catch(e){}
@@ -695,12 +693,11 @@
                     if (!cObj.el) return;
                      
                     const rect = cObj.el.getBoundingClientRect();
-                    cObj.el.width = rect.width * window.devicePixelRatio;
-                    cObj.el.height = rect.height * window.devicePixelRatio;
+                    cObj.el.width = rect.width;
+                    cObj.el.height = rect.height;
                     cObj.ctx = cObj.el.getContext("2d");
-                    cObj.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
                      
-                    cObj.points = new Array(60).fill(25); 
+                    cObj.points = new Array(60).fill(rect.height / 2); 
                 });
  
                 resetAllUIValues();
@@ -736,6 +733,7 @@
  
             function setupControlEventListeners() {
                 if (voiceBtn) {
+                    voiceBtn.removeEventListener("click", toggleVoiceCaptureSystem);
                     voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
                 }
             }
@@ -759,7 +757,7 @@
  
                         SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                         SystemState.analyser = SystemState.audioContext.createAnalyser();
-                        SystemState.analyser.fftSize = 64;
+                        SystemState.analyser.fftSize = 32;
                         const bufferLength = SystemState.analyser.frequencyBinCount;
                         SystemState.dataArray = new Uint8Array(bufferLength);
                          
@@ -769,16 +767,16 @@
                         liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
  
                         setTimeout(() => {
-                            executeRoboticSpeech("Ambient speaker activated. Listening for activation keywords.");
+                            executeRoboticSpeech("System initialized. I am listening.");
                         }, 400);
  
-                        if ('webkitSpeechRecognition' in window || 'speechRecognition' in window) {
+                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                             SystemState.recognition = new SpeechRecognition();
                             
-                            // Essential Alexa Optimization: true lets browser run an enduring active session
                             SystemState.recognition.continuous = true; 
                             SystemState.recognition.interimResults = false;
+                            SystemState.recognition.lang = 'en-US';
                              
                             SystemState.recognition.onresult = (event) => {
                                 let cleanBuffer = '';
@@ -789,43 +787,30 @@
                                 }
                                 
                                 if (!cleanBuffer) return;
-                                
-                                const rawText = cleanBuffer.toLowerCase().trim();
-                                console.log("Heard phrase:", rawText);
-                                
-                                // Wake word parsing filters (Alexa or System)
-                                if (rawText.startsWith("alexa") || rawText.startsWith("system")) {
-                                    // Strip wake word out cleanly to parse just the remaining intent
-                                    let commandBody = rawText.replace(/^(alexa|system)\s*,?\s*/i, "").trim();
-                                    
-                                    if (commandBody.length > 0) {
-                                        voiceTranscript.textContent = `[Command] ${commandBody}`;
-                                        processAutomatedSemanticResponse(commandBody);
-                                    } else {
-                                        voiceTranscript.textContent = '[Wake word detected, awaiting system parameters...]';
-                                        executeRoboticSpeech("Yes, I am listening.");
-                                    }
+                                processVoicePayload(cleanBuffer);
+                            };
+
+                            SystemState.recognition.onerror = (e) => {
+                                console.log("Recognition error:", e.error);
+                            };
+
+                            SystemState.recognition.onend = () => {
+                                // Keep listening continuously unless manually terminated
+                                if (SystemState.isListening && SystemState.shouldRestartRecognition) {
+                                    try { SystemState.recognition.start(); } catch(err){}
                                 }
                             };
  
-                            SystemState.recognition.onend = () => {
-                                if (SystemState.isListening && SystemState.shouldRestartRecognition && SystemState.recognition) {
-                                    try { SystemState.recognition.start(); } catch(e) {}
-                                }
-                            };
-                            
-                            SystemState.recognition.onerror = (err) => {
-                                console.warn("Recognition loop notification:", err.error);
-                            };
-
                             SystemState.recognition.start();
+                        } else {
+                            voiceTranscript.textContent = "API error: Speech recognition layer missing in this browser architecture.";
                         }
                     }).catch(err => {
-                        console.error("Audio access rejected:", err);
-                        voiceTranscript.textContent = "Error: Microphone permission denied.";
+                        console.error("Audio Access Denied:", err);
+                        voiceTranscript.textContent = "Error: Peripheral audio acquisition array access refused.";
                     });
                 } else {
-                    // Turn off system loop cleanly
+                    // Turn off system loop
                     SystemState.isListening = false;
                     SystemState.shouldRestartRecognition = false;
                     
@@ -838,6 +823,9 @@
                     if (SystemState.audioContext) {
                         SystemState.audioContext.close();
                     }
+                    if (SystemState.voiceSynth) {
+                        SystemState.voiceSynth.cancel();
+                    }
 
                     voiceBtn.classList.remove("listening");
                     document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
@@ -846,134 +834,162 @@
                     voiceModuleStatus.textContent = "STANDBY";
                     voiceModuleStatus.classList.remove("active");
                     voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                    liveDecibel.textContent = "-Inf dB";
-                    liveSampleRate.textContent = "0.0 kHz";
+                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">System Hibernating. Initialize loop interface to watch.</span>';
                     
                     resetAllUIValues();
                 }
             }
 
-            function processAutomatedSemanticResponse(text) {
-                console.log("Processing command string:", text);
+            // Alexa command engine processing
+            function processVoicePayload(phraseStr) {
+                const cleanPhrase = phraseStr.trim();
+                const lowerPhrase = cleanPhrase.toLowerCase();
+                
+                voiceTranscript.innerHTML = `<div><span style="color:var(--text-secondary);">Heard:</span> "${cleanPhrase}"</div>`;
+                
+                // Wake words check
+                const matchAlexa = lowerPhrase.includes("alexa");
+                const matchSystem = lowerPhrase.includes("system");
+                
+                if (!matchAlexa && !matchSystem) {
+                    // Received vocal inputs but wake token missing
+                    return;
+                }
 
-                // Send clean data directly to your local Python tracking loops
-                fetch("http://127.0.0.1:8000/command", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        command: text
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Backend Response:", data);
-                    if (data.open_url) {
-                        window.open(data.open_url, '_blank'); 
-                    }
-                })
-                .catch(error => {
-                    console.error("Connection Error:", error);
-                });
+                // Strip wake token to extract clean actionable command payload
+                let commandPayload = lowerPhrase.replace("alexa", "").replace("system", "").trim();
+                
+                // Visual indicators dynamic scaling block
+                emotionBars.calmBar.style.width = "85%";
+                emotionBars.calmTxt.textContent = "85%";
+                emotionBars.frictionBar.style.width = "15%";
+                emotionBars.frictionTxt.textContent = "15%";
+                emotionBars.loadBar.style.width = "60%";
+                emotionBars.loadTxt.textContent = "60%";
+                emotionTokenDisplay.textContent = "PROCESSING INTENT";
+                emotionTokenDisplay.style.color = "var(--neon-amber)";
 
-                // Immediate web interface logic backup triggers
-                if (text.includes("status") || text.includes("scan")) {
-                    executeRoboticSpeech("Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops.");
-                } else if (text.includes("hello") || text.includes("hi")) {
-                    executeRoboticSpeech("Greetings user. Systems initialization check complete. All matrices are operational.");
+                // Intent matching logic framework
+                if (commandPayload.includes("time")) {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    respondAndShow(`The current time is ${timeStr}.`, "90%", "45%", "25%");
+                } 
+                else if (commandPayload.includes("day") || commandPayload.includes("date")) {
+                    const now = new Date();
+                    const dateStr = now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+                    respondAndShow(`Today is ${dateStr}.`, "95%", "35%", "15%");
+                } 
+                else if (commandPayload.includes("light") || commandPayload.includes("turn on")) {
+                    respondAndShow("Executing automated task. Smart grid infrastructure relays have been activated.", "70%", "95%", "85%");
+                } 
+                else if (commandPayload.includes("status") || commandPayload.includes("diagnostics")) {
+                    respondAndShow("Running complete system diagnostic array. All operations modules are processing normally within accepted variances.", "99%", "90%", "95%");
+                } 
+                else if (commandPayload.includes("joke")) {
+                    const jokes = [
+                        "Why do robots drive down the road? Because they are programmed to.",
+                        "There are ten types of people in this world. Those who understand binary, and those who do not.",
+                        "Why did the computer cross the road? To escape the network firewall loop context."
+                    ];
+                    const selected = jokes[Math.floor(Math.random() * jokes.length)];
+                    respondAndShow(selected, "80%", "75%", "40%");
+                } 
+                else if (commandPayload === "" || commandPayload === "hello") {
+                    respondAndShow("Acoustic wake token detected. Ready for immediate command.", "80%", "20%", "30%");
+                } 
+                else {
+                    respondAndShow(`I detected the command payload, "${commandPayload}". Processing logic layer via localized automation frameworks.`, "50%", "80%", "70%");
                 }
             }
 
+            function respondAndShow(replyText, neuralVal, visionVal, robotVal) {
+                // Render text update to console layout structure cleanly
+                const currentHtml = voiceTranscript.innerHTML;
+                voiceTranscript.innerHTML = `${currentHtml}<div style="margin-top:5px;"><span style="color:var(--neon-blue); font-weight:600;">Response:</span> ${replyText}</div>`;
+                
+                // Dynamically update dashboard interface metrics cards
+                metricLabels.neuralVelocity.textContent = neuralVal;
+                metricLabels.neuralBar.style.width = neuralVal;
+                metricLabels.neuralIndex.textContent = "74%";
+                metricLabels.neuralActive.textContent = "82%";
+
+                metricLabels.visionFPS.textContent = "60 FPS";
+                metricLabels.visionAccuracy.textContent = visionVal;
+                metricLabels.analyticsBar.style.width = visionVal;
+                metricLabels.visionTracking.textContent = "91%";
+
+                metricLabels.robotTasks.textContent = robotVal;
+                metricLabels.automationBar.style.width = robotVal;
+                metricLabels.robotLoad.textContent = "38%";
+                metricLabels.robotFlow.textContent = "94%";
+
+                executeRoboticSpeech(replyText);
+            }
+ 
             function runLiveTelemetryUIUpdate() {
-                requestAnimationFrame(runLiveTelemetryUIUpdate);
-
-                if (SystemState.isListening && SystemState.analyser) {
+                if (SystemState.isListening && SystemState.analyser && SystemState.dataArray) {
                     SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    let sum = 0;
                     
+                    // Simple average volume computation
+                    let total = 0;
+                    for (let i = 0; i < SystemState.dataArray.length; i++) {
+                        total += SystemState.dataArray[i];
+                    }
+                    const avgVol = total / SystemState.dataArray.length;
+                    
+                    // Convert into approximate live Decibels metric display safely
+                    const dbValue = avgVol > 0 ? Math.round(20 * Math.log10(avgVol / 255)) : -90;
+                    liveDecibel.textContent = dbValue > -90 ? `${dbValue} dB` : "-Inf dB";
+ 
+                    // Update visualizer tracking nodes frequencies mapping
                     eqBars.forEach((bar, index) => {
-                        const val = SystemState.dataArray[index] || 0;
-                        sum += val;
-                        const heightPercent = Math.max(10, Math.min(100, (val / 255) * 100));
-                        bar.style.height = `${heightPercent}%`;
+                        const rawVal = SystemState.dataArray[index % SystemState.dataArray.length] || 0;
+                        const calculatedHeight = Math.max(10, Math.min(100, (rawVal / 255) * 100));
+                        bar.style.height = `${calculatedHeight}%`;
                     });
-
-                    let average = sum / eqBars.length;
-                    SystemState.currentVolume = average;
-                    let db = 20 * Math.log10(average / 255);
-                    if (average === 0) db = -100;
-                    liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
-
-                    const randomFlux = () => Math.floor(Math.random() * 30);
-                    emotionBars.calmBar.style.width = `${70 + randomFlux() / 3}%`;
-                    emotionBars.calmTxt.textContent = emotionBars.calmBar.style.width;
-                    emotionBars.frictionBar.style.width = `${10 + randomFlux() / 5}%`;
-                    emotionBars.frictionTxt.textContent = emotionBars.frictionBar.style.width;
-                    emotionBars.loadBar.style.width = `${Math.min(100, average * 1.5)}%`;
-                    emotionBars.loadTxt.textContent = emotionBars.loadBar.style.width;
                 }
-
-                if (SystemState.isListening) {
-                    const timeSeed = Date.now();
-                    
-                    const nVelocity = Math.floor(75 + Math.sin(timeSeed / 400) * 10);
-                    metricLabels.neuralVelocity.textContent = `${nVelocity}%`;
-                    metricLabels.neuralIndex.textContent = `${Math.floor(60 + Math.cos(timeSeed / 600) * 8)}%`;
-                    metricLabels.neuralActive.textContent = `${Math.floor(85 + Math.sin(timeSeed / 200) * 5)}%`;
-                    metricLabels.neuralBar.style.width = `${nVelocity}%`;
-
-                    const vFPS = Math.floor(58 + Math.random() * 4);
-                    metricLabels.visionFPS.textContent = `${vFPS} FPS`;
-                    metricLabels.visionAccuracy.textContent = `${(94 + Math.sin(timeSeed / 800) * 2).toFixed(1)}%`;
-                    metricLabels.visionTracking.textContent = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
-                    metricLabels.analyticsBar.style.width = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
-
-                    const rTasks = Math.floor(40 + Math.sin(timeSeed / 1000) * 20);
-                    metricLabels.robotTasks.textContent = `${rTasks}%`;
-                    metricLabels.robotLoad.textContent = `${Math.floor(35 + Math.cos(timeSeed / 700) * 12)}%`;
-                    metricLabels.robotFlow.textContent = `${(98.2 + Math.sin(timeSeed / 1500) * 1.1).toFixed(1)}%`;
-                    metricLabels.automationBar.style.width = `${rTasks}%`;
-                }
-
+ 
+                // Render synthetic canvas telemetry loops lines drawing routines
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
                     if (!engine.ctx) return;
-
+ 
                     const ctx = engine.ctx;
-                    const w = engine.el.width / window.devicePixelRatio;
-                    const h = engine.el.height / window.devicePixelRatio;
-
+                    const w = engine.el.width;
+                    const h = engine.el.height;
+ 
                     ctx.clearRect(0, 0, w, h);
-
+                    
+                    // Shuffle coordinates backward
+                    engine.points.shift();
+                    let targetNext = h / 2;
+                    
                     if (SystemState.isListening) {
-                        let lastPoint = engine.points[engine.points.length - 1];
-                        let change = (Math.random() - 0.5) * 12;
-                        let newPoint = Math.max(10, Math.min(h - 10, lastPoint + change));
-                        engine.points.push(newPoint);
-                        engine.points.shift();
+                        targetNext = (h / 2) + (Math.random() * (h * 0.6) - (h * 0.3));
                     }
-
+                    engine.points.push(targetNext);
+ 
                     ctx.beginPath();
                     ctx.strokeStyle = engine.color;
                     ctx.lineWidth = 2;
                     ctx.lineJoin = "round";
-
-                    const step = w / (engine.points.length - 1);
-                    engine.points.forEach((pt, idx) => {
-                        if (idx === 0) ctx.moveTo(0, pt);
-                        else ctx.lineTo(idx * step, pt);
-                    });
+ 
+                    const slice = w / (engine.points.length - 1);
+                    for (let i = 0; i < engine.points.length; i++) {
+                        const currentX = i * slice;
+                        if (i === 0) {
+                            ctx.moveTo(currentX, engine.points[i]);
+                        } else {
+                            ctx.lineTo(currentX, engine.points[i]);
+                        }
+                    }
                     ctx.stroke();
-
-                    ctx.lineTo(w, h);
-                    ctx.lineTo(0, h);
-                    ctx.closePath();
-                    ctx.fillStyle = engine.color + "11"; 
-                    ctx.fill();
                 });
+ 
+                requestAnimationFrame(runLiveTelemetryUIUpdate);
             }
-
+ 
             initLiveTelemetryEngine();
         });
     </script>

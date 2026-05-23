@@ -233,7 +233,6 @@
             flex-direction: column;
             gap: 6px;
             border-bottom: 1px solid #1e2942;
-
             padding-bottom: 12px;
             margin-bottom: 15px;
         }
@@ -584,364 +583,359 @@
     </footer>
  
     <script>
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const SystemState = {
-            isListening: false,
-            audioContext: null,
-            analyser: null,
-            dataArray: null,
-            stream: null,
-            recognition: null,
-            voiceSynth: window.speechSynthesis,
-            roboticVoice: null,
-            shouldRestartRecognition: true,
-            animationFrameId: null
-        };
-
-        const telemetryCanvasEngines = {
-            neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff' },
-            analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6' },
-            automation: { el: document.getElementById("automationCanvas"), points: [], color: '#10b981' }
-        };
-
-        const voiceBtn = document.getElementById("btnVoiceTrigger");
-        const voiceStatusDot = document.getElementById("voiceStatusDot");
-        const voiceStatusText = document.getElementById("voiceStatusText");
-        const voiceTranscript = document.getElementById("voiceTranscript");
-        const voiceModuleStatus = document.getElementById("voiceModuleStatus");
-        const liveDecibel = document.getElementById("liveDecibel");
-        const liveSampleRate = document.getElementById("liveSampleRate");
-        const eqBars = document.querySelectorAll(".eq-bar");
-        const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
-        const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-               
-        const emotionBars = {
-            calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
-            frictionBar: document.getElementById("barFriction"), frictionTxt: document.getElementById("txtFriction"),
-            loadBar: document.getElementById("barLoad"), loadTxt: document.getElementById("txtLoad")
-        };
-
-        const metricLabels = {
-            neuralVelocity: document.getElementById("valNeuralVelocity"),
-            neuralIndex: document.getElementById("valNeuralIndex"),
-            neuralActive: document.getElementById("valNeuralActive"),
-            neuralBar: document.getElementById("neuralBar"),
-            visionFPS: document.getElementById("valVisionFPS"),
-            visionAccuracy: document.getElementById("valVisionAccuracy"),
-            visionTracking: document.getElementById("valVisionTracking"),
-            analyticsBar: document.getElementById("analyticsBar"),
-            robotTasks: document.getElementById("valRobotTasks"),
-            robotLoad: document.getElementById("valRobotLoad"),
-            robotFlow: document.getElementById("valRobotFlow"),
-            automationBar: document.getElementById("automationBar")
-        };
-
-        function initVoiceProfiles() {
-            if (!SystemState.voiceSynth) return;
-            let voices = SystemState.voiceSynth.getVoices();
-            SystemState.roboticVoice = voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('google')) || 
-                                       voices.find(v => v.lang.includes('en-US')) || 
-                                       voices[0];
-        }
-
-        if (window.speechSynthesis) {
-            window.speechSynthesis.onvoiceschanged = initVoiceProfiles;
-            initVoiceProfiles();
-        }
-
-        function executeRoboticSpeech(phrase) {
-            if (!SystemState.voiceSynth) return;
-            
-            if (SystemState.recognition) {
-                SystemState.shouldRestartRecognition = false;
-                SystemState.recognition.stop();
-            }
-
-            SystemState.voiceSynth.cancel();
-                 
-            const utterance = new SpeechSynthesisUtterance(phrase);
-            if (SystemState.roboticVoice) {
-                utterance.voice = SystemState.roboticVoice;
-            }
-                 
-            utterance.pitch = 1.0; 
-            utterance.rate = 1.0;    
-            utterance.volume = 1.0;  
-                 
-            utterance.onstart = () => {
-                emotionTokenDisplay.textContent = "TRANSMITTING RESPONSE";
-                emotionTokenDisplay.style.color = "var(--neon-blue)";
-                voiceStatusDot.className = "status-dot speaking";
-                voiceStatusText.textContent = "Broadcasting Audio Output Array...";
+        document.addEventListener("DOMContentLoaded", () => {
+            const SystemState = {
+                isListening: false,
+                audioContext: null,
+                analyser: null,
+                dataArray: null,
+                stream: null,
+                recognition: null,
+                voiceSynth: window.speechSynthesis,
+                roboticVoice: null,
+                shouldRestartRecognition: true,
+                animationFrameId: null
             };
 
-            utterance.onend = () => {
-                emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
-                emotionTokenDisplay.style.color = "var(--neon-green)";
-                voiceStatusDot.className = "status-dot active";
-                voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                    
-                SystemState.shouldRestartRecognition = true;
-                if (SystemState.isListening && SystemState.recognition) {
-                    try { SystemState.recognition.start(); } catch(e){}
+            const telemetryCanvasEngines = {
+                neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff' },
+                analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6' },
+                automation: { el: document.getElementById("automationCanvas"), points: [], color: '#10b981' }
+            };
+
+            const voiceBtn = document.getElementById("btnVoiceTrigger");
+            const voiceStatusDot = document.getElementById("voiceStatusDot");
+            const voiceStatusText = document.getElementById("voiceStatusText");
+            const voiceTranscript = document.getElementById("voiceTranscript");
+            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+            const liveDecibel = document.getElementById("liveDecibel");
+            const liveSampleRate = document.getElementById("liveSampleRate");
+            const eqBars = document.querySelectorAll(".eq-bar");
+            const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
+            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
+                   
+            const emotionBars = {
+                calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
+                frictionBar: document.getElementById("barFriction"), frictionTxt: document.getElementById("txtFriction"),
+                loadBar: document.getElementById("barLoad"), loadTxt: document.getElementById("txtLoad")
+            };
+
+            const metricLabels = {
+                neuralVelocity: document.getElementById("valNeuralVelocity"),
+                neuralIndex: document.getElementById("valNeuralIndex"),
+                neuralActive: document.getElementById("valNeuralActive"),
+                neuralBar: document.getElementById("neuralBar"),
+                visionFPS: document.getElementById("valVisionFPS"),
+                visionAccuracy: document.getElementById("valVisionAccuracy"),
+                visionTracking: document.getElementById("valVisionTracking"),
+                analyticsBar: document.getElementById("analyticsBar"),
+                robotTasks: document.getElementById("valRobotTasks"),
+                robotLoad: document.getElementById("valRobotLoad"),
+                robotFlow: document.getElementById("valRobotFlow"),
+                automationBar: document.getElementById("automationBar")
+            };
+
+            // Setup button click
+            if (voiceBtn) {
+                voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
+            }
+
+            function initVoiceProfiles() {
+                if (!SystemState.voiceSynth) return;
+                let voices = SystemState.voiceSynth.getVoices();
+                SystemState.roboticVoice = voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('google')) || 
+                                           voices.find(v => v.lang.includes('en-US')) || 
+                                           voices[0];
+            }
+
+            if (window.speechSynthesis) {
+                window.speechSynthesis.onvoiceschanged = initVoiceProfiles;
+                initVoiceProfiles();
+            }
+
+            function executeRoboticSpeech(phrase) {
+                if (!SystemState.voiceSynth) return;
+                
+                if (SystemState.recognition) {
+                    SystemState.shouldRestartRecognition = false;
+                    SystemState.recognition.stop();
                 }
-            };
 
-            SystemState.voiceSynth.speak(utterance);
-        }
+                SystemState.voiceSynth.cancel();
+                     
+                const utterance = new SpeechSynthesisUtterance(phrase);
+                if (SystemState.roboticVoice) {
+                    utterance.voice = SystemState.roboticVoice;
+                }
+                     
+                utterance.pitch = 1.0; 
+                utterance.rate = 1.0;    
+                utterance.volume = 1.0;  
+                     
+                utterance.onstart = () => {
+                    emotionTokenDisplay.textContent = "TRANSMITTING RESPONSE";
+                    emotionTokenDisplay.style.color = "var(--neon-blue)";
+                    voiceStatusDot.className = "status-dot speaking";
+                    voiceStatusText.textContent = "Broadcasting Audio Output Array...";
+                };
 
-        function resetAllUIValues() {
-            eqBars.forEach(b => b.style.height = "10%");
-            Object.keys(emotionBars).forEach(k => {
-                if(k.includes('Bar')) emotionBars[k].style.width = "0%";
-                if(k.includes('Txt')) emotionBars[k].textContent = "0%";
-            });
-                 
-            if(emotionTokenDisplay) {
-                emotionTokenDisplay.textContent = "SYSTEM OFFLINE";
-                emotionTokenDisplay.style.color = "var(--text-secondary)";
-            }
-
-            metricLabels.neuralVelocity.textContent = "0%";
-            metricLabels.neuralIndex.textContent = "0%";
-            metricLabels.neuralActive.textContent = "0%";
-            metricLabels.neuralBar.style.width = "0%";
-            metricLabels.visionFPS.textContent = "0 FPS";
-            metricLabels.visionAccuracy.textContent = "0%";
-            metricLabels.visionTracking.textContent = "0%";
-            metricLabels.analyticsBar.style.width = "0%";
-            metricLabels.robotTasks.textContent = "0%";
-            metricLabels.robotLoad.textContent = "0%";
-            metricLabels.robotFlow.textContent = "0%";
-            metricLabels.automationBar.style.width = "0%";
-            liveDecibel.textContent = "-Inf dB";
-            liveSampleRate.textContent = "0.0 kHz";
-        }
-
-        function toggleVoiceCaptureSystem() {
-            if (!SystemState.isListening) {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    SystemState.isListening = true;
-                    SystemState.stream = stream;
-                    SystemState.shouldRestartRecognition = true;
-                         
-                    voiceBtn.classList.add("listening");
-                    document.getElementById("voiceText").textContent = "Terminate System Loop";
+                utterance.onend = () => {
+                    emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
+                    emotionTokenDisplay.style.color = "var(--neon-green)";
                     voiceStatusDot.className = "status-dot active";
                     voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                    voiceModuleStatus.textContent = "AMBIENT WATCH";
-                    voiceModuleStatus.classList.add("active");
-                    voiceProcessingPanel?.classList.add("voice-pulse-highlight");
-                         
-                    voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Core Online. Say "SYSTEM..." followed by your request.]</span>';
-
-                    SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    SystemState.analyser = SystemState.audioContext.createAnalyser();
-                    SystemState.analyser.fftSize = 32;
-                    const bufferLength = SystemState.analyser.frequencyBinCount;
-                    SystemState.dataArray = new Uint8Array(bufferLength);
-                         
-                    const source = SystemState.audioContext.createMediaStreamSource(stream);
-                    source.connect(SystemState.analyser);
-                         
-                    liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-
-                    setTimeout(() => {
-                        executeRoboticSpeech("System array online. I am actively monitoring.");
-                    }, 400);
-
-                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                        SystemState.recognition = new SpeechRecognition();
-                             
-                        SystemState.recognition.continuous = true; 
-                        SystemState.recognition.interimResults = false;
-                        SystemState.recognition.lang = 'en-US';
-                             
-                        SystemState.recognition.onresult = (event) => {
-                            let cleanBuffer = '';
-                            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                                if (event.results[i].isFinal) {
-                                    cleanBuffer += event.results[i][0].transcript;
-                                }
-                            }
-                                 
-                            if (!cleanBuffer || cleanBuffer.trim() === '') return;
-                            processVoicePayload(cleanBuffer);
-                        };
-
-                        SystemState.recognition.onerror = (e) => {
-                            console.error("Recognition baseline error:", e.error);
-                        };
-
-                        SystemState.recognition.onend = () => {
-                            if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                                try { SystemState.recognition.start(); } catch(err){}
-                            }
-                        };
-
-                        SystemState.recognition.start();
-                    } else {
-                        voiceTranscript.textContent = "Error: Speech Recognition API unsupported.";
-                    }
                         
-                    runLiveTelemetryUIUpdate();
-
-                }).catch(err => {
-                    console.error("Microphone hardware error:", err);
-                    alert("Microphone configuration access denied.");
-                });
-            } else {
-                shutdownVoiceCaptureSystem();
-            }
-        }
-
-       function shutdownVoiceCaptureSystem() {
-    SystemState.isListening = false;
-    SystemState.shouldRestartRecognition = false;
-
-    if (SystemState.recognition) {
-        try { SystemState.recognition.stop(); } catch(e) {}
-        SystemState.recognition = null;
-    }
-
-    if (SystemState.stream) {
-        SystemState.stream.getTracks().forEach(track => track.stop());
-        SystemState.stream = null;
-    }
-
-    if (SystemState.audioContext) {
-        try { SystemState.audioContext.close(); } catch(e) {}
-        SystemState.audioContext = null;
-    }
-
-    if (SystemState.animationFrameId) {
-        cancelAnimationFrame(SystemState.animationFrameId);
-    }
-
-    // Revert styling and clear values
-    voiceBtn.classList.remove("listening");
-    document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
-    voiceStatusDot.className = "status-dot";
-    voiceStatusText.textContent = "Acoustic Core Offline";
-    voiceModuleStatus.textContent = "STANDBY";
-    voiceModuleStatus.classList.remove("active");
-    voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-    voiceTranscript.innerHTML = '<span class="transcript-placeholder">Say "SYSTEM" followed by your command.</span>';
-    
-    resetAllUIValues();
-}
-        function processVoicePayload(phrase) {
-            const rawText = phrase.trim();
-            voiceTranscript.innerHTML = `<span>${rawText}</span>`;
-            
-            // Local Flask Server URL endpoint
-            const targetBackend = "http://localhost:5000/api/command";
-
-            fetch(targetBackend, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ command: rawText })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "success" || data.status === "busy") {
-                    executeRoboticSpeech(data.action || data.message);
-                    
-                    // Fire mock animations on structural metric panels upon command success
-                    triggerInterfaceSpike();
-
-                    if (data.url && data.url !== "") {
-                        setTimeout(() => {
-                            window.open(data.url, "_blank");
-                        }, 1200);
+                    SystemState.shouldRestartRecognition = true;
+                    if (SystemState.isListening && SystemState.recognition) {
+                        try { SystemState.recognition.start(); } catch(e){}
                     }
+                };
+
+                SystemState.voiceSynth.speak(utterance);
+            }
+
+            function processVoicePayload(transcript) {
+                voiceTranscript.innerHTML = `<span style="color:#fff;">${transcript}</span>`;
+                
+                // Simple parsing keyword matching pattern
+                const lowerInput = transcript.toLowerCase();
+                if (lowerInput.includes("system") || lowerInput.includes("hello") || lowerInput.includes("status")) {
+                    executeRoboticSpeech("Command captured. Processing analytical response routines now.");
                 }
-            })
-            .catch(err => {
-                console.error("Network communication failure:", err);
-                executeRoboticSpeech("Communication error. Unable to bind to local pipeline server.");
-            });
-        }
+            }
 
-        function triggerInterfaceSpike() {
-            // Animate dashboard elements to show active parsing metrics
-            const val1 = Math.floor(Math.random() * 30) + 65;
-            const val2 = Math.floor(Math.random() * 25) + 70;
-            const val3 = Math.floor(Math.random() * 40) + 55;
-
-            emotionBars.calmBar.style.width = `${val1}%`; emotionBars.calmTxt.textContent = `${val1}%`;
-            emotionBars.frictionBar.style.width = `${100 - val1}%`; emotionBars.frictionTxt.textContent = `${100 - val1}%`;
-            emotionBars.loadBar.style.width = `${val2}%`; emotionBars.loadTxt.textContent = `${val2}%`;
-
-            metricLabels.neuralVelocity.textContent = `${val1}%`;
-            metricLabels.neuralIndex.textContent = `${val2}%`;
-            metricLabels.neuralActive.textContent = `${val3}%`;
-            metricLabels.neuralBar.style.width = `${val1}%`;
-
-            metricLabels.visionFPS.textContent = "60 FPS";
-            metricLabels.visionAccuracy.textContent = `${val2}%`;
-            metricLabels.visionTracking.textContent = `${val3}%`;
-            metricLabels.analyticsBar.style.width = `${val2}%`;
-
-            metricLabels.robotTasks.textContent = `${val3}%`;
-            metricLabels.robotLoad.textContent = `${val1}%`;
-            metricLabels.robotFlow.textContent = `${val2}%`;
-            metricLabels.automationBar.style.width = `${val3}%`;
-        }
-
-        function runLiveTelemetryUIUpdate() {
-            if (!SystemState.isListening) return;
-
-            SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
-            SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-
-            let total = 0;
-            SystemState.dataArray.forEach((val, idx) => {
-                total += val;
-                if (eqBars[idx]) {
-                    const h = Math.max(10, (val / 255) * 100);
-                    eqBars[idx].style.height = `${h}%`;
-                }
-            });
-
-            const avg = total / SystemState.dataArray.length;
-            const db = avg > 0 ? Math.round(20 * Math.log10(avg / 255)) : -120;
-            liveDecibel.textContent = `${db} dB`;
-
-            // Draw real-time Canvas telemetry matrices
-            Object.keys(telemetryCanvasEngines).forEach(k => {
-                const cfg = telemetryCanvasEngines[k];
-                if (!cfg.el) return;
-                const ctx = cfg.el.getContext("2d");
-                const w = cfg.el.width = cfg.el.clientWidth;
-                const h = cfg.el.height = cfg.el.clientHeight;
-
-                if (cfg.points.length === 0 || cfg.points.length < w / 4) {
-                    cfg.points.push(Math.random() * (h - 20) + 10);
-                } else {
-                    cfg.points.shift();
-                    let targetShift = avg > 10 ? Math.random() * h : Math.random() * (h/3) + (h/3);
-                    cfg.points.push(targetShift);
-                }
-
-                ctx.clearRect(0, 0, w, h);
-                ctx.beginPath();
-                ctx.strokeStyle = cfg.color;
-                ctx.lineWidth = 2;
-
-                const step = w / cfg.points.length;
-                cfg.points.forEach((p, i) => {
-                    if (i === 0) ctx.moveTo(0, p);
-                    else ctx.lineTo(i * step, p);
+            function resetAllUIValues() {
+                eqBars.forEach(b => b.style.height = "10%");
+                Object.keys(emotionBars).forEach(k => {
+                    if(k.includes('Bar')) emotionBars[k].style.width = "0%";
+                    if(k.includes('Txt')) emotionBars[k].textContent = "0%";
                 });
-                ctx.stroke();
-            });
-        }
+                     
+                if(emotionTokenDisplay) {
+                    emotionTokenDisplay.textContent = "SYSTEM OFFLINE";
+                    emotionTokenDisplay.style.color = "var(--text-secondary)";
+                }
 
-        setupControlEventListeners();
-    });
+                metricLabels.neuralVelocity.textContent = "0%";
+                metricLabels.neuralIndex.textContent = "0%";
+                metricLabels.neuralActive.textContent = "0%";
+                metricLabels.neuralBar.style.width = "0%";
+                metricLabels.visionFPS.textContent = "0 FPS";
+                metricLabels.visionAccuracy.textContent = "0%";
+                metricLabels.visionTracking.textContent = "0%";
+                metricLabels.analyticsBar.style.width = "0%";
+                metricLabels.robotTasks.textContent = "0%";
+                metricLabels.robotLoad.textContent = "0%";
+                metricLabels.robotFlow.textContent = "0%";
+                metricLabels.automationBar.style.width = "0%";
+                liveDecibel.textContent = "-Inf dB";
+                liveSampleRate.textContent = "0.0 kHz";
+            }
+
+            function toggleVoiceCaptureSystem() {
+                if (!SystemState.isListening) {
+                    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                        SystemState.isListening = true;
+                        SystemState.stream = stream;
+                        SystemState.shouldRestartRecognition = true;
+                             
+                        voiceBtn.classList.add("listening");
+                        document.getElementById("voiceText").textContent = "Terminate System Loop";
+                        voiceStatusDot.className = "status-dot active";
+                        voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
+                        voiceModuleStatus.textContent = "AMBIENT WATCH";
+                        voiceModuleStatus.classList.add("active");
+                        voiceProcessingPanel?.classList.add("voice-pulse-highlight");
+                             
+                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Core Online. Say "SYSTEM..." followed by your request.]</span>';
+
+                        SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        SystemState.analyser = SystemState.audioContext.createAnalyser();
+                        SystemState.analyser.fftSize = 32;
+                        const bufferLength = SystemState.analyser.frequencyBinCount;
+                        SystemState.dataArray = new Uint8Array(bufferLength);
+                             
+                        const source = SystemState.audioContext.createMediaStreamSource(stream);
+                        source.connect(SystemState.analyser);
+                             
+                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
+
+                        setTimeout(() => {
+                            executeRoboticSpeech("System array online. I am actively monitoring.");
+                        }, 400);
+
+                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                            SystemState.recognition = new SpeechRecognition();
+                                 
+                            SystemState.recognition.continuous = true; 
+                            SystemState.recognition.interimResults = false;
+                            SystemState.recognition.lang = 'en-US';
+                                 
+                            SystemState.recognition.onresult = (event) => {
+                                let cleanBuffer = '';
+                                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                    if (event.results[i].isFinal) {
+                                        cleanBuffer += event.results[i][0].transcript;
+                                    }
+                                }
+                                     
+                                if (!cleanBuffer || cleanBuffer.trim() === '') return;
+                                processVoicePayload(cleanBuffer);
+                            };
+
+                            SystemState.recognition.onerror = (e) => {
+                                console.error("Recognition baseline error:", e.error);
+                            };
+
+                            SystemState.recognition.onend = () => {
+                                if (SystemState.isListening && SystemState.shouldRestartRecognition) {
+                                    try { SystemState.recognition.start(); } catch(err){}
+                                }
+                            };
+
+                            SystemState.recognition.start();
+                        } else {
+                            voiceTranscript.textContent = "Error: Speech Recognition API unsupported.";
+                        }
+                            
+                        runLiveTelemetryUIUpdate();
+
+                    }).catch(err => {
+                        console.error("Microphone hardware error:", err);
+                        alert("Microphone configuration access denied.");
+                    });
+                } else {
+                    shutdownVoiceCaptureSystem();
+                }
+            }
+
+            function shutdownVoiceCaptureSystem() {
+                SystemState.isListening = false;
+                SystemState.shouldRestartRecognition = false;
+
+                if (SystemState.recognition) {
+                    try { SystemState.recognition.stop(); } catch(e) {}
+                    SystemState.recognition = null;
+                }
+
+                if (SystemState.stream) {
+                    SystemState.stream.getTracks().forEach(track => track.stop());
+                    SystemState.stream = null;
+                }
+
+                if (SystemState.audioContext) {
+                    try { SystemState.audioContext.close(); } catch(e) {}
+                    SystemState.audioContext = null;
+                }
+
+                if (SystemState.animationFrameId) {
+                    cancelAnimationFrame(SystemState.animationFrameId);
+                }
+
+                voiceBtn.classList.remove("listening");
+                document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
+                voiceStatusDot.className = "status-dot";
+                voiceStatusText.textContent = "Acoustic Core Offline";
+                voiceModuleStatus.textContent = "STANDBY";
+                voiceModuleStatus.classList.remove("active");
+                voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                voiceTranscript.innerHTML = '<span class="transcript-placeholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>';
+                
+                resetAllUIValues();
+            }
+
+            function runLiveTelemetryUIUpdate() {
+                if (!SystemState.isListening) return;
+
+                // 1. Process real audio equalizer bars if analysis loop is valid
+                if (SystemState.analyser && SystemState.dataArray) {
+                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                    let totalAmplitude = 0;
+                    
+                    eqBars.forEach((bar, index) => {
+                        const val = SystemState.dataArray[index] || 0;
+                        totalAmplitude += val;
+                        const heightPercent = Math.max(10, Math.floor((val / 255) * 100));
+                        bar.style.height = `${heightPercent}%`;
+                    });
+
+                    // Approximate a DB readout metric based on signal amplitude sum
+                    const averageSignal = totalAmplitude / eqBars.length;
+                    const db = averageSignal > 0 ? Math.floor((averageSignal / 255) * 60) - 60 : -90;
+                    liveDecibel.textContent = db > -90 ? `${db} dB` : "-Inf dB";
+                }
+
+                // 2. Generate simulated ambient shifts for core matrices
+                const seed = Date.now();
+                
+                const calmVal = Math.floor(60 + Math.sin(seed * 0.001) * 20);
+                const frictionVal = Math.floor(15 + Math.cos(seed * 0.002) * 10);
+                const loadVal = Math.floor(40 + Math.sin(seed * 0.003) * 30);
+
+                emotionBars.calmBar.style.width = `${calmVal}%`;
+                emotionBars.calmTxt.textContent = `${calmVal}%`;
+                emotionBars.frictionBar.style.width = `${frictionVal}%`;
+                emotionBars.frictionTxt.textContent = `${frictionVal}%`;
+                emotionBars.loadBar.style.width = `${loadVal}%`;
+                emotionBars.loadTxt.textContent = `${loadVal}%`;
+
+                // 3. Telemetry Matrix Values Update
+                const valVelocity = Math.floor(70 + Math.sin(seed * 0.002) * 15);
+                metricLabels.neuralVelocity.textContent = `${valVelocity}%`;
+                metricLabels.neuralIndex.textContent = `${Math.floor(85 + Math.cos(seed * 0.001) * 5)}%`;
+                metricLabels.neuralActive.textContent = `${Math.floor(40 + Math.sin(seed * 0.005) * 5)}%`;
+                metricLabels.neuralBar.style.width = `${valVelocity}%`;
+
+                const fpsVal = Math.floor(58 + Math.random() * 4);
+                metricLabels.visionFPS.textContent = `${fpsVal} FPS`;
+                const accVal = Math.floor(94 + Math.sin(seed * 0.0005) * 2);
+                metricLabels.visionAccuracy.textContent = `${accVal}%`;
+                metricLabels.visionTracking.textContent = `${Math.floor(88 + Math.cos(seed * 0.001) * 6)}%`;
+                metricLabels.analyticsBar.style.width = `${accVal}%`;
+
+                const taskVal = Math.floor(50 + Math.sin(seed * 0.001) * 20);
+                metricLabels.robotTasks.textContent = `${taskVal}%`;
+                metricLabels.robotLoad.textContent = `${Math.floor(30 + Math.cos(seed * 0.002) * 12)}%`;
+                metricLabels.robotFlow.textContent = `${Math.floor(91 + Math.sin(seed * 0.0008) * 4)}%`;
+                metricLabels.automationBar.style.width = `${taskVal}%`;
+
+                // 4. Draw Canvas Telemetry Spikes
+                Object.keys(telemetryCanvasEngines).forEach(key => {
+                    const engine = telemetryCanvasEngines[key];
+                    if (!engine.el) return;
+                    const ctx = engine.el.getContext("2d");
+                    const w = engine.el.width = engine.el.offsetWidth;
+                    const h = engine.el.height = engine.el.offsetHeight;
+
+                    // Shift data arrays leftwards 
+                    if (engine.points.length > w / 4) {
+                        engine.points.shift();
+                    }
+                    
+                    // Add modern noise variables depending on category
+                    let amplitudeFactor = key === 'neural' ? loadVal : key === 'analytics' ? frictionVal : taskVal;
+                    let targetY = (h / 2) + (Math.random() - 0.5) * (amplitudeFactor / 100) * h;
+                    engine.points.push(targetY);
+
+                    // Render sequence pathway
+                    ctx.clearRect(0, 0, w, h);
+                    ctx.beginPath();
+                    ctx.strokeStyle = engine.color;
+                    ctx.lineWidth = 2;
+                    ctx.lineJoin = "round";
+
+                    for (let i = 0; i < engine.points.length; i++) {
+                        let x = i * 4;
+                        if (i === 0) ctx.moveTo(x, engine.points[i]);
+                        else ctx.lineTo(x, engine.points[i]);
+                    }
+                    ctx.stroke();
+                });
+
+                SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
+            }
+        });
     </script>
 </body>
 </html>

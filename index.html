@@ -844,24 +844,25 @@
         resetAllUIValues();
     }
 
-    function processVoicePayload(transcript) {
-        const text = transcript.trim();
-        voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
-        
-        const lowerText = text.toLowerCase();
-        
-        if (lowerText.includes("system") || lowerText.includes("computer")) {
-            if (lowerText.includes("status")) {
-                executeRoboticSpeech("All matrices operating inside structural tolerances. Hardware thread scheduler stable.");
-            } else if (lowerText.includes("clear")) {
-                voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Buffer Cleared. Awaiting payload...]</span>';
-                executeRoboticSpeech("Transcript matrix flushed.");
-            } else {
-                executeRoboticSpeech(`Acknowledged command: ${text.replace(/system|computer/gi, "").trim()}`);
-            }
+function processVoicePayload(transcript) {
+    const text = transcript.trim();
+    voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
+    
+    // Dispatches payload back into your local Python Flask Orchestrator
+    fetch('http://127.0.0.1:5000/api/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: text })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Flask Response Matrix:", data);
+        if (data.status === "success") {
+            executeRoboticSpeech(data.message);
         }
-    }
-
+    })
+    .catch(err => console.error("API link configuration mismatch:", err));
+}
     function runLiveTelemetryUIUpdate() {
         if (!SystemState.isListening) return;
 

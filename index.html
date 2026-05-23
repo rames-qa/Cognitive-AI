@@ -852,13 +852,42 @@
         }
 
         function processVoicePayload(text) {
-            voiceTranscript.innerHTML = `<span>${text}</span>`;
-            // Simple mock evaluation routing logic based on key patterns
-            const upperText = text.toUpperCase();
-            if (upperText.includes("SYSTEM") || upperText.includes("COMPUTER")) {
-                executeRoboticSpeech("Processing requested system token array command.");
+    // 1. Instantly display whatever you said onto the screen
+    voiceTranscript.innerHTML = `<span>${text}</span>`;
+    
+    const upperText = text.toUpperCase();
+    
+    // 2. Check if you used the wake-up words "SYSTEM" or "COMPUTER"
+    if (upperText.includes("SYSTEM") || upperText.includes("COMPUTER")) {
+        
+        // Change dashboard status display to let you know it's working
+        emotionTokenDisplay.textContent = "ROUTING COMMAND";
+        emotionTokenDisplay.style.color = "var(--neon-amber)";
+        
+        // 3. Send the voice text straight to your running Python Flask server
+        fetch('http://127.0.0.1:5000/api/command', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ command: text })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Server response:", data);
+            if (data.status === "success") {
+                // Have the browser speak the confirmation message from Python
+                executeRoboticSpeech(data.message);
+            } else {
+                executeRoboticSpeech("Command reached the backend, but no script matches this phrase.");
             }
-        }
+        })
+        .catch(err => {
+            console.error("Connection failed:", err);
+            executeRoboticSpeech("Cannot connect to your local Python server. Check if your terminal app is running.");
+        });
+    }
+}
 
         function runLiveTelemetryUIUpdate() {
             if (!SystemState.isListening) return;

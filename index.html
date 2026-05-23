@@ -694,15 +694,44 @@
                 SystemState.voiceSynth.speak(utterance);
             }
 
-            function processVoicePayload(transcript) {
-                voiceTranscript.innerHTML = `<span style="color:#fff;">${transcript}</span>`;
-                
-                // Simple parsing keyword matching pattern
-                const lowerInput = transcript.toLowerCase();
-                if (lowerInput.includes("system") || lowerInput.includes("hello") || lowerInput.includes("status")) {
-                    executeRoboticSpeech("Command captured. Processing analytical response routines now.");
-                }
-            }
+          function processVoicePayload(transcript) {
+
+    const text = transcript.trim();
+
+    voiceTranscript.innerHTML =
+        `<span style="color:#fff;">> ${text}</span>`;
+
+    fetch("http://127.0.0.1:5000/api/command", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            command: text
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        console.log("Backend Response:", data);
+
+        if (data.action) {
+            executeRoboticSpeech(data.action);
+        }
+
+        if (data.url && data.url !== "") {
+            window.open(data.url, "_blank");
+        }
+    })
+    .catch(err => {
+
+        console.error("Flask Connection Error:", err);
+
+        executeRoboticSpeech(
+            "Backend connection failed."
+        );
+    });
+}
 
             function resetAllUIValues() {
                 eqBars.forEach(b => b.style.height = "10%");

@@ -851,20 +851,20 @@
             liveSampleRate.textContent = "0.0 kHz";
         }
 
-        function processVoicePayload(text) {
-    // 1. Instantly display whatever you said onto the screen
+  function processVoicePayload(text) {
+    // 1. Instantly display whatever you said onto your visual text panel
     voiceTranscript.innerHTML = `<span>${text}</span>`;
     
     const upperText = text.toUpperCase();
     
-    // 2. Check if you used the wake-up words "SYSTEM" or "COMPUTER"
+    // 2. Check if you initiated the voice sequence with your wake words
     if (upperText.includes("SYSTEM") || upperText.includes("COMPUTER")) {
         
-        // Change dashboard status display to let you know it's working
+        // Visually update the status readout display on your dashboard layout
         emotionTokenDisplay.textContent = "ROUTING COMMAND";
         emotionTokenDisplay.style.color = "var(--neon-amber)";
         
-        // 3. Send the voice text straight to your running Python Flask server
+        // 3. Dispatch the text packet right over into your running Flask terminal window
         fetch('http://127.0.0.1:5000/api/command', {
             method: 'POST',
             headers: {
@@ -874,17 +874,17 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Server response:", data);
+            console.log("Server verification payload received:", data);
             if (data.status === "success") {
-                // Have the browser speak the confirmation message from Python
+                // Command processed! Let the computer vocally confirm the action
                 executeRoboticSpeech(data.message);
             } else {
-                executeRoboticSpeech("Command reached the backend, but no script matches this phrase.");
+                executeRoboticSpeech("Text successfully sent to backend, but no automation matches this routing.");
             }
         })
         .catch(err => {
-            console.error("Connection failed:", err);
-            executeRoboticSpeech("Cannot connect to your local Python server. Check if your terminal app is running.");
+            console.error("Network bridge failure:", err);
+            executeRoboticSpeech("Connection failed to local python server engine. Check your running terminal.");
         });
     }
 }

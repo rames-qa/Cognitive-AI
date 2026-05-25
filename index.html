@@ -248,12 +248,13 @@
         .audio-pill-badge {
             align-self: flex-start;
             background: rgba(16, 185, 129, 0.1);
-            color: var(--neon-green);
+            color: var(--text-secondary);
             padding: 3px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
             border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
         }
  
         .audio-pill-badge.active {
@@ -324,6 +325,10 @@
             gap: 15px;
         }
  
+        .metric-bar-group {
+            width: 100%;
+        }
+
         .metric-label-row {
             display: flex;
             justify-content: space-between;
@@ -635,11 +640,6 @@
                 automationBar: document.getElementById("automationBar")
             };
 
-            // Setup button click
-            if (voiceBtn) {
-                voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
-            }
-
             function initVoiceProfiles() {
                 if (!SystemState.voiceSynth) return;
                 let voices = SystemState.voiceSynth.getVoices();
@@ -694,58 +694,38 @@
                 SystemState.voiceSynth.speak(utterance);
             }
 
-         function processVoicePayload(transcript) {
+            function processVoicePayload(transcript) {
+                const text = transcript.trim();
+                voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
 
-    const text = transcript.trim();
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 10000);
 
-    voiceTranscript.innerHTML =
-        `<span style="color:#fff;">> ${text}</span>`;
+                fetch("https://abcd1234.ngrok-free.app/api/command", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ command: text }),
+                    signal: controller.signal
+                })
+                .then(async (res) => {
+                    clearTimeout(timeout);
+                    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                    return await res.json();
+                })
+                .then(data => {
+                    console.log("Backend Response:", data);
+                    if (data?.action) executeRoboticSpeech(data.action);
+                    if (data?.url) window.open(data.url, "_blank");
+                })
+                .catch(err => {
+                    clearTimeout(timeout);
+                    console.error("Flask Connection Error:", err);
+                    executeRoboticSpeech("Backend connection failed.");
+                });
+            }
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-
-    fetch("https://abcd1234.ngrok-free.app/api/command", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            command: text
-        }),
-        signal: controller.signal
-    })
-    .then(async (res) => {
-
-        clearTimeout(timeout);
-
-        if (!res.ok) {
-            throw new Error(`HTTP Error: ${res.status}`);
-        }
-
-        const data = await res.json();
-        return data;
-    })
-    .then(data => {
-
-        console.log("Backend Response:", data);
-
-        if (data?.action) {
-            executeRoboticSpeech(data.action);
-        }
-
-        if (data?.url) {
-            window.open(data.url, "_blank");
-        }
-    })
-    .catch(err => {
-
-        clearTimeout(timeout);
-
-        console.error("Flask Connection Error:", err);
-
-        executeRoboticSpeech("Backend connection failed.");
-    });
-}
             function resetAllUIValues() {
                 eqBars.forEach(b => b.style.height = "10%");
                 Object.keys(emotionBars).forEach(k => {
@@ -772,6 +752,100 @@
                 metricLabels.automationBar.style.width = "0%";
                 liveDecibel.textContent = "-Inf dB";
                 liveSampleRate.textContent = "0.0 kHz";
+                
+                if (SystemState.animationFrameId) {
+                    cancelAnimationFrame(SystemState.animationFrameId);
+                }
+            }
+
+            function runLiveTelemetryMatrixLoop() {
+                if (!SystemState.isListening) return;
+
+                // 1. Process Microhphone Audio Spectrum Data
+                if (SystemState.analyser && SystemState.dataArray) {
+                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                    let sum = 0;
+                    eqBars.forEach((bar, index) => {
+                        const val = SystemState.dataArray[index % SystemState.dataArray.length] || 0;
+                        sum += val;
+                        const heightPercent = Math.max(10, Math.min(100, (val / 255) * 100));
+                        bar.style.height = `${heightPercent}%`;
+                    });
+
+                    // Update Live Decibel calculations
+                    const average = sum / eqBars.length;
+                    const db = average > 0 ? Math.round(20 * Math.log10(average / 255)) : -90;
+                    liveDecibel.textContent = db > -90 ? `${db} dB` : "-Inf dB";
+                }
+
+                // 2. Generate Simulated Hardware Array Telemetry
+                const timeFactor = Date.now() * 0.002;
+                
+                const calmVal = Math.round(75 + Math.sin(timeFactor) * 15);
+                const frictionVal = Math.round(20 + Math.cos(timeFactor * 1.5) * 10);
+                const loadVal = Math.round(45 + Math.sin(timeFactor * 0.7) * 20);
+
+                emotionBars.calmBar.style.width = `${calmVal}%`;
+                emotionBars.calmTxt.textContent = `${calmVal}%`;
+                emotionBars.frictionBar.style.width = `${frictionVal}%`;
+                emotionBars.frictionTxt.textContent = `${frictionVal}%`;
+                emotionBars.loadBar.style.width = `${loadVal}%`;
+                emotionBars.loadTxt.textContent = `${loadVal}%`;
+
+                // Update Box Progress Arrays
+                metricLabels.neuralBar.style.width = `${Math.round(60 + Math.sin(timeFactor) * 10)}%`;
+                metricLabels.analyticsBar.style.width = `${Math.round(80 + Math.cos(timeFactor) * 8)}%`;
+                metricLabels.automationBar.style.width = `${Math.round(40 + Math.sin(timeFactor * 1.2) * 15)}%`;
+
+                metricLabels.neuralVelocity.textContent = `${Math.round(85 + Math.sin(timeFactor) * 5)}%`;
+                metricLabels.neuralIndex.textContent = `${Math.round(92 + Math.cos(timeFactor * 2) * 3)}%`;
+                metricLabels.neuralActive.textContent = `${Math.round(64 + Math.sin(timeFactor * 0.5) * 12)}%`;
+
+                metricLabels.visionFPS.textContent = `${Math.round(58 + Math.random() * 2)} FPS`;
+                metricLabels.visionAccuracy.textContent = `${(98.2 + Math.sin(timeFactor) * 0.5).toFixed(1)}%`;
+                metricLabels.visionTracking.textContent = `${Math.round(87 + Math.cos(timeFactor) * 4)}%`;
+
+                metricLabels.robotTasks.textContent = `${Math.round(30 + Math.sin(timeFactor) * 5)}%`;
+                metricLabels.robotLoad.textContent = `${Math.round(18 + Math.cos(timeFactor * 1.1) * 6)}%`;
+                metricLabels.robotFlow.textContent = `${Math.round(95 + Math.sin(timeFactor * 2) * 2)}%`;
+
+                // 3. Render Canvas Monitor Waveforms
+                Object.keys(telemetryCanvasEngines).forEach(key => {
+                    const engine = telemetryCanvasEngines[key];
+                    const canvas = engine.el;
+                    if (!canvas) return;
+                    const ctx = canvas.getContext("2d");
+                    
+                    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+                        canvas.width = canvas.clientWidth;
+                        canvas.height = canvas.clientHeight;
+                    }
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    if (engine.points.length === 0 || engine.points.length < canvas.width) {
+                        engine.points = Array(canvas.width).fill(canvas.height / 2);
+                    }
+
+                    let nextValue = canvas.height / 2;
+                    if (key === 'neural') nextValue = (canvas.height / 2) + Math.sin(timeFactor * 3) * 15 + (Math.random() * 4 - 2);
+                    if (key === 'analytics') nextValue = (canvas.height / 2) + Math.cos(timeFactor * 2) * 10 + (Math.random() * 6 - 3);
+                    if (key === 'automation') nextValue = (canvas.height / 2) + Math.sin(timeFactor * 4) * 8 + (Math.random() * 2 - 1);
+
+                    engine.points.push(nextValue);
+                    if (engine.points.length > canvas.width) engine.points.shift();
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = engine.color;
+                    ctx.lineWidth = 1.5;
+                    for (let x = 0; x < engine.points.length; x++) {
+                        if (x === 0) ctx.moveTo(x, engine.points[x]);
+                        else ctx.lineTo(x, engine.points[x]);
+                    }
+                    ctx.stroke();
+                });
+
+                SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryMatrixLoop);
             }
 
             function toggleVoiceCaptureSystem() {
@@ -802,6 +876,12 @@
                              
                         liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
 
+                        emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
+                        emotionTokenDisplay.style.color = "var(--neon-green)";
+
+                        // Launch telemetry visualization engines
+                        runLiveTelemetryMatrixLoop();
+
                         setTimeout(() => {
                             executeRoboticSpeech("System array online. I am actively monitoring.");
                         }, 400);
@@ -826,156 +906,51 @@
                                 processVoicePayload(cleanBuffer);
                             };
 
-                            SystemState.recognition.onerror = (e) => {
-                                console.error("Recognition baseline error:", e.error);
-                            };
-
                             SystemState.recognition.onend = () => {
                                 if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                                    try { SystemState.recognition.start(); } catch(err){}
+                                    try { SystemState.recognition.start(); } catch(e){}
                                 }
                             };
 
-                            SystemState.recognition.start();
-                        } else {
-                            voiceTranscript.textContent = "Error: Speech Recognition API unsupported.";
-                        }
-                            
-                        runLiveTelemetryUIUpdate();
+                            SystemState.recognition.onerror = (err) => {
+                                console.error("Speech Recognition Error Loop:", err);
+                            };
 
+                            SystemState.recognition.start();
+                        }
                     }).catch(err => {
-                        console.error("Microphone hardware error:", err);
-                        alert("Microphone configuration access denied.");
+                        console.error("Microphone Hardware Access Denied:", err);
+                        voiceTranscript.innerHTML = '<span style="color:var(--neon-rose);">[Hardware Failure: Audio Input Denied]</span>';
                     });
                 } else {
-                    shutdownVoiceCaptureSystem();
-                }
-            }
-
-            function shutdownVoiceCaptureSystem() {
-                SystemState.isListening = false;
-                SystemState.shouldRestartRecognition = false;
-
-                if (SystemState.recognition) {
-                    try { SystemState.recognition.stop(); } catch(e) {}
-                    SystemState.recognition = null;
-                }
-
-                if (SystemState.stream) {
-                    SystemState.stream.getTracks().forEach(track => track.stop());
-                    SystemState.stream = null;
-                }
-
-                if (SystemState.audioContext) {
-                    try { SystemState.audioContext.close(); } catch(e) {}
-                    SystemState.audioContext = null;
-                }
-
-                if (SystemState.animationFrameId) {
-                    cancelAnimationFrame(SystemState.animationFrameId);
-                }
-
-                voiceBtn.classList.remove("listening");
-                document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
-                voiceStatusDot.className = "status-dot";
-                voiceStatusText.textContent = "Acoustic Core Offline";
-                voiceModuleStatus.textContent = "STANDBY";
-                voiceModuleStatus.classList.remove("active");
-                voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                voiceTranscript.innerHTML = '<span class="transcript-placeholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>';
-                
-                resetAllUIValues();
-            }
-
-            function runLiveTelemetryUIUpdate() {
-                if (!SystemState.isListening) return;
-
-                // 1. Process real audio equalizer bars if analysis loop is valid
-                if (SystemState.analyser && SystemState.dataArray) {
-                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    let totalAmplitude = 0;
+                    // Turn everything off cleanly
+                    SystemState.isListening = false;
+                    SystemState.shouldRestartRecognition = false;
                     
-                    eqBars.forEach((bar, index) => {
-                        const val = SystemState.dataArray[index] || 0;
-                        totalAmplitude += val;
-                        const heightPercent = Math.max(10, Math.floor((val / 255) * 100));
-                        bar.style.height = `${heightPercent}%`;
-                    });
-
-                    // Approximate a DB readout metric based on signal amplitude sum
-                    const averageSignal = totalAmplitude / eqBars.length;
-                    const db = averageSignal > 0 ? Math.floor((averageSignal / 255) * 60) - 60 : -90;
-                    liveDecibel.textContent = db > -90 ? `${db} dB` : "-Inf dB";
-                }
-
-                // 2. Generate simulated ambient shifts for core matrices
-                const seed = Date.now();
-                
-                const calmVal = Math.floor(60 + Math.sin(seed * 0.001) * 20);
-                const frictionVal = Math.floor(15 + Math.cos(seed * 0.002) * 10);
-                const loadVal = Math.floor(40 + Math.sin(seed * 0.003) * 30);
-
-                emotionBars.calmBar.style.width = `${calmVal}%`;
-                emotionBars.calmTxt.textContent = `${calmVal}%`;
-                emotionBars.frictionBar.style.width = `${frictionVal}%`;
-                emotionBars.frictionTxt.textContent = `${frictionVal}%`;
-                emotionBars.loadBar.style.width = `${loadVal}%`;
-                emotionBars.loadTxt.textContent = `${loadVal}%`;
-
-                // 3. Telemetry Matrix Values Update
-                const valVelocity = Math.floor(70 + Math.sin(seed * 0.002) * 15);
-                metricLabels.neuralVelocity.textContent = `${valVelocity}%`;
-                metricLabels.neuralIndex.textContent = `${Math.floor(85 + Math.cos(seed * 0.001) * 5)}%`;
-                metricLabels.neuralActive.textContent = `${Math.floor(40 + Math.sin(seed * 0.005) * 5)}%`;
-                metricLabels.neuralBar.style.width = `${valVelocity}%`;
-
-                const fpsVal = Math.floor(58 + Math.random() * 4);
-                metricLabels.visionFPS.textContent = `${fpsVal} FPS`;
-                const accVal = Math.floor(94 + Math.sin(seed * 0.0005) * 2);
-                metricLabels.visionAccuracy.textContent = `${accVal}%`;
-                metricLabels.visionTracking.textContent = `${Math.floor(88 + Math.cos(seed * 0.001) * 6)}%`;
-                metricLabels.analyticsBar.style.width = `${accVal}%`;
-
-                const taskVal = Math.floor(50 + Math.sin(seed * 0.001) * 20);
-                metricLabels.robotTasks.textContent = `${taskVal}%`;
-                metricLabels.robotLoad.textContent = `${Math.floor(30 + Math.cos(seed * 0.002) * 12)}%`;
-                metricLabels.robotFlow.textContent = `${Math.floor(91 + Math.sin(seed * 0.0008) * 4)}%`;
-                metricLabels.automationBar.style.width = `${taskVal}%`;
-
-                // 4. Draw Canvas Telemetry Spikes
-                Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const engine = telemetryCanvasEngines[key];
-                    if (!engine.el) return;
-                    const ctx = engine.el.getContext("2d");
-                    const w = engine.el.width = engine.el.offsetWidth;
-                    const h = engine.el.height = engine.el.offsetHeight;
-
-                    // Shift data arrays leftwards 
-                    if (engine.points.length > w / 4) {
-                        engine.points.shift();
+                    if (SystemState.recognition) {
+                        SystemState.recognition.stop();
                     }
+                    if (SystemState.stream) {
+                        SystemState.stream.getTracks().forEach(t => t.stop());
+                    }
+                    if (SystemState.audioContext) {
+                        SystemState.audioContext.close();
+                    }
+                    if (SystemState.voiceSynth) {
+                        SystemState.voiceSynth.cancel();
+                    }
+
+                    voiceBtn.classList.remove("listening");
+                    document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
+                    voiceStatusDot.className = "status-dot";
+                    voiceStatusText.textContent = "Acoustic Core Offline";
+                    voiceModuleStatus.textContent = "STANDBY";
+                    voiceModuleStatus.classList.remove("active");
+                    voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">System Hibernating. Click Initialization loop to start monitor profiles.</span>';
                     
-                    // Add modern noise variables depending on category
-                    let amplitudeFactor = key === 'neural' ? loadVal : key === 'analytics' ? frictionVal : taskVal;
-                    let targetY = (h / 2) + (Math.random() - 0.5) * (amplitudeFactor / 100) * h;
-                    engine.points.push(targetY);
-
-                    // Render sequence pathway
-                    ctx.clearRect(0, 0, w, h);
-                    ctx.beginPath();
-                    ctx.strokeStyle = engine.color;
-                    ctx.lineWidth = 2;
-                    ctx.lineJoin = "round";
-
-                    for (let i = 0; i < engine.points.length; i++) {
-                        let x = i * 4;
-                        if (i === 0) ctx.moveTo(x, engine.points[i]);
-                        else ctx.lineTo(x, engine.points[i]);
-                    }
-                    ctx.stroke();
-                });
-
-                SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
+                    resetAllUIValues();
+                }
             }
         });
     </script>

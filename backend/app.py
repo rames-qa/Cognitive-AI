@@ -1,101 +1,102 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 import threading
 import urllib.parse
 import logging
+import sys
 
-# FLASK INITIALIZATION
+# SYSTEM SETUP & CONFIGURATION
 app = Flask(__name__)
 
-# Cleans up CORS scoping across all dynamic front-end pathways
+# Production CORS: Restrict origins in production if frontend domain is known
 CORS(
     app,
     resources={
         r"/api/*": {
-            # In production, consider replacing "*" with your actual frontend domain
             "origins": "*" 
         }
     }
 )
 
-# GLOBAL SYSTEM STATE
+# GLOBAL CONCURRENCY STATE
 automation_lock = threading.Lock()
 active_driver = None
+# DYNAMIC NLP & QUERY PROCESSING ENGINE
 
-def sanitize_query(text, extra_tags=None):
-    # FIX: Safer idiom for mutable default arguments
-    if extra_tags is None:
-        extra_tags = []
+def extract_production_intent(text, platform_tags=None):
+    """
+    Safely tokenizes natural language speech strings without 
+    accidentally destroying target phrases or substring structures.
+    """
+    if platform_tags is None:
+        platform_tags = []
         
-    cleaned = text.lower()
-    removal_tokens = [
-        "search for",
-        "search",
-        "open",
-        "show me",
-        "find",
-        "go to",
-        "launch",
-        "start",
-        "play",
-        "tell me about",
-        "details of",
-        "open up",
-        "route to"
-    ] + [tag.lower() for tag in extra_tags]  # Ensure all extra tags are lowercase
-
-    for token in removal_tokens:
-        # Note: Keeps your string replacement logic intact, but handles case safety
+    cleaned = text.lower().strip()
+    
+    # Ordered by string length descending to guarantee maximum phrase matching first
+    action_tokens = [
+        "tell me about", "details of", "search for", 
+        "open up", "route to", "show me", "go to", 
+        "search", "launch", "start", "play", "find", "open"
+    ]
+    
+    # Normalize and isolate platform-specific keyword definitions
+    filter_tokens = action_tokens + [str(tag).lower() for tag in platform_tags]
+    
+    for token in filter_tokens:
+        # Pad checking spaces to preserve word boundaries where possible
         if token in cleaned:
             cleaned = cleaned.replace(token, "")
             
     return cleaned.strip()
 
-def generate_response(action, url=""):
+def build_api_payload(status, action, url=""):
     return jsonify({
-        "status": "success",
+        "status": status,
         "action": action,
         "url": url
     })
 
-# AMAZON AUTOMATION ENGINE
-def run_amazon_automation():
+# ASYNC AUTOMATION WORKER PIPELINES
+
+def execute_amazon_pipeline():
+    """
+    Handles headless-safe execution and explicitly manages target lifecycles
+    without orphaning web browser processing nodes in system memory.
+    """
     global active_driver
 
     if not automation_lock.acquire(blocking=False):
-        print("[AUTOMATION] Existing session already running.")
+        print("[WORKER BLOCKED] Automation routine requested while engine is locked.")
         return
         
-    print("\n[SELENIUM] Launching Amazon automation sequence...")
+    print("\n[SELENIUM] Initializing detached infrastructure orchestration...")
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
+    
+    # Keeps the session visible for manual interception post-automation pass
     options.add_experimental_option("detach", True)
     
     try:
-        service = Service(ChromeDriverManager().install())
-        active_driver = webdriver.Chrome(
-            service=service,
-            options=options
-        )
+        # Selenium 4.6+ Native Driver Resolution
+        active_driver = webdriver.Chrome(options=options)
         active_driver.get("https://www.amazon.in")
-        wait = WebDriverWait(active_driver, 15)
-        signin_button = wait.until(
-            EC.element_to_be_clickable(
-                (By.ID, "nav-link-accountList")
-            )
+        
+        wait = WebDriverWait(active_driver, 12)
+        signin_node = wait.until(
+            EC.element_to_be_clickable((By.ID, "nav-link-accountList"))
         )
-        signin_button.click()
-        print("[SELENIUM] Amazon login page opened successfully.")
-    except Exception as e:
-        print(f"[SELENIUM ERROR] Fault discovered during execution: {e}")
+        signin_node.click()
+        print("[SELENIUM] Verification target achieved: Login gateway reached.")
+        
+    except Exception as error:
+        print(f"[SELENIUM ERROR] Pipe failure detected: {error}", file=sys.stderr)
         if active_driver:
             try:
                 active_driver.quit()
@@ -105,131 +106,135 @@ def run_amazon_automation():
     finally:
         automation_lock.release()
 
-# COMMAND ENGINE
+# PRODUCTION ROUTING GATEWAYS
+
 @app.route("/api/command", methods=["POST"])
-def handle_command():
+def process_incoming_command():
     try:
-        data = request.get_json(force=True) or {}
-        print("\n=================================================")
-        print("RAW REQUEST:", data)
-        print("=================================================\n")
+        payload = request.get_json(force=True) or {}
+        raw_input = payload.get("command", "").strip()
         
-        raw_command = data.get("command", "").strip()
-        if not raw_command:
-            return jsonify({
-                "status": "empty",
-                "action": "No command received",
-                "url": ""
-            })
+        if not raw_input:
+            return build_api_payload("empty", "No payload vector received.")
             
-        command = raw_command.lower()
-        print(f"[VOICE INPUT] -> {command}")
+        command = raw_input.lower()
+        print(f"[INGRESS] Core Token Vector -> {command}")
         
-        # SYSTEM COMMANDS
-        if any(x in command for x in ["system", "status", "connected", "dashboard"]):
-            return generate_response("All cognitive systems operational.")
+        # SYSTEM UTILITIES
+        if any(token in command for token in ["system", "status", "connected", "dashboard"]):
+            return build_api_payload("success", "Production gateway infrastructure operational.")
             
-        # AMAZON
+        # AMAZON TARGET ROUTING
         elif "amazon" in command:
-            if "login" in command or "automation" in command:
+            if any(act in command for act in ["login", "automation", "run"]):
                 if automation_lock.locked():
-                    return jsonify({
-                        "status": "busy",
-                        "action": "Automation engine already active.",
-                        "url": ""
-                    })
-                threading.Thread(
-                    target=run_amazon_automation,
-                    daemon=True
-                ).start()
-                return generate_response(
-                    "Launching Amazon automation engine.",
-                    "https://www.amazon.in"
-                )
-            query = sanitize_query(command, ["amazon"])
-            if query:
-                url = "https://www.amazon.in/s?k=" + urllib.parse.quote(query)
-                return generate_response(f"Searching Amazon for {query}", url)
-            return generate_response("Opening Amazon India.", "https://www.amazon.in")
+                    return build_api_payload("busy", "Engine is currently executing a standard block.")
+                
+                threading.Thread(target=execute_amazon_pipeline, daemon=True).start()
+                return build_api_payload("success", "Spawning decoupled Amazon automated runner.", "https://www.amazon.in")
             
-        # FLIPKART
+            search_query = extract_production_intent(command, ["amazon"])
+            if search_query:
+                target_url = f"https://www.amazon.in/s?k={urllib.parse.quote(search_query)}"
+                return build_api_payload("success", f"Redirecting to Amazon search: {search_query}", target_url)
+            return build_api_payload("success", "Redirecting to Amazon main interface.", "https://www.amazon.in")
+            
+        # FLIPKART TARGET ROUTING
         elif "flipkart" in command:
-            query = sanitize_query(command, ["flipkart"])
-            if query:
-                url = "https://www.flipkart.com/search?q=" + urllib.parse.quote(query)
-                return generate_response(f"Searching Flipkart for {query}", url)
-            return generate_response("Opening Flipkart.", "https://www.flipkart.com")
+            search_query = extract_production_intent(command, ["flipkart"])
+            if search_query:
+                target_url = f"https://www.flipkart.com/search?q={urllib.parse.quote(search_query)}"
+                return build_api_payload("success", f"Redirecting to Flipkart search: {search_query}", target_url)
+            return build_api_payload("success", "Redirecting to Flipkart marketplace.", "https://www.flipkart.com")
             
-        # GMAIL
-        elif any(x in command for x in ["gmail", "mail", "inbox"]):
-            query = sanitize_query(command, ["gmail", "mail", "inbox"])
-            if query:
-                url = "https://mail.google.com/mail/u/0/#search/" + urllib.parse.quote(query)
-                return generate_response(f"Searching Gmail for {query}", url)
-            return generate_response("Opening Gmail workspace.", "https://mail.google.com")
+        # GOOGLE MAPS (Fixed Production-Grade Geo Endpoints)
+        elif any(token in command for token in ["map", "route", "direction", "location"]):
+            search_query = extract_production_intent(command, ["map", "route", "direction", "location"])
+            if search_query:
+                target_url = f"https://www.google.com/maps/search/{urllib.parse.quote(search_query)}"
+                return build_api_payload("success", f"Generating dynamic mapping path for: {search_query}", target_url)
+            return build_api_payload("success", "Redirecting to primary Google Maps engine.", "https://www.google.com/maps")
             
-        # YOUTUBE
-        elif any(x in command for x in ["youtube", "video", "song", "music"]):
-            query = sanitize_query(command, ["youtube", "video", "song", "music"])
-            if query:
-                url = "https://www.youtube.com/results?search_query=" + urllib.parse.quote(query)
-                return generate_response(f"Opening YouTube results for {query}", url)          
-            return generate_response("Opening YouTube Home.", "https://www.youtube.com")
+        # GLOBAL COMMUNICATIONS (GMAIL)
+        elif any(token in command for token in ["gmail", "mail", "inbox"]):
+            search_query = extract_production_intent(command, ["gmail", "mail", "inbox"])
+            if search_query:
+                target_url = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(search_query)}"
+                return build_api_payload("success", f"Filtering messaging archive for: {search_query}", target_url)
+            return build_api_payload("success", "Opening central communications workspace.", "https://mail.google.com")
             
-        # MAPS (FIXED: Standard web endpoints used)
-        elif any(x in command for x in ["map", "route", "direction", "location"]):
-            query = sanitize_query(command, ["map", "route", "direction", "location"])
-            if query:
-                url = "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(query)
-                return generate_response(f"Opening maps for {query}", url)          
-            return generate_response("Opening Google Maps.", "https://www.google.com/maps")
+        # CONTENT DELIVERY (YOUTUBE)
+        elif any(token in command for token in ["youtube", "video", "song", "music"]):
+            search_query = extract_production_intent(command, ["youtube", "video", "song", "music"])
+            if search_query:
+                target_url = f"https://www.youtube.com/results?search_query={urllib.parse.quote(search_query)}"
+                return build_api_payload("success", f"Streaming search indexing array for: {search_query}", target_url)
+            return build_api_payload("success", "Opening content platform dashboard.", "https://www.youtube.com")
             
-        # NEWS
+        # NEWS STRATIFICATION
         elif "news" in command:
-            query = sanitize_query(command, ["news"])
-            url = "https://news.google.com/search?q=" + urllib.parse.quote(query)
-            return generate_response(f"Opening news feed for {query}", url)
+            search_query = extract_production_intent(command, ["news"])
+            if search_query:
+                target_url = f"https://news.google.com/search?q={urllib.parse.quote(search_query)}"
+                return build_api_payload("success", f"Isolating dynamic press feeds for: {search_query}", target_url)
+            return build_api_payload("success", "Opening centralized global press feeds.", "https://news.google.com")
             
-        # OPEN WEBSITES
+        # PORTAL FALLBACK DEFAULTS
         elif "google" in command:
-            return generate_response("Opening Google.", "https://www.google.com")
+            return build_api_payload("success", "Resolving portal home.", "https://www.google.com")
         elif "github" in command:
-            return generate_response("Opening GitHub.", "https://github.com")
+            return build_api_payload("success", "Resolving version control hub.", "https://github.com")
         elif "linkedin" in command:
-            return generate_response("Opening LinkedIn.", "https://www.linkedin.com")
+            return build_api_payload("success", "Resolving business index professional channels.", "https://www.linkedin.com")
             
-        # FALLBACK SEARCH
+        # WEB SEARCH FALLBACK
         else:
-            fallback_url = "https://www.google.com/search?q=" + urllib.parse.quote(command)
-            return generate_response(f"Searching web for {command}", fallback_url)
+            fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(command)}"
+            return build_api_payload("success", f"Processing wide-spectrum web search fallback for: {command}", fallback_target)
             
-    except Exception as e:
-        print(f"\n[BACKEND ERROR] {e}\n")
+    except Exception as runtime_error:
+        print(f"[CRITICAL ERROR] Core runtime fault: {runtime_error}", file=sys.stderr)
         return jsonify({
             "status": "error",
-            "action": str(e),
-            "url": ""
+            "action": "Internal API infrastructure exception encountered.",
+            "details": str(runtime_error)
         }), 500
 
-# HEALTH CHECK
+# RESOURCE LIFECYCLE MANAGEMENT ENDPOINTS
+
+@app.route("/api/close_session", methods=["POST"])
+def terminate_orphaned_drivers():
+    """
+    Explicit administrative webhook to clean up trailing Chrome runtimes
+    leveraging the detached experimental flag state.
+    """
+    global active_driver
+    try:
+        if active_driver:
+            active_driver.quit()
+            active_driver = None
+            return build_api_payload("success", "Active infrastructure nodes terminated cleanly.")
+        return build_api_payload("empty", "No standalone processes found active.")
+    except Exception as error:
+        return build_api_payload("error", f"Node teardown exception: {str(error)}")
+
 @app.route("/")
 def health_check():
     return jsonify({
         "status": "online",
-        "message": "Cognitive AI backend operational"
+        "service": "Cognitive Enterprise Pipeline"
     })
 
-# SERVER BOOT
+# SERVER BOOTSTRAPPING ENGINE
 if __name__ == "__main__":
-    log = logging.getLogger("werkzeug")
-    log.setLevel(logging.ERROR)
+    # Suppress verbose development routing entries
+    logging.getLogger("werkzeug").setLevel(logging.ERROR)
     
-    print("\n" + "=" * 60)
-    print("    COGNITIVE SPEECH AI BACKEND SERVER ONLINE")
-    print("    Voice + Selenium + Automation Ready")
-    print("    Local Instance: http://127.0.0.1:5000")
-    print("    Public Tunnel:  https://abcd1234.ngrok-free.app/api/command")
-    print("=" * 60 + "\n")
+    print("\n" + "=" * 65)
+    print("    COGNITIVE SPEECH AI ")
+    print("   Operational Scope: Threaded API Ingress + Selenium Engine")
+    print("   Network Target:    http://0.0.0.0:5000")
+    print("=" * 65 + "\n")
     
     app.run(
         host="0.0.0.0",

@@ -694,12 +694,15 @@
                 SystemState.voiceSynth.speak(utterance);
             }
 
-          function processVoicePayload(transcript) {
+         function processVoicePayload(transcript) {
 
     const text = transcript.trim();
 
     voiceTranscript.innerHTML =
         `<span style="color:#fff;">> ${text}</span>`;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
 
     fetch("https://abcd1234.ngrok-free.app/api/command", {
         method: "POST",
@@ -708,31 +711,41 @@
         },
         body: JSON.stringify({
             command: text
-        })
+        }),
+        signal: controller.signal
     })
-    .then(res => res.json())
+    .then(async (res) => {
+
+        clearTimeout(timeout);
+
+        if (!res.ok) {
+            throw new Error(`HTTP Error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        return data;
+    })
     .then(data => {
 
         console.log("Backend Response:", data);
 
-        if (data.action) {
+        if (data?.action) {
             executeRoboticSpeech(data.action);
         }
 
-        if (data.url && data.url !== "") {
+        if (data?.url) {
             window.open(data.url, "_blank");
         }
     })
     .catch(err => {
 
+        clearTimeout(timeout);
+
         console.error("Flask Connection Error:", err);
 
-        executeRoboticSpeech(
-            "Backend connection failed."
-        );
+        executeRoboticSpeech("Backend connection failed.");
     });
 }
-
             function resetAllUIValues() {
                 eqBars.forEach(b => b.style.height = "10%");
                 Object.keys(emotionBars).forEach(k => {

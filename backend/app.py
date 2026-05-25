@@ -18,7 +18,8 @@ CORS(
     app,
     resources={
         r"/api/*": {
-            "origins": "*"
+            # In production, consider replacing "*" with your actual frontend domain
+            "origins": "*" 
         }
     }
 )
@@ -28,8 +29,10 @@ automation_lock = threading.Lock()
 active_driver = None
 
 def sanitize_query(text, extra_tags=None):
+    # FIX: Safer idiom for mutable default arguments
     if extra_tags is None:
         extra_tags = []
+        
     cleaned = text.lower()
     removal_tokens = [
         "search for",
@@ -45,10 +48,13 @@ def sanitize_query(text, extra_tags=None):
         "details of",
         "open up",
         "route to"
-    ] + extra_tags
+    ] + [tag.lower() for tag in extra_tags]  # Ensure all extra tags are lowercase
 
     for token in removal_tokens:
-        cleaned = cleaned.replace(token.lower(), "")
+        # Note: Keeps your string replacement logic intact, but handles case safety
+        if token in cleaned:
+            cleaned = cleaned.replace(token, "")
+            
     return cleaned.strip()
 
 def generate_response(action, url=""):
@@ -93,7 +99,7 @@ def run_amazon_automation():
         if active_driver:
             try:
                 active_driver.quit()
-            except:
+            except Exception:
                 pass
             active_driver = None
     finally:
@@ -170,13 +176,13 @@ def handle_command():
                 return generate_response(f"Opening YouTube results for {query}", url)          
             return generate_response("Opening YouTube Home.", "https://www.youtube.com")
             
-        # MAPS (Updated with stable fallback endpoints)
+        # MAPS (FIXED: Standard web endpoints used)
         elif any(x in command for x in ["map", "route", "direction", "location"]):
             query = sanitize_query(command, ["map", "route", "direction", "location"])
             if query:
-                url = "https://www.google.com/maps/search/" + urllib.parse.quote(query)
+                url = "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(query)
                 return generate_response(f"Opening maps for {query}", url)          
-            return generate_response("Opening Google Maps.", "https://maps.google.com")
+            return generate_response("Opening Google Maps.", "https://www.google.com/maps")
             
         # NEWS
         elif "news" in command:
@@ -219,13 +225,12 @@ if __name__ == "__main__":
     log.setLevel(logging.ERROR)
     
     print("\n" + "=" * 60)
-    print("   COGNITIVE SPEECH AI BACKEND SERVER ONLINE")
-    print("   Voice + Selenium + Automation Ready")
-    print("   Local Instance: http://127.0.0.1:5000")
-    print("   Public Tunnel:  https://abcd1234.ngrok-free.app/api/command")
+    print("    COGNITIVE SPEECH AI BACKEND SERVER ONLINE")
+    print("    Voice + Selenium + Automation Ready")
+    print("    Local Instance: http://127.0.0.1:5000")
+    print("    Public Tunnel:  https://abcd1234.ngrok-free.app/api/command")
     print("=" * 60 + "\n")
     
-    # Must run on port 5000 locally so ngrok can look inside and intercept requests
     app.run(
         host="0.0.0.0",
         port=5000,

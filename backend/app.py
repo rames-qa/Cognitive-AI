@@ -205,7 +205,7 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     print("   COGNITIVE SPEECH AI BACKEND SERVER ONLINE")
     print("   Voice + Selenium + Automation Ready")
-    print("   URL: http://127.0.0.1:5000")
+    print("   URL: https://abcd1234.ngrok-free.app/api/command")
     print("=" * 60 + "\n")
     app.run(
         host="0.0.0.0",

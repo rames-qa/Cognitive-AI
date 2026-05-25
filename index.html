@@ -613,7 +613,7 @@
             const eqBars = document.querySelectorAll(".eq-bar");
             const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
             const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-                   
+                    
             const emotionBars = {
                 calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
                 frictionBar: document.getElementById("barFriction"), frictionTxt: document.getElementById("txtFriction"),
@@ -635,7 +635,6 @@
                 automationBar: document.getElementById("automationBar")
             };
 
-            // Setup button click
             if (voiceBtn) {
                 voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
             }
@@ -694,58 +693,112 @@
                 SystemState.voiceSynth.speak(utterance);
             }
 
-         function processVoicePayload(transcript) {
+            function processVoicePayload(transcript) {
+                const text = transcript.trim();
+                voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
 
-    const text = transcript.trim();
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 10000);
 
-    voiceTranscript.innerHTML =
-        `<span style="color:#fff;">> ${text}</span>`;
+                // Default Local Port Fallback Route Configuration
+                fetch("http://127.0.0.1:5000/api/command", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ command: text }),
+                    signal: controller.signal
+                })
+                .then(async (res) => {
+                    clearTimeout(timeout);
+                    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                    return await res.json();
+                })
+                .then(data => {
+                    console.log("Backend Response:", data);
+                    if (data?.action) executeRoboticSpeech(data.action);
+                    if (data?.url) window.open(data.url, "_blank");
+                })
+                .catch(err => {
+                    clearTimeout(timeout);
+                    console.error("Flask Connection Error:", err);
+                    executeRoboticSpeech("Backend connection failed.");
+                });
+            }
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+            function animateTelemetryCanvas() {
+                if (!SystemState.isListening) return;
 
-    fetch("https://abcd1234.ngrok-free.app/api/command", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            command: text
-        }),
-        signal: controller.signal
-    })
-    .then(async (res) => {
+                // Animate Audio EQ Visualizer Bars
+                if (SystemState.analyser && SystemState.dataArray) {
+                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                    let sum = 0;
+                    eqBars.forEach((bar, index) => {
+                        const value = SystemState.dataArray[index] || 0;
+                        sum += value;
+                        const heightPercent = Math.max(10, (value / 255) * 100);
+                        bar.style.height = `${heightPercent}%`;
+                    });
+                    
+                    const average = sum / eqBars.length;
+                    const db = 20 * Math.log10(average / 255);
+                    liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
+                }
 
-        clearTimeout(timeout);
+                // Render Background Canvas Framework Wave Lines
+                Object.keys(telemetryCanvasEngines).forEach(key => {
+                    const engine = telemetryCanvasEngines[key];
+                    const canvas = engine.el;
+                    if (!canvas) return;
+                    const ctx = canvas.getContext("2d");
+                    
+                    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+                        canvas.width = canvas.clientWidth;
+                        canvas.height = canvas.clientHeight;
+                    }
 
-        if (!res.ok) {
-            throw new Error(`HTTP Error: ${res.status}`);
-        }
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.strokeStyle = engine.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
 
-        const data = await res.json();
-        return data;
-    })
-    .then(data => {
+                    if (engine.points.length < 30) {
+                        while(engine.points.length < 30) engine.points.push(Math.random() * canvas.height);
+                    }
 
-        console.log("Backend Response:", data);
+                    engine.points.shift();
+                    engine.points.push(Math.random() * canvas.height);
 
-        if (data?.action) {
-            executeRoboticSpeech(data.action);
-        }
+                    const sliceWidth = canvas.width / (engine.points.length - 1);
+                    for (let i = 0; i < engine.points.length; i++) {
+                        const x = i * sliceWidth;
+                        const y = (engine.points[i] * 0.3) + (canvas.height * 0.35);
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                });
 
-        if (data?.url) {
-            window.open(data.url, "_blank");
-        }
-    })
-    .catch(err => {
+                // Dynamically update simulated progress metrics logs
+                if (Math.random() > 0.85) {
+                    const r1 = Math.floor(Math.random() * 40) + 50;
+                    const r2 = Math.floor(Math.random() * 30) + 60;
+                    const r3 = Math.floor(Math.random() * 20) + 75;
 
-        clearTimeout(timeout);
+                    metricLabels.neuralVelocity.textContent = `${r1}%`;
+                    metricLabels.neuralBar.style.width = `${r1}%`;
+                    metricLabels.visionFPS.textContent = `${Math.floor(Math.random() * 15) + 45} FPS`;
+                    metricLabels.analyticsBar.style.width = `${r2}%`;
+                    metricLabels.robotTasks.textContent = `${r3}%`;
+                    metricLabels.automationBar.style.width = `${r3}%`;
 
-        console.error("Flask Connection Error:", err);
+                    emotionBars.calmBar.style.width = `${r2}%`;
+                    emotionBars.calmTxt.textContent = `${r2}%`;
+                    emotionBars.frictionBar.style.width = `${100 - r2}%`;
+                    emotionBars.frictionTxt.textContent = `${100 - r2}%`;
+                }
 
-        executeRoboticSpeech("Backend connection failed.");
-    });
-}
+                SystemState.animationFrameId = requestAnimationFrame(animateTelemetryCanvas);
+            }
+
             function resetAllUIValues() {
                 eqBars.forEach(b => b.style.height = "10%");
                 Object.keys(emotionBars).forEach(k => {
@@ -826,156 +879,45 @@
                                 processVoicePayload(cleanBuffer);
                             };
 
-                            SystemState.recognition.onerror = (e) => {
-                                console.error("Recognition baseline error:", e.error);
+                            SystemState.recognition.onerror = (err) => {
+                                console.error("Speech Engine Error:", err);
                             };
 
                             SystemState.recognition.onend = () => {
                                 if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                                    try { SystemState.recognition.start(); } catch(err){}
+                                    try { SystemState.recognition.start(); } catch(e){}
                                 }
                             };
 
                             SystemState.recognition.start();
-                        } else {
-                            voiceTranscript.textContent = "Error: Speech Recognition API unsupported.";
                         }
-                            
-                        runLiveTelemetryUIUpdate();
-
+                        
+                        animateTelemetryCanvas();
                     }).catch(err => {
-                        console.error("Microphone hardware error:", err);
-                        alert("Microphone configuration access denied.");
+                        console.error("Microphone Access Denied:", err);
+                        alert("Microphone capture failure. Check permissions configuration parameters.");
                     });
                 } else {
-                    shutdownVoiceCaptureSystem();
-                }
-            }
-
-            function shutdownVoiceCaptureSystem() {
-                SystemState.isListening = false;
-                SystemState.shouldRestartRecognition = false;
-
-                if (SystemState.recognition) {
-                    try { SystemState.recognition.stop(); } catch(e) {}
-                    SystemState.recognition = null;
-                }
-
-                if (SystemState.stream) {
-                    SystemState.stream.getTracks().forEach(track => track.stop());
-                    SystemState.stream = null;
-                }
-
-                if (SystemState.audioContext) {
-                    try { SystemState.audioContext.close(); } catch(e) {}
-                    SystemState.audioContext = null;
-                }
-
-                if (SystemState.animationFrameId) {
-                    cancelAnimationFrame(SystemState.animationFrameId);
-                }
-
-                voiceBtn.classList.remove("listening");
-                document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
-                voiceStatusDot.className = "status-dot";
-                voiceStatusText.textContent = "Acoustic Core Offline";
-                voiceModuleStatus.textContent = "STANDBY";
-                voiceModuleStatus.classList.remove("active");
-                voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                voiceTranscript.innerHTML = '<span class="transcript-placeholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>';
-                
-                resetAllUIValues();
-            }
-
-            function runLiveTelemetryUIUpdate() {
-                if (!SystemState.isListening) return;
-
-                // 1. Process real audio equalizer bars if analysis loop is valid
-                if (SystemState.analyser && SystemState.dataArray) {
-                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    let totalAmplitude = 0;
+                    // Shutdown Execution Pipelines cleanly
+                    SystemState.isListening = false;
+                    SystemState.shouldRestartRecognition = false;
                     
-                    eqBars.forEach((bar, index) => {
-                        const val = SystemState.dataArray[index] || 0;
-                        totalAmplitude += val;
-                        const heightPercent = Math.max(10, Math.floor((val / 255) * 100));
-                        bar.style.height = `${heightPercent}%`;
-                    });
+                    if (SystemState.recognition) SystemState.recognition.stop();
+                    if (SystemState.animationFrameId) cancelAnimationFrame(SystemState.animationFrameId);
+                    if (SystemState.stream) SystemState.stream.getTracks().forEach(track => track.stop());
+                    if (SystemState.audioContext) SystemState.audioContext.close();
 
-                    // Approximate a DB readout metric based on signal amplitude sum
-                    const averageSignal = totalAmplitude / eqBars.length;
-                    const db = averageSignal > 0 ? Math.floor((averageSignal / 255) * 60) - 60 : -90;
-                    liveDecibel.textContent = db > -90 ? `${db} dB` : "-Inf dB";
-                }
-
-                // 2. Generate simulated ambient shifts for core matrices
-                const seed = Date.now();
-                
-                const calmVal = Math.floor(60 + Math.sin(seed * 0.001) * 20);
-                const frictionVal = Math.floor(15 + Math.cos(seed * 0.002) * 10);
-                const loadVal = Math.floor(40 + Math.sin(seed * 0.003) * 30);
-
-                emotionBars.calmBar.style.width = `${calmVal}%`;
-                emotionBars.calmTxt.textContent = `${calmVal}%`;
-                emotionBars.frictionBar.style.width = `${frictionVal}%`;
-                emotionBars.frictionTxt.textContent = `${frictionVal}%`;
-                emotionBars.loadBar.style.width = `${loadVal}%`;
-                emotionBars.loadTxt.textContent = `${loadVal}%`;
-
-                // 3. Telemetry Matrix Values Update
-                const valVelocity = Math.floor(70 + Math.sin(seed * 0.002) * 15);
-                metricLabels.neuralVelocity.textContent = `${valVelocity}%`;
-                metricLabels.neuralIndex.textContent = `${Math.floor(85 + Math.cos(seed * 0.001) * 5)}%`;
-                metricLabels.neuralActive.textContent = `${Math.floor(40 + Math.sin(seed * 0.005) * 5)}%`;
-                metricLabels.neuralBar.style.width = `${valVelocity}%`;
-
-                const fpsVal = Math.floor(58 + Math.random() * 4);
-                metricLabels.visionFPS.textContent = `${fpsVal} FPS`;
-                const accVal = Math.floor(94 + Math.sin(seed * 0.0005) * 2);
-                metricLabels.visionAccuracy.textContent = `${accVal}%`;
-                metricLabels.visionTracking.textContent = `${Math.floor(88 + Math.cos(seed * 0.001) * 6)}%`;
-                metricLabels.analyticsBar.style.width = `${accVal}%`;
-
-                const taskVal = Math.floor(50 + Math.sin(seed * 0.001) * 20);
-                metricLabels.robotTasks.textContent = `${taskVal}%`;
-                metricLabels.robotLoad.textContent = `${Math.floor(30 + Math.cos(seed * 0.002) * 12)}%`;
-                metricLabels.robotFlow.textContent = `${Math.floor(91 + Math.sin(seed * 0.0008) * 4)}%`;
-                metricLabels.automationBar.style.width = `${taskVal}%`;
-
-                // 4. Draw Canvas Telemetry Spikes
-                Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const engine = telemetryCanvasEngines[key];
-                    if (!engine.el) return;
-                    const ctx = engine.el.getContext("2d");
-                    const w = engine.el.width = engine.el.offsetWidth;
-                    const h = engine.el.height = engine.el.offsetHeight;
-
-                    // Shift data arrays leftwards 
-                    if (engine.points.length > w / 4) {
-                        engine.points.shift();
-                    }
+                    voiceBtn.classList.remove("listening");
+                    document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
+                    voiceStatusDot.className = "status-dot";
+                    voiceStatusText.textContent = "Acoustic Core Offline";
+                    voiceModuleStatus.textContent = "STANDBY";
+                    voiceModuleStatus.classList.remove("active");
+                    voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">System pipeline deactivated. Core offline.</span>';
                     
-                    // Add modern noise variables depending on category
-                    let amplitudeFactor = key === 'neural' ? loadVal : key === 'analytics' ? frictionVal : taskVal;
-                    let targetY = (h / 2) + (Math.random() - 0.5) * (amplitudeFactor / 100) * h;
-                    engine.points.push(targetY);
-
-                    // Render sequence pathway
-                    ctx.clearRect(0, 0, w, h);
-                    ctx.beginPath();
-                    ctx.strokeStyle = engine.color;
-                    ctx.lineWidth = 2;
-                    ctx.lineJoin = "round";
-
-                    for (let i = 0; i < engine.points.length; i++) {
-                        let x = i * 4;
-                        if (i === 0) ctx.moveTo(x, engine.points[i]);
-                        else ctx.lineTo(x, engine.points[i]);
-                    }
-                    ctx.stroke();
-                });
-
-                SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
+                    resetAllUIValues();
+                }
             }
         });
     </script>

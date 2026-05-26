@@ -151,6 +151,24 @@ PLATFORM_REGISTRY = {
         "base_url": "https://www.quora.com",
         "search_path": "/search?q=",
         "has_automation": False
+    },
+    "bus": {
+        "base_url": "https://www.busbud.com",
+        "search_path": "/en/search/-/USD/",
+        "aliases": ["book bus", "bus ticket", "greyhound", "coach"],
+        "has_automation": False
+    },
+    "train": {
+        "base_url": "https://www.amtrak.com",
+        "search_path": "/home.html",
+        "aliases": ["book train", "train ticket", "railway ticket", "amtrak", "eurostar"],
+        "has_automation": False
+    },
+    "flights": {
+        "base_url": "https://www.expedia.com",
+        "search_path": "/Flights-Search?leg1=from::to:,departure::T&mode=search&passengers=adults:1",
+        "aliases": ["air ticket", "book flight", "flight ticket", "airline ticket", "plane ticket"],
+        "has_automation": False
     }
 }
 

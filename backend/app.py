@@ -10,15 +10,15 @@ import logging
 import sys
 import re
 
+# SYSTEM SETUP & CONFIGURATION
 app = Flask(__name__)
-# Enable CORS for communication with your frontend dashboard
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# GLOBAL SYSTEM STATE
+# GLOBAL CONCURRENCY STATE
 automation_lock = threading.Lock()
 active_driver = None
 
-# CENTRAL REGISTRY MECHANISM
+# COMPLETELY DYNAMIC REGISTRY CONFIGURATION
 PLATFORM_REGISTRY = {
     "amazon": {
         "base_url": "https://www.amazon.in",
@@ -37,7 +37,7 @@ PLATFORM_REGISTRY = {
         "has_automation": False
     },
     "google maps": {
-        "base_url": "https://www.google.com/maps",
+        "base_url": "https://maps.google.com",
         "search_path": "/search/",
         "aliases": ["map", "route", "direction", "location"],
         "has_automation": False
@@ -60,6 +60,18 @@ PLATFORM_REGISTRY = {
         "aliases": ["world news", "global news", "updates", "breaking news", "current affairs"],
         "has_automation": False
     },
+    "reuters": {
+        "base_url": "https://www.reuters.com",
+        "search_path": "/search/ui/?q=",
+        "aliases": ["international news", "business updates"],
+        "has_automation": False
+    },
+    "bbc news": {
+        "base_url": "https://www.bbc.com/news",
+        "search_path": "/search?q=",
+        "aliases": ["bbc"],
+        "has_automation": False
+    },
     "github": {
         "base_url": "https://github.com",
         "search_path": "/search?q=",
@@ -69,20 +81,89 @@ PLATFORM_REGISTRY = {
         "base_url": "https://www.linkedin.com",
         "search_path": "/search/results/all/?keywords=",
         "has_automation": False
+    },
+    "google": {
+        "base_url": "https://www.google.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "bing": {
+        "base_url": "https://www.bing.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "duckduckgo": {
+        "base_url": "https://duckduckgo.com",
+        "search_path": "/?q=",
+        "has_automation": False
+    },
+    "yahoo": {
+        "base_url": "https://search.yahoo.com",
+        "search_path": "/search/p=",
+        "has_automation": False
+    },
+    "stackoverflow": {
+        "base_url": "https://stackoverflow.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "reddit": {
+        "base_url": "https://www.reddit.com",
+        "search_path": "/search/?q=",
+        "has_automation": False
+    },
+    "wikipedia": {
+        "base_url": "https://en.wikipedia.org",
+        "search_path": "/wiki/Special:Search?search=",
+        "has_automation": False
+    },
+    "twitter": {
+        "base_url": "https://twitter.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "facebook": {
+        "base_url": "https://www.facebook.com",
+        "search_path": "/search/top?q=",
+        "has_automation": False
+    },
+    "instagram": {
+        "base_url": "https://www.instagram.com",
+        "search_path": "/explore/tags/",
+        "has_automation": False
+    },
+    "npm": {
+        "base_url": "https://www.npmjs.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "pypi": {
+        "base_url": "https://pypi.org",
+        "search_path": "/search/?q=",
+        "has_automation": False
+    },
+    "medium": {
+        "base_url": "https://medium.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "quora": {
+        "base_url": "https://www.quora.com",
+        "search_path": "/search?q=",
+        "has_automation": False
     }
 }
 
+# DYNAMIC NLP PARSING ENGINE
 def resolve_intent_and_query(command):
     command = command.lower().strip()
     matched_platform = None
-
-    # Sort platforms by text boundary length to protect multi-phrase definitions
+    
     sorted_platforms = sorted(
         PLATFORM_REGISTRY.items(), 
         key=lambda item: max([len(term) for term in [item[0]] + item[1].get("aliases", [])]), 
         reverse=True
     )
-
     for target_key, config in sorted_platforms:
         search_terms = [target_key] + config.get("aliases", [])
         for term in search_terms:
@@ -93,47 +174,51 @@ def resolve_intent_and_query(command):
         if matched_platform:
             break
 
-    # Clean filler patterns and relational prepositions
     action_patterns = [
         r"\btell me about\b", r"\bdetails of\b", r"\bsearch for\b", 
         r"\bopen up\b", r"\broute to\b", r"\bshow me\b", r"\bgo to\b", 
         r"\bsearch\b", r"\blaunch\b", r"\bstart\b", r"\bplay\b", r"\bfind\b", r"\bopen\b",
         r"\bon\b", r"\bfor\b", r"\bat\b", r"\band\b"
-    ]
-    
+    ]   
     clean_query = command
     for pattern in action_patterns:
-        clean_query = re.sub(pattern, " ", clean_query)
-    
+        clean_query = re.sub(pattern, " ", clean_query) 
     extracted_query = " ".join(clean_query.split())
     return matched_platform, extracted_query
 
 def build_api_payload(status, action, url=""):
     return jsonify({"status": status, "action": action, "url": url})
 
+# ASYNC AUTOMATION PIPELINE RUNNER
 def execute_amazon_pipeline():
     global active_driver
     if not automation_lock.acquire(blocking=False):
-        print("[WORKER BLOCKED] Execution framework locked.")
-        return
-        
-    print("\n[SELENIUM] Initializing autonomous pipeline infrastructure...")
+        print("[WORKER BLOCKED] Engine is busy processing an open test pipeline.")
+        return     
+    print("\n[SELENIUM] Initializing autonomous Codespace driver orchestration sequence...")
     try:
         options = webdriver.ChromeOptions()
+        
+        # --- CRITICAL CODESPACE/HEADLESS ENVIRONMENT ARGUMENTS ---
+        options.add_argument("--headless=new") # Instructs Chrome to run in background without a GUI window
+        options.add_argument("--disable-gpu")     # Overrides hardware UI rendering pipeline limitations
+        options.add_argument("--window-size=1920,1080") # Simulates a standard crisp layout resolution
+        
+        # Original Sandbox safety setups
         options.add_argument("--start-maximized")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
-        options.add_experimental_option("detach", True)
+        options.add_experimental_option("detach", True)       
         
         active_driver = webdriver.Chrome(options=options)
-        active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])
+        active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])      
         
         wait = WebDriverWait(active_driver, 12)
         signin_node = wait.until(EC.element_to_be_clickable((By.ID, "nav-link-accountList")))
         signin_node.click()
-        print("[SELENIUM] Verification Complete: Target node accessed successfully.")
+        print("[SELENIUM] Routine target reached inside Codespace: Login target node located safely.")
     except Exception as error:
-        print(f"[SELENIUM ERROR] Automation engine failure: {error}", file=sys.stderr)
+        print(f"[SELENIUM ERROR] Codespace automation execution faulted: {error}", file=sys.stderr)
         if active_driver:
             try: active_driver.quit()
             except: pass
@@ -141,49 +226,42 @@ def execute_amazon_pipeline():
     finally:
         automation_lock.release()
 
+# DYNAMIC ENDPOINT ROUTING MANAGEMENT
 @app.route("/api/command", methods=["POST"])
 def process_incoming_command():
     try:
         payload = request.get_json(force=True) or {}
-        raw_input = payload.get("command", "").strip()
-        
+        raw_input = payload.get("command", "").strip()       
         if not raw_input:
-            return build_api_payload("empty", "No command structural data identified.")
-            
+            return build_api_payload("empty", "No payload execution vector supplied.")          
         command = raw_input.lower()
-        print(f"[INGRESS] Operational Vector -> {command}")
-        
+        print(f"[INGRESS] Routing Vector Received -> {command}")        
         if any(token in command for token in ["system", "status", "connected", "dashboard"]):
-            return build_api_payload("success", "Dynamic infrastructure routing node online.")
-            
-        platform, query = resolve_intent_and_query(command)
-        
+            return build_api_payload("success", "Dynamic infrastructure matrix operational.")          
+        platform, query = resolve_intent_and_query(command)       
         if platform:
-            platform_config = PLATFORM_REGISTRY[platform]
-            
-            # Catch runner conditions for automated system scripts
+            platform_config = PLATFORM_REGISTRY[platform]          
             if platform_config["has_automation"] and any(act in command for act in ["login", "automation", "run"]):
                 if automation_lock.locked():
-                    return build_api_payload("busy", "Automation pipeline is running another process.")
-                
+                    return build_api_payload("busy", "Selenium instance pipeline is currently locked.")              
                 threading.Thread(target=execute_amazon_pipeline, daemon=True).start()
-                return build_api_payload("success", f"Launching underlying browser runner for {platform}.", platform_config["base_url"])
-            
+                return build_api_payload("success", f"Triggered active thread runner for {platform}.", platform_config["base_url"])          
             if query:
                 if platform == "myntra":
                     target_url = f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
                 else:
-                    target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"
-                return build_api_payload("success", f"Routing to {platform} query parameter: '{query}'", target_url)
-            
-            return build_api_payload("success", f"Direct interface redirection for {platform}.", platform_config["base_url"])
-            
-        fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(command)}"
-        return build_api_payload("success", f"Forwarding query parameters to open web search fallback.", fallback_target)
-            
+                    target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"                 
+                return build_api_payload("success", f"Dynamic mapping to {platform} query parameter: '{query}'", target_url)         
+            return build_api_payload("success", f"Routing request forward to {platform} root interface.", platform_config["base_url"])           
+        fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(raw_input)}"
+        return build_api_payload("success", f"No localized workspace hit. Fallback query to open web: {raw_input}", fallback_target)           
     except Exception as runtime_error:
-        print(f"[CRITICAL] Runtime pipeline error: {runtime_error}", file=sys.stderr)
-        return jsonify({"status": "error", "action": "Internal parsing pipeline failure.", "details": str(runtime_error)}), 500
+        print(f"[CRITICAL ERROR] Process pipeline crashed: {runtime_error}", file=sys.stderr)
+        return jsonify({
+            "status": "error",
+            "action": "Internal API infrastructure exception encountered.",
+            "details": str(runtime_error)
+        }), 500
 
 @app.route("/api/close_session", methods=["POST"])
 def terminate_orphaned_drivers():
@@ -192,16 +270,20 @@ def terminate_orphaned_drivers():
         if active_driver:
             active_driver.quit()
             active_driver = None
-            return build_api_payload("success", "Detached browser resources recovered successfully.")
-        return build_api_payload("empty", "No orphaned browser processes found running.")
+            return build_api_payload("success", "Active infrastructure nodes terminated cleanly.")
+        return build_api_payload("empty", "No standalone processes found active.")
     except Exception as error:
-        return build_api_payload("error", f"Node process recovery exception: {str(error)}")
+        return build_api_payload("error", f"Node teardown exception: {str(error)}")
 
 @app.route("/")
 def health_check():
-    return jsonify({"status": "online", "engine": "Dynamic Registry Router"})
+    return jsonify({"status": "online", "service": "Adaptive Codespace Pipeline"})
 
 if __name__ == "__main__":
-    logging.getLogger("werkzeug").setLevel(logging.ERROR)
-    print("\n" + "=" * 65 + "\n    BACKEND OPERATIONAL SYSTEM LOGGED ON\n" + "=" * 65 + "\n")
+    logging.getLogger("werkzeug").setLevel(logging.ERROR)    
+    print("\n" + "=" * 65)
+    print("   COGNITIVE SPEECH AI (CODESPACE EDITION)")
+    print("   Operational Scope: Registry-Driven Route Processing Engine")
+    print("   Network Target:    http://0.0.0.0:5000")
+    print("=" * 65 + "\n")   
     app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
